@@ -113,8 +113,10 @@
   --ok:#2d8a6e;--rad:14px;--rads:10px;
   --tr:.3s cubic-bezier(.4,0,.2,1);--sp:.5s cubic-bezier(.34,1.56,.64,1);
 }
-html,body{height:100%;overflow:hidden}
+html,body{height:100%}
+html{overflow:hidden}
 body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--tx);display:flex;flex-direction:column}
+body.modal-open{overflow:hidden}
 a{color:inherit;text-decoration:none}
 button{cursor:pointer;font-family:inherit;border:none;background:none}
 
@@ -248,7 +250,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .citem{display:flex;gap:10px;margin-bottom:14px;font-size:.82rem;color:var(--tx)}.citem .ci{font-size:1.1rem;flex-shrink:0}
 .cform{background:rgba(255,255,255,.88);border-radius:var(--rad);padding:28px;border:1px solid rgba(232,228,223,.5)}
 .cform h3{font-size:.88rem;font-weight:800;color:var(--dk);margin-bottom:14px}
-.cfg{margin-bottom:12px}.cfg label{display:block;font-size:.72rem;font-weight:700;color:var(--txm);margin-bottom:4px}
+.cfg{margin-bottom:12px}.cfg label,.mfg label{display:block;font-size:.72rem;font-weight:700;color:var(--txm);margin-bottom:4px}
 .cfg input,.cfg textarea{width:100%;padding:10px 12px;border:2px solid var(--brd);border-radius:var(--rads);font-size:.82rem;font-family:inherit;transition:all var(--tr);background:var(--bg)}.cfg input:focus,.cfg textarea:focus{outline:none;border-color:var(--pri);background:#fff}.cfg textarea{resize:none;height:80px}
 
 /* ── Admin overlay ── */
@@ -401,7 +403,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
   </div>
 </header>
 
-<div class="content" id="content"></div>
+<main class="content" id="content"></main>
 
 <!-- ── Floating WhatsApp CTA (tum sayfalarda gorunur) ── -->
 <a href="https://wa.me/905413635454" target="_blank" rel="noopener" aria-label="WhatsApp ile iletişime geçin"
@@ -652,7 +654,7 @@ function showMarkers(list){const ids=new Set(list.map(p=>p.id));Object.entries(m
 function openD(id){const p=D.projects.find(x=>x.id===id);if(!p)return;document.querySelectorAll('.card').forEach(c=>c.classList.remove('on'));const cd=document.getElementById('c'+id);if(cd){cd.classList.add('on');cd.scrollIntoView({behavior:'smooth',block:'nearest'})}if(mapObj)mapObj.flyTo([p.lat,p.lng],15,{duration:.8});document.getElementById('dtoTitle').textContent=p.name;const bd=document.getElementById('dtoBd');const videoHtml = p.youtubeId
   ? `<div class="yt-wrap"><iframe src="https://www.youtube.com/embed/${encodeURIComponent(p.youtubeId)}?rel=0" title="${p.name} drone videosu" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`
   : `<div class="yt-placeholder" aria-label="Drone videosu yakında"><div class="yt-ph-in"><span>🎬</span>Drone videosu yakında</div></div>`;
-bd.innerHTML=`<div class="dto-hero" style="background:${p.grad}" role="img" aria-label="${p.name} öne çıkan görsel">${p.emoji}<div class="st" style="background:${p.sc};color:${p.sc==='#c8913a'?'var(--dk)':'#fff'}">${p.status}</div></div>${videoHtml}<div class="dto-name">${p.name}</div><div class="dto-loc">📍 ${p.location}</div>${p.timeline?`<div style="font-size:.75rem;color:var(--txm);margin-bottom:14px">🗓️ ${p.timeline}</div>`:''}<div class="qstats"><div class="qs"><div class="n">${p.units||'—'}</div><div class="l">Daire</div></div><div class="qs"><div class="n">${p.blocks||'—'}</div><div class="l">Blok</div></div><div class="qs"><div class="n">${p.floors||'—'}</div><div class="l">Kat</div></div></div>${p.types.length?`<div class="sec-t">Daire Tipleri</div><div class="atgrid">${p.types.map((t,i)=>`<div class="atc${i===0?' sel':''}" onclick="selType(${i})"><div class="atc-n">${t.n}</div><div class="atc-s">${t.s}</div><div class="atc-p">${t.p}</div></div>`).join('')}</div>`:''}<div class="sec-t">Özellikler</div><div class="ftgrid">${p.feats.map(f=>`<div class="fti">${f}</div>`).join('')}</div><div class="ddesc">${p.desc}</div><div class="cmini" id="cmini"><h4>Bu Proje İçin Bilgi Al</h4><div class="mfg"><input id="df_name" required placeholder="Adınız Soyadınız" aria-label="Ad Soyad" autocomplete="name"><div class="field-error">Ad Soyad alanı zorunludur</div></div><div class="mfg"><input id="df_phone" required data-phone placeholder="0(5XX) XXX XX XX" aria-label="Telefon numarası" autocomplete="tel"><div class="field-error">Geçerli bir telefon numarası girin</div></div><div class="mfg"><textarea id="df_msg" placeholder="Mesajınız... (${p.name} hakkında bilgi almak istiyorum)" aria-label="Mesaj"></textarea></div><button class="msub" onclick="submitForm(this,document.getElementById('df_name'),document.getElementById('df_phone'),document.getElementById('df_msg'))">📩 Bilgi Talep Et</button></div>`;bd.scrollTop=0;requestAnimationFrame(()=>{bd.querySelectorAll('.dto-hero,.dto-name,.dto-loc,.qstats,.atgrid,.ftgrid,.ddesc,.cmini').forEach((el,i)=>{el.style.animation=`dFade .4s ease-out ${i*.05}s backwards`})});document.getElementById('dto').classList.add('open')}
+bd.innerHTML=`<div class="dto-hero" style="background:${p.grad}" role="img" aria-label="${p.name} öne çıkan görsel">${p.emoji}<div class="st" style="background:${p.sc};color:${p.sc==='#c8913a'?'var(--dk)':'#fff'}">${p.status}</div></div>${videoHtml}<div class="dto-name">${p.name}</div><div class="dto-loc">📍 ${p.location}</div>${p.timeline?`<div style="font-size:.75rem;color:var(--txm);margin-bottom:14px">🗓️ ${p.timeline}</div>`:''}<div class="qstats"><div class="qs"><div class="n">${p.units||'—'}</div><div class="l">Daire</div></div><div class="qs"><div class="n">${p.blocks||'—'}</div><div class="l">Blok</div></div><div class="qs"><div class="n">${p.floors||'—'}</div><div class="l">Kat</div></div></div>${p.types.length?`<div class="sec-t">Daire Tipleri</div><div class="atgrid">${p.types.map((t,i)=>`<div class="atc${i===0?' sel':''}" onclick="selType(${i})"><div class="atc-n">${t.n}</div><div class="atc-s">${t.s}</div><div class="atc-p">${t.p}</div></div>`).join('')}</div>`:''}<div class="sec-t">Özellikler</div><div class="ftgrid">${p.feats.map(f=>`<div class="fti">${f}</div>`).join('')}</div><div class="ddesc">${p.desc}</div><div class="cmini" id="cmini"><h4>Bu Proje İçin Bilgi Al</h4><div class="mfg"><label for="df_name">Ad Soyad</label><input id="df_name" required placeholder="Adınız Soyadınız" aria-label="Ad Soyad" autocomplete="name"><div class="field-error">Ad Soyad alanı zorunludur</div></div><div class="mfg"><label for="df_phone">Telefon</label><input id="df_phone" required data-phone placeholder="0(5XX) XXX XX XX" aria-label="Telefon numarası" autocomplete="tel"><div class="field-error">Geçerli bir telefon numarası girin</div></div><div class="mfg"><label for="df_msg">Mesaj</label><textarea id="df_msg" placeholder="Mesajınız... (${p.name} hakkında bilgi almak istiyorum)" aria-label="Mesaj"></textarea></div><button class="msub" onclick="submitForm(this,document.getElementById('df_name'),document.getElementById('df_phone'),document.getElementById('df_msg'))">📩 Bilgi Talep Et</button></div>`;bd.scrollTop=0;requestAnimationFrame(()=>{bd.querySelectorAll('.dto-hero,.dto-name,.dto-loc,.qstats,.atgrid,.ftgrid,.ddesc,.cmini').forEach((el,i)=>{el.style.animation=`dFade .4s ease-out ${i*.05}s backwards`})});document.getElementById('dto').classList.add('open')}
 function closeD(){document.getElementById('dto')?.classList.remove('open');document.querySelectorAll('.card').forEach(c=>c.classList.remove('on'))}
 function selType(i){document.querySelectorAll('.atc').forEach((c,j)=>c.classList.toggle('sel',j===i))}
 
@@ -669,7 +671,7 @@ async function tryUnlock(){
 }
 function unlock(){if(admUnlocked)return;admUnlocked=true;document.getElementById('adminBtn').style.display='inline-flex';toast('Admin paneli aktif')}
 function toggleAdminMode(){if(!admUnlocked)return;toggleAdmin()}
-function toggleAdmin(){document.getElementById('admOv').classList.toggle('open');if(document.getElementById('admOv').classList.contains('open'))admTab('projects',document.querySelector('.adm-ni'))}
+function toggleAdmin(){const ov=document.getElementById('admOv');ov.classList.toggle('open');const isOpen=ov.classList.contains('open');document.body.classList.toggle('modal-open',isOpen||document.getElementById('legalOv')?.classList.contains('open'));if(isOpen)admTab('projects',document.querySelector('.adm-ni'))}
 
 // ═══ ADMIN TABS ═══
 function admTab(tab,el){document.querySelectorAll('.adm-ni').forEach(n=>n.classList.remove('on'));if(el)el.classList.add('on');const t={projects:'Proje Yönetimi',about:'Hakkımızda',contact:'İletişim Bilgileri',site:'Site Ayarları',pages:'Sayfa Yönetimi'};document.getElementById('admTitle').textContent=t[tab]||'';const bd=document.getElementById('admBd');
@@ -818,7 +820,6 @@ function buildFooter(){
     <div class="footer-col">
       <h4>Bizi Takip Edin</h4>
       <a href="https://instagram.com/${c.instagram.replace('@','')}" target="_blank" rel="noopener" class="footer-link">📸 Instagram: ${c.instagram}</a>
-      <a href="#" class="footer-link">📘 Facebook: ${c.facebook}</a>
       <a href="https://wa.me/${c.whatsapp.replace(/\D/g,'')}" target="_blank" rel="noopener" class="footer-link">💬 WhatsApp</a>
       <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1)">
         <a onclick="openLegal('kvkk')" class="footer-link" style="cursor:pointer">📜 KVKK Aydınlatma Metni</a>
@@ -910,8 +911,12 @@ function openLegal(key){
   document.getElementById('legalTitle').textContent = l.title;
   document.getElementById('legalBd').innerHTML = l.html;
   document.getElementById('legalOv').classList.add('open');
+  document.body.classList.add('modal-open');
 }
-function closeLegal(){ document.getElementById('legalOv').classList.remove('open'); }
+function closeLegal(){
+  document.getElementById('legalOv').classList.remove('open');
+  if(!document.getElementById('admOv')?.classList.contains('open')) document.body.classList.remove('modal-open');
+}
 
 // ═══ KREDI HESAPLAMA (Konut Kredisi) ═══
 function calcLoan(){
@@ -967,17 +972,13 @@ function attachLoanCalc(){
 // Omer: sifre hash'i icin tarayici konsoluna sunu yapistir:
 //   (async()=>{const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('SIFRENIZ'));console.log(Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join(''))})();
 // veya bash: echo -n "SIFRENIZ" | sha256sum
-const ADMIN_PWD_HASH = "CHANGE_ME_SHA256_HASH"; // Omer: buraya gercek hash'i yaz
+// Default sifre: "safakari2026" - Omer sonra degistirmeli (yukaridaki snippet ile)
+const ADMIN_PWD_HASH = "9bcdc7f012e9a1d9388929fc84026549edbc1f653626f9c71352518a54005589";
 async function sha256Hex(msg){
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
   return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 async function verifyAdminPassword(){
-  // Dev fallback: hash henuz set edilmediyse sifresiz gir (development only)
-  if(ADMIN_PWD_HASH === "CHANGE_ME_SHA256_HASH"){
-    console.warn('[Safakari] ADMIN_PWD_HASH ayarlanmamis - gelistirici modu, sifresiz admin erisimi.');
-    return true;
-  }
   // Valid session?
   try {
     const sess = sessionStorage.getItem('safakari_admin');
@@ -1004,7 +1005,7 @@ async function verifyAdminPassword(){
 buildNav();
 showPage('projects');
 initCookieBanner();
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeD();document.getElementById('admOv').classList.remove('open');closeLegal()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeD();document.getElementById('admOv').classList.remove('open');closeLegal();document.body.classList.remove('modal-open')}});
 // Close legal modal by clicking overlay
 document.getElementById('legalOv')?.addEventListener('click',e=>{if(e.target.id==='legalOv')closeLegal()});
 window.addEventListener('resize',()=>{if(mapObj){mapObj.invalidateSize();setTimeout(()=>mapObj.invalidateSize(),200)}});
