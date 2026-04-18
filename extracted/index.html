@@ -73,7 +73,7 @@
   </script>
 
   <!-- ── Google Analytics 4 (Consent Mode v2) ── -->
-  <!-- Omer: service-agent'in deploy-rehberi-2026-04-17.md dosyasinda GA4 setup var, G-PLACEHOLDER ID'sini degistir -->
+  <!-- GA4 placeholder — deploy sonrasi gercek ID ile acilacak. Demo icin devre disi (network 404 onleme).
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PLACEHOLDER"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -99,6 +99,12 @@
         });
       }
     } catch(e){}
+  </script>
+  -->
+  <!-- Demo icin gecici stub: gtag() tanimli olsun ki (rejectCookies vb.) fonksiyonlarda ReferenceError firlamasin -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
   </script>
 
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -326,7 +332,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .legal-bd p{margin-bottom:10px}
 .legal-bd ul{margin:8px 0 12px 20px}
 .legal-bd li{margin-bottom:4px}
-.legal-note{background:#fef3c7;border-left:3px solid #f59e0b;padding:10px 14px;border-radius:8px;margin-top:14px;font-size:.76rem;color:#78350f}
+.legal-note{display:none;background:#fef3c7;border-left:3px solid #f59e0b;padding:10px 14px;border-radius:8px;margin-top:14px;font-size:.76rem;color:#78350f} /* demo: hukuk review sonrasi display:none kaldirilacak */
 /* ── Loan Calculator ── */
 .loan-section{background:linear-gradient(135deg,rgba(30,58,95,.04),rgba(200,145,58,.04));border-radius:var(--rad);padding:32px;margin:28px 0;border:1px solid rgba(232,228,223,.6)}
 .loan-section h2{font-size:1.4rem;font-weight:900;color:var(--dk);margin-bottom:6px;display:flex;align-items:center;gap:10px}
