@@ -110,6 +110,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- ── Editor.js core + plugins (page-builder v1) — versiyonlar PIN'LI ── -->
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.30.7/dist/editorjs.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.8.8/dist/header.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@2.11.7/dist/paragraph.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@2.10.2/dist/image.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@1.4.2/dist/delimiter.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@1.10.0/dist/list.umd.js"></script>
+  <!-- DOMPurify (zorunlu — her save ve render'da sanitize) -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -437,6 +447,87 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
   .footer-inner{grid-template-columns:1fr!important}
   .footer-bottom{flex-direction:column;gap:8px;text-align:center}
 }
+
+/* ═══════════════════════════════════════════════════
+   PAGE BUILDER v1 — Editor.js tabanli inline editor
+   ═══════════════════════════════════════════════════ */
+
+/* ── Public render: block classes ── */
+.gpage .pb-h1{font-size:1.9rem;font-weight:900;color:var(--dk);margin:26px 0 12px;line-height:1.2}
+.gpage .pb-h2{font-size:1.35rem;font-weight:800;color:var(--dk);margin:22px 0 10px;line-height:1.3}
+.gpage .pb-h3{font-size:1.05rem;font-weight:800;color:var(--pri);margin:18px 0 8px;line-height:1.4}
+.gpage .pb-p{font-size:.95rem;line-height:1.75;color:var(--tx);margin:10px 0}
+.gpage .pb-p a{color:var(--pri);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.gpage .pb-p a:hover{color:var(--acc-d)}
+.gpage .pb-list{margin:12px 0 14px 26px;font-size:.92rem;line-height:1.75;color:var(--tx)}
+.gpage .pb-list li{margin-bottom:6px}
+.gpage .pb-img{margin:22px 0;border-radius:var(--rad);overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.08)}
+.gpage .pb-img img{display:block;width:100%;height:auto;object-fit:cover}
+.gpage .pb-img figcaption{padding:10px 14px;background:rgba(255,255,255,.9);font-size:.78rem;color:var(--txm);text-align:center;font-style:italic}
+.gpage .pb-btn{display:inline-flex;align-items:center;gap:6px;margin:18px 0;padding:12px 28px;border-radius:50px;font-size:.85rem;font-weight:800;text-decoration:none}
+.gpage .pb-hr{margin:28px auto;border:0;width:80px;height:3px;background:linear-gradient(90deg,var(--acc),var(--pri));border-radius:2px;opacity:.6}
+
+/* ── Editor.js host container ── */
+#page_editor{min-height:420px;background:#fff;border-radius:var(--rad);padding:18px 24px;border:1px solid var(--brd);box-shadow:inset 0 1px 2px rgba(0,0,0,.02)}
+#page_editor .codex-editor{font-family:'Montserrat',sans-serif;color:var(--tx)}
+#page_editor .ce-block__content,#page_editor .ce-toolbar__content{max-width:calc(100% - 80px);margin:0 auto}
+#page_editor .ce-header{font-family:'Montserrat',sans-serif;font-weight:800;color:var(--dk)}
+#page_editor h1.ce-header{font-size:1.7rem}
+#page_editor h2.ce-header{font-size:1.25rem}
+#page_editor h3.ce-header{font-size:1rem;color:var(--pri)}
+#page_editor .ce-paragraph{font-size:.95rem;line-height:1.7;color:var(--tx)}
+#page_editor .ce-toolbar__plus,#page_editor .ce-toolbar__settings-btn{background:var(--pri-l);color:var(--pri);border-radius:8px}
+#page_editor .ce-toolbar__plus:hover,#page_editor .ce-toolbar__settings-btn:hover{background:var(--pri);color:#fff}
+#page_editor .ce-popover{border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.12);border:1px solid var(--brd)}
+#page_editor .ce-delimiter::before{color:var(--acc)}
+
+/* ── Custom "Button" tool wrapper ── */
+.pb-btn-tool{display:flex;flex-direction:column;gap:8px;padding:12px;border:2px dashed rgba(30,58,95,.25);border-radius:var(--rads);background:rgba(30,58,95,.03)}
+.pb-btn-tool input{width:100%;padding:8px 12px;border:1.5px solid var(--brd);border-radius:var(--rads);font-size:.82rem;font-family:inherit;background:#fff;color:var(--dk);transition:all var(--tr)}
+.pb-btn-tool input:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 3px rgba(30,58,95,.08)}
+.pb-btn-tool label{font-size:.68rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.4px;margin-bottom:-4px}
+.pb-btn-tool-preview{margin-top:4px;padding:8px 10px;font-size:.72rem;color:var(--pri);background:var(--pri-l);border-radius:6px;font-weight:600}
+
+/* ── Editor view header (admin) ── */
+.pe-topbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.pe-topbar .pe-title-in{flex:1;min-width:220px;padding:10px 14px;border:2px solid var(--brd);border-radius:var(--rads);font-size:1rem;font-weight:800;font-family:inherit;background:var(--bg);color:var(--dk);transition:all var(--tr)}
+.pe-topbar .pe-title-in:focus{outline:none;border-color:var(--pri);background:#fff}
+.pe-badge{padding:6px 14px;border-radius:50px;font-size:.72rem;font-weight:800;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.pe-badge[data-status="draft"]{background:#fef3c7;color:#78350f}
+.pe-badge[data-status="live"]{background:#d1fae5;color:#065f46}
+.pe-save-ind{font-size:.68rem;color:var(--txm);font-weight:600;min-width:100px;text-align:right}
+.pe-save-ind.saving{color:var(--acc-d)}
+.pe-save-ind.saved{color:var(--ok)}
+
+/* ── Template selection modal ── */
+.tmpl-ov{display:none;position:fixed;inset:0;z-index:9800;background:rgba(15,23,42,.55);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:24px;animation:tmplFade .25s ease-out}
+.tmpl-ov.open{display:flex}
+@keyframes tmplFade{from{opacity:0}to{opacity:1}}
+.tmpl-box{width:100%;max-width:820px;max-height:90vh;background:var(--w);border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,.22);display:flex;flex-direction:column;overflow:hidden;animation:aIn .3s ease-out}
+.tmpl-head{padding:20px 26px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between}
+.tmpl-head h2{font-size:1.1rem;font-weight:800;color:var(--dk)}
+.tmpl-head p{font-size:.78rem;color:var(--txm);margin-top:2px}
+.tmpl-bd{flex:1;overflow-y:auto;padding:24px 26px}
+.tmpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tmpl-card{background:var(--bg);border:2px solid var(--brd);border-radius:var(--rad);padding:20px 16px;cursor:pointer;transition:all var(--sp);text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.tmpl-card:hover{border-color:var(--pri);background:var(--pri-l);transform:translateY(-3px);box-shadow:0 6px 20px var(--pri-g)}
+.tmpl-card .tmpl-ic{font-size:2.1rem;margin-bottom:4px}
+.tmpl-card .tmpl-t{font-size:.9rem;font-weight:800;color:var(--dk)}
+.tmpl-card .tmpl-d{font-size:.7rem;color:var(--txm);line-height:1.4}
+.tmpl-card.mini{grid-column:span 3;padding:12px 14px;flex-direction:row;gap:10px;text-align:left;background:#fafafa}
+.tmpl-card.mini .tmpl-ic{font-size:1.2rem;margin:0}
+.tmpl-card.mini .tmpl-t{font-size:.82rem}
+.tmpl-card.mini .tmpl-d{font-size:.68rem}
+@media(max-width:640px){.tmpl-grid{grid-template-columns:1fr}.tmpl-card.mini{grid-column:span 1}}
+
+/* ── Page actions bar ── */
+.pe-actions{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.pe-actions .abtn{padding:9px 18px}
+.pe-danger-zone{margin-top:24px;padding-top:18px;border-top:1px dashed var(--brd)}
+
+/* ── Pages listesi ek: backup butonlari ── */
+.pages-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.pages-toolbar .abtn{padding:7px 14px;font-size:.74rem}
 </style>
 </head>
 <body>
@@ -499,6 +590,22 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
     </div>
   </div>
 </div>
+<!-- ── Template secim modal (page-builder v1) ── -->
+<div class="tmpl-ov" id="tmplOv" role="dialog" aria-modal="true" aria-labelledby="tmplTitle">
+  <div class="tmpl-box">
+    <div class="tmpl-head">
+      <div>
+        <h2 id="tmplTitle">Yeni Sayfa</h2>
+        <p>Baslamak icin bir sablon sec</p>
+      </div>
+      <button class="adm-cls" onclick="closeTemplateModal()" aria-label="Kapat">✕</button>
+    </div>
+    <div class="tmpl-bd">
+      <div class="tmpl-grid" id="tmplGrid" role="list"></div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -660,16 +767,11 @@ function showPage(id){
     return;
   }
 
-  // Custom pages
+  // Custom pages — page-builder render (editorData blocks)
   const pg=D.pages.find(p=>p.id===id);
   if(pg&&pg.type==='custom'){
     const el=ensurePg(id,true);
-    let html=`<div class="gpage"><h1>${pg.icon||'📄'} ${pg.title}</h1><div class="divider"></div><p class="sub">${pg.content||''}</p>`;
-    if(pg.sections&&pg.sections.length){
-      html+=`<div class="gcards">${pg.sections.map(s=>`<div class="gcard"><h3>${s.title}</h3><p>${s.text}</p></div>`).join('')}</div>`;
-    }
-    html+=`</div>`;
-    el.innerHTML=html+buildFooter();
+    el.innerHTML=renderPageBlocks(pg)+buildFooter();
     showPg('pg-'+id);
   }
 }
@@ -1092,18 +1194,617 @@ function saveContact(){const c=D.company;c.address=document.getElementById('ac_a
 
 function admSite(bd){const c=D.company;bd.innerHTML=`<div class="af"><label>Şirket Adı</label><input id="ss_n" value="${c.name}"></div><div class="af"><label>Slogan</label><input id="ss_s" value="${c.slogan}"></div><div class="af"><label>Kuruluş Yılı</label><input id="ss_y" type="number" value="${c.founded}"></div><button class="abtn sv" onclick="D.company.name=document.getElementById('ss_n').value;D.company.slogan=document.getElementById('ss_s').value;D.company.founded=+document.getElementById('ss_y').value;toast('Ayarlar güncellendi')">Kaydet</button>`}
 
-function admPages(bd){bd.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:16px"><span style="font-size:.82rem;color:var(--txm);font-weight:600">${D.pages.length} sayfa</span><button class="abtn ac" onclick="editPg(null)">+ Yeni Sayfa</button></div><div class="acl">${D.pages.map(p=>`<div class="aci"><div class="aci-i"><div class="aci-n">${p.type==='builtin'?'🔒':'📄'} ${p.title}</div><div class="aci-m">${p.visible?'✅ Aktif':'⚪ Gizli'} · ${p.type==='builtin'?'Sistem sayfası':'Özel sayfa'}</div></div><div class="aci-a">${p.type==='custom'?`<button class="aci-b ed" onclick="editPg('${p.id}')">Düzenle</button><button class="aci-b dl" onclick="delPg('${p.id}')">Sil</button>`:`<button class="aci-b ed" onclick="togglePgVis('${p.id}',this)">${p.visible?'Gizle':'Göster'}</button>`}</div></div>`).join('')}</div>`}
+// ═══════════════════════════════════════════════════
+// PAGE BUILDER v1 — Editor.js tabanli sayfa editoru
+// Wix-benzeri inline, template'li, auto-save'li
+// ═══════════════════════════════════════════════════
 
-function editPg(id){const pg=id?D.pages.find(x=>x.id===id):{id:'',title:'',type:'custom',visible:true,icon:'📄',content:'',sections:[]};const bd=document.getElementById('admBd');const secs=pg.sections||[];bd.innerHTML=`<div style="display:flex;gap:8px;margin-bottom:16px"><button class="abtn sc" onclick="admTab('pages',document.querySelectorAll('.adm-ni')[4])">← Geri</button><button class="abtn sv" onclick="savePg('${id||''}')">${id?'Güncelle':'Oluştur'}</button></div><div class="ar2"><div class="af"><label>Sayfa ID (URL)</label><input id="pg_id" value="${pg.id}" ${id?'readonly':''}  placeholder="ornek-sayfa"></div><div class="af"><label>Başlık</label><input id="pg_t" value="${pg.title}"></div></div><div class="ar2"><div class="af"><label>İkon (Emoji)</label><input id="pg_ic" value="${pg.icon||'📄'}"></div><div class="af"><label><input type="checkbox" id="pg_v" ${pg.visible?'checked':''}> Sayfayı göster</label></div></div><div class="af"><label>Ana Açıklama</label><textarea id="pg_c" rows="4">${pg.content||''}</textarea></div><div style="margin:16px 0 8px;font-weight:700;font-size:.78rem;display:flex;justify-content:space-between;align-items:center">Bölümler (Kartlar) <button class="abtn sc" style="padding:6px 14px;font-size:.72rem" onclick="addSec()">+ Bölüm</button></div><div id="pg_secs"></div>`;const sl=document.getElementById('pg_secs');secs.forEach(s=>addSec(s));bd.scrollTop=0}
+// ── Utility: HTML escape (inline metin icin) ──
+function escapeHtml(s){
+  if(s==null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 
-function addSec(s){const sl=document.getElementById('pg_secs');const d=document.createElement('div');d.className='ar2';d.style.marginBottom='10px';d.style.background='var(--bg)';d.style.padding='12px';d.style.borderRadius='var(--rads)';d.innerHTML=`<div class="af"><label>Başlık</label><input class="sec_t" value="${s?.title||''}"></div><div style="display:flex;gap:4px;align-items:flex-end"><div class="af" style="flex:1"><label>İçerik</label><input class="sec_tx" value="${s?.text||''}"></div><button class="abtn dn" style="padding:8px 12px;margin-bottom:14px" onclick="this.parentElement.parentElement.remove()">✕</button></div>`;sl.appendChild(d)}
+// ── localStorage persistence ──
+const PAGES_KEY = 'safakari_pages_v1';
+function persistPages(){
+  try {
+    localStorage.setItem(PAGES_KEY, JSON.stringify({pages: D.pages, savedAt: Date.now()}));
+  } catch(e){
+    if(e && (e.name==='QuotaExceededError' || e.code===22 || /quota/i.test(e.message||''))){
+      toast('⚠️ Depolama dolu — Yedek indir ve eski sayfalari sil');
+    }
+  }
+}
+function loadPages(){
+  try {
+    const raw = localStorage.getItem(PAGES_KEY);
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    if(data && Array.isArray(data.pages) && data.pages.length){
+      // Merge: localStorage has priority over defaults, but ensure builtin pages still exist
+      const saved = data.pages;
+      const savedIds = new Set(saved.map(p=>p.id));
+      // Keep builtin defaults that are missing from storage
+      D.pages.filter(p=>p.type==='builtin' && !savedIds.has(p.id)).forEach(bp=>saved.push(bp));
+      D.pages = saved;
+    }
+  } catch(e){ /* ignore parse/storage errors, keep defaults */ }
+}
 
-function savePg(oldId){const secs=[];document.querySelectorAll('#pg_secs .ar2').forEach(r=>{const t=r.querySelector('.sec_t').value.trim();if(t)secs.push({title:t,text:r.querySelector('.sec_tx').value.trim()})});const pg={id:document.getElementById('pg_id').value.trim()||'page-'+Date.now(),title:document.getElementById('pg_t').value,type:'custom',visible:document.getElementById('pg_v').checked,icon:document.getElementById('pg_ic').value||'📄',content:document.getElementById('pg_c').value,sections:secs};if(oldId){const i=D.pages.findIndex(x=>x.id===oldId);if(i>=0)D.pages[i]=pg}else D.pages.push(pg);buildNav();// Remove old rendered page
-const old=document.getElementById('pg-'+pg.id);if(old)old.remove();admTab('pages',document.querySelectorAll('.adm-ni')[4]);toast(oldId?'Sayfa güncellendi':'Yeni sayfa oluşturuldu — navigasyona eklendi!')}
+// ── Runtime migration: legacy page (sections/content) → editorData blocks ──
+function migratePageToBlocks(pg){
+  if(!pg) return pg;
+  if(pg.editorData && Array.isArray(pg.editorData.blocks) && pg.editorData.blocks.length){
+    return pg; // already migrated
+  }
+  const blocks = [];
+  if(pg.content && String(pg.content).trim()){
+    blocks.push({type:'paragraph', data:{text: String(pg.content)}});
+  }
+  if(Array.isArray(pg.sections)){
+    pg.sections.forEach(s=>{
+      if(s && s.title) blocks.push({type:'header', data:{text: String(s.title), level:2}});
+      if(s && s.text)  blocks.push({type:'paragraph', data:{text: String(s.text)}});
+    });
+  }
+  if(!blocks.length){
+    blocks.push({type:'paragraph', data:{text:''}});
+  }
+  pg.editorData = {time: Date.now(), blocks, version:'2.30.7'};
+  return pg;
+}
 
-function delPg(id){if(!confirm('Bu sayfayı silmek istediğinize emin misiniz?'))return;D.pages=D.pages.filter(p=>p.id!==id);const el=document.getElementById('pg-'+id);if(el)el.remove();buildNav();admTab('pages',document.querySelectorAll('.adm-ni')[4]);toast('Sayfa silindi')}
+// ── DOMPurify sanitizer (her save oncesi) ──
+function sanitizeBlocks(editorJson){
+  if(!editorJson || !Array.isArray(editorJson.blocks)) return editorJson;
+  editorJson.blocks.forEach(b=>{
+    if(!b || !b.data) return;
+    if(b.type==='header' && typeof b.data.text==='string'){
+      b.data.text = DOMPurify.sanitize(b.data.text, {ALLOWED_TAGS:[], ALLOWED_ATTR:[]});
+    } else if(b.type==='paragraph' && typeof b.data.text==='string'){
+      b.data.text = DOMPurify.sanitize(b.data.text, {
+        ALLOWED_TAGS:['b','i','u','a','br','strong','em','mark','code'],
+        ALLOWED_ATTR:['href','target','rel']
+      });
+    } else if(b.type==='list' && Array.isArray(b.data.items)){
+      b.data.items = b.data.items.map(it => typeof it==='string'
+        ? DOMPurify.sanitize(it, {ALLOWED_TAGS:['b','i','u','a','br','strong','em'], ALLOWED_ATTR:['href','target','rel']})
+        : it);
+    } else if(b.type==='image' && b.data.caption){
+      b.data.caption = DOMPurify.sanitize(String(b.data.caption), {ALLOWED_TAGS:[]});
+    } else if(b.type==='button' && b.data){
+      if(typeof b.data.label==='string') b.data.label = DOMPurify.sanitize(b.data.label, {ALLOWED_TAGS:[]});
+      if(typeof b.data.url==='string')   b.data.url   = b.data.url.trim().slice(0,500);
+    }
+  });
+  return editorJson;
+}
 
-function togglePgVis(id,btn){const pg=D.pages.find(p=>p.id===id);if(pg){pg.visible=!pg.visible;buildNav();admTab('pages',document.querySelectorAll('.adm-ni')[4]);toast(pg.visible?'Sayfa gösterildi':'Sayfa gizlendi')}}
+// ── Public render: editorData → HTML ──
+function renderPageBlocks(pg){
+  const migrated = migratePageToBlocks(pg);
+  let html = `<div class="gpage"><h1>${escapeHtml(pg.icon||'📄')} ${escapeHtml(pg.title||'')}</h1><div class="divider"></div>`;
+  (migrated.editorData.blocks||[]).forEach(b => { html += renderBlock(b); });
+  html += `</div>`;
+  return html;
+}
+function renderBlock(b){
+  if(!b || !b.type) return '';
+  const d = b.data || {};
+  switch(b.type){
+    case 'header': {
+      const lvl = Math.min(Math.max(parseInt(d.level,10)||2, 1), 3);
+      const safe = DOMPurify.sanitize(d.text||'', {ALLOWED_TAGS:[], ALLOWED_ATTR:[]});
+      return `<h${lvl} class="pb-h${lvl}">${safe}</h${lvl}>`;
+    }
+    case 'paragraph': {
+      const safe = DOMPurify.sanitize(d.text||'', {
+        ALLOWED_TAGS:['b','i','u','a','br','strong','em','mark','code'],
+        ALLOWED_ATTR:['href','target','rel']
+      });
+      return `<p class="pb-p">${safe}</p>`;
+    }
+    case 'list': {
+      const tag = d.style === 'ordered' ? 'ol' : 'ul';
+      const items = (d.items||[]).map(it => {
+        const s = typeof it==='string' ? it : (it && it.content ? it.content : '');
+        return `<li>${DOMPurify.sanitize(s, {ALLOWED_TAGS:['b','i','u','a','br','strong','em'], ALLOWED_ATTR:['href','target','rel']})}</li>`;
+      }).join('');
+      return `<${tag} class="pb-list">${items}</${tag}>`;
+    }
+    case 'image': {
+      const url = d.file && d.file.url ? String(d.file.url) : '';
+      if(!url) return '';
+      const safeUrl = /^(https?:|data:image\/|\/)/i.test(url) ? url : '';
+      if(!safeUrl) return '';
+      const cap = d.caption ? DOMPurify.sanitize(String(d.caption), {ALLOWED_TAGS:[]}) : '';
+      const capHtml = cap ? `<figcaption>${cap}</figcaption>` : '';
+      return `<figure class="pb-img"><img src="${safeUrl}" alt="${cap}" loading="lazy">${capHtml}</figure>`;
+    }
+    case 'button': {
+      const label = DOMPurify.sanitize(d.label||'Detaylı Bilgi', {ALLOWED_TAGS:[]}) || 'Detaylı Bilgi';
+      const rawHref = (d.url||'').trim();
+      const safeHref = /^(https?:|mailto:|tel:|#|\/)/i.test(rawHref) ? rawHref : '#';
+      const external = /^https?:/i.test(safeHref);
+      const attrs = external ? 'target="_blank" rel="noopener noreferrer"' : '';
+      return `<a class="pb-btn tb pri" href="${escapeHtml(safeHref)}" ${attrs}>${label}</a>`;
+    }
+    case 'delimiter': return `<hr class="pb-hr">`;
+    default: return '';
+  }
+}
+
+// ── Templates (customer-facing) ──
+const PAGE_TEMPLATES = {
+  project: {
+    key:'project', icon:'🏠', title:'Proje Detay',
+    desc:'Hero + aciklama + galeri + iletisim butonu',
+    defaultTitle:'Yeni Proje',
+    data:{time:Date.now(), version:'2.30.7', blocks:[
+      {type:'header', data:{text:'Proje Adı', level:1}},
+      {type:'paragraph', data:{text:'Proje hakkında kısa açıklama...'}},
+      {type:'header', data:{text:'Özellikler', level:2}},
+      {type:'list', data:{style:'unordered', items:['Konum avantajı','Daire tipleri','Teslim tarihi']}},
+      {type:'image', data:{file:{url:''}, caption:'Proje görseli'}},
+      {type:'button', data:{label:'İletişime Geç', url:'#contact'}}
+    ]}
+  },
+  service: {
+    key:'service', icon:'🛠️', title:'Hizmet Sayfası',
+    desc:'Baslik + 3 ozellik + CTA',
+    defaultTitle:'Yeni Hizmet',
+    data:{time:Date.now(), version:'2.30.7', blocks:[
+      {type:'header', data:{text:'Hizmetimiz', level:1}},
+      {type:'paragraph', data:{text:'Kısa özet paragrafı...'}},
+      {type:'header', data:{text:'Ne Sunuyoruz', level:2}},
+      {type:'list', data:{style:'unordered', items:['Özellik 1','Özellik 2','Özellik 3']}},
+      {type:'delimiter', data:{}},
+      {type:'button', data:{label:'Bilgi Al', url:'#contact'}}
+    ]}
+  },
+  gallery: {
+    key:'gallery', icon:'📸', title:'Referans / Galeri',
+    desc:'Baslik + 6\'li foto grid + aciklama',
+    defaultTitle:'Yeni Galeri',
+    data:{time:Date.now(), version:'2.30.7', blocks:[
+      {type:'header', data:{text:'Galeri', level:1}},
+      {type:'paragraph', data:{text:'Kısa açıklama...'}},
+      {type:'image', data:{file:{url:''}, caption:''}},
+      {type:'image', data:{file:{url:''}, caption:''}},
+      {type:'image', data:{file:{url:''}, caption:''}}
+    ]}
+  },
+  blank: {
+    key:'blank', icon:'⬜', title:'Boş Sayfa',
+    desc:'Sıfırdan başla',
+    defaultTitle:'Yeni Sayfa',
+    data:{time:Date.now(), version:'2.30.7', blocks:[
+      {type:'paragraph', data:{text:''}}
+    ]}
+  }
+};
+
+// ── Admin: Pages list ──
+function admPages(bd){
+  const total = D.pages.length;
+  const customCount = D.pages.filter(p=>p.type==='custom').length;
+  bd.innerHTML = `
+    <div class="pages-toolbar">
+      <button class="abtn ac" onclick="openTemplateModal()" aria-label="Yeni sayfa olustur">+ Yeni Sayfa</button>
+      <button class="abtn sc" onclick="exportPagesJSON()" aria-label="Sayfalari JSON olarak indir">📥 Yedek İndir</button>
+      <label class="abtn sc" for="pg_import_file" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;margin:0" aria-label="JSON dosyasindan sayfa yukle">📤 Yedekten Yükle
+        <input id="pg_import_file" type="file" accept="application/json,.json" style="display:none" onchange="importPagesJSON(event)">
+      </label>
+    </div>
+    <div style="font-size:.76rem;color:var(--txm);font-weight:600;margin-bottom:12px">${total} sayfa (${customCount} özel)</div>
+    <div class="acl">
+      ${D.pages.map(p=>{
+        const isBuiltin = p.type==='builtin';
+        const statusTxt = isBuiltin
+          ? (p.visible?'✅ Aktif':'⚪ Gizli') + ' · Sistem sayfası (form)'
+          : (p.visible?'✅ Yayında':'💾 Taslak') + ' · Özel sayfa';
+        const actions = isBuiltin
+          ? `<button class="aci-b ed" onclick="togglePgVis('${escapeHtml(p.id)}')" aria-label="${p.visible?'Gizle':'Göster'}">${p.visible?'Gizle':'Göster'}</button>`
+          : `<button class="aci-b ed" onclick="openPageEditor('${escapeHtml(p.id)}')" aria-label="Sayfayi duzenle">Düzenle</button>
+             <button class="aci-b dl" onclick="deletePage('${escapeHtml(p.id)}')" aria-label="Sayfayi sil">Sil</button>`;
+        return `<div class="aci">
+          <div class="aci-i">
+            <div class="aci-n">${escapeHtml(isBuiltin?'🔒':(p.icon||'📄'))} ${escapeHtml(p.title||p.id)}</div>
+            <div class="aci-m">${statusTxt}</div>
+          </div>
+          <div class="aci-a">${actions}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+// ── Admin: Template selection modal ──
+function openTemplateModal(){
+  const grid = document.getElementById('tmplGrid');
+  if(!grid) return;
+  // Render 3 main + 1 mini (blank)
+  const order = ['project','service','gallery','blank'];
+  grid.innerHTML = order.map(k=>{
+    const t = PAGE_TEMPLATES[k];
+    const cls = k==='blank' ? 'tmpl-card mini' : 'tmpl-card';
+    return `<div class="${cls}" role="listitem" tabindex="0"
+                 onclick="createPageFromTemplate('${t.key}')"
+                 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();createPageFromTemplate('${t.key}')}">
+      <div class="tmpl-ic">${t.icon}</div>
+      <div>
+        <div class="tmpl-t">${escapeHtml(t.title)}</div>
+        <div class="tmpl-d">${escapeHtml(t.desc)}</div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('tmplOv').classList.add('open');
+  document.body.classList.add('modal-open');
+}
+function closeTemplateModal(){
+  document.getElementById('tmplOv')?.classList.remove('open');
+  // Keep modal-open if admin overlay is still visible
+  if(!document.getElementById('admOv')?.classList.contains('open')
+     && !document.getElementById('legalOv')?.classList.contains('open')){
+    document.body.classList.remove('modal-open');
+  }
+}
+
+// ── Admin: Slug helper ──
+function slugifyTitle(t){
+  const trMap = {'ş':'s','ğ':'g','ü':'u','ı':'i','İ':'i','ö':'o','ç':'c','Ş':'s','Ğ':'g','Ü':'u','Ö':'o','Ç':'c'};
+  let s = String(t||'').toLowerCase();
+  s = s.replace(/[şğüıİöçŞĞÜÖÇ]/g, ch => trMap[ch]||ch);
+  s = s.replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  return s || ('sayfa-'+Date.now());
+}
+function uniquePageId(base){
+  const existing = new Set(D.pages.map(p=>p.id));
+  if(!existing.has(base)) return base;
+  let i = 2;
+  while(existing.has(base+'-'+i)) i++;
+  return base+'-'+i;
+}
+
+// ── Admin: Create page from template ──
+function createPageFromTemplate(tplKey){
+  const t = PAGE_TEMPLATES[tplKey];
+  if(!t){ toast('Sablon bulunamadi'); return; }
+  const title = t.defaultTitle;
+  const id = uniquePageId(slugifyTitle(title));
+  const pg = {
+    id,
+    title,
+    type:'custom',
+    visible:false, // taslak
+    icon:t.icon,
+    editorData: JSON.parse(JSON.stringify(t.data)) // deep clone
+  };
+  pg.editorData.time = Date.now();
+  D.pages.push(pg);
+  persistPages();
+  closeTemplateModal();
+  openPageEditor(id);
+  toast('Taslak olusturuldu, duzenlemeye basla');
+}
+
+// ── Admin: Delete page ──
+function deletePage(id){
+  if(!confirm('Bu sayfayi silmek istediginize emin misiniz? Bu islem geri alinamaz.')) return;
+  D.pages = D.pages.filter(p=>p.id!==id);
+  const el = document.getElementById('pg-'+id);
+  if(el) el.remove();
+  persistPages();
+  buildNav();
+  admTab('pages', document.querySelectorAll('.adm-ni')[4]);
+  toast('Sayfa silindi');
+}
+
+// ── Admin: Toggle builtin page visibility ──
+function togglePgVis(id){
+  const pg = D.pages.find(p=>p.id===id);
+  if(!pg) return;
+  pg.visible = !pg.visible;
+  persistPages();
+  buildNav();
+  admTab('pages', document.querySelectorAll('.adm-ni')[4]);
+  toast(pg.visible?'Sayfa gosterildi':'Sayfa gizlendi');
+}
+
+// ── Editor instance state ──
+let pageEditor = null;
+let currentEditorPageId = null;
+let autoSaveTimer = null;
+
+// ── Admin: Open page editor (custom pages only) ──
+function openPageEditor(id){
+  const pg = D.pages.find(p=>p.id===id);
+  if(!pg || pg.type!=='custom'){ toast('Bu sayfa duzenlenemiyor'); return; }
+  migratePageToBlocks(pg); // ensure editorData exists
+  currentEditorPageId = id;
+  const bd = document.getElementById('admBd');
+  const pubTxt = pg.visible ? '✅ Yayında' : '💾 Taslak';
+  const pubStatus = pg.visible ? 'live' : 'draft';
+
+  bd.innerHTML = `
+    <div class="pe-topbar">
+      <button class="abtn sc" onclick="closePageEditor()" aria-label="Sayfa listesine don">← Geri</button>
+      <input class="pe-title-in" id="pe_title" value="${escapeHtml(pg.title)}" placeholder="Sayfa basligi" aria-label="Sayfa basligi">
+      <span class="pe-badge" id="pe_badge" data-status="${pubStatus}" aria-live="polite">${pubTxt}</span>
+      <span class="pe-save-ind" id="pe_save_ind" aria-live="polite">Hazır</span>
+    </div>
+    <div class="pe-actions">
+      ${pg.visible
+        ? `<button class="abtn sc" onclick="unpublishPage()" aria-label="Sayfayi taslaga cevir">💾 Taslağa Çevir</button>`
+        : `<button class="abtn sv" onclick="publishPage()" aria-label="Sayfayi yayinla">✅ Yayınla</button>`}
+      <span style="font-size:.72rem;color:var(--txm);margin-left:8px">💡 Yazmaya basla, "/" ile blok ekle. Degisiklikler otomatik kaydedilir.</span>
+    </div>
+    <div id="page_editor" aria-label="Sayfa icerik editoru"></div>
+    <div class="pe-danger-zone">
+      <button class="abtn dn" onclick="deletePage('${escapeHtml(id)}')" aria-label="Sayfayi sil">🗑️ Sayfayi Sil</button>
+    </div>
+  `;
+
+  // Wire title input to auto-save
+  document.getElementById('pe_title').addEventListener('input', ()=>{
+    const v = document.getElementById('pe_title').value;
+    const cur = D.pages.find(p=>p.id===currentEditorPageId);
+    if(cur){ cur.title = v; debouncedAutoSave(); }
+  });
+
+  // Destroy previous editor if any
+  destroyPageEditor();
+  // Init Editor.js
+  try {
+    pageEditor = initPageEditor('page_editor', pg.editorData);
+  } catch(err){
+    console.error('Editor.js init fail:', err);
+    document.getElementById('page_editor').innerHTML =
+      `<p style="color:#c0392b;padding:20px">Editor yuklenemedi. Sayfayi yenileyip tekrar deneyin.<br><small>Detay: ${escapeHtml(err.message||err)}</small></p>`;
+  }
+  bd.scrollTop = 0;
+}
+
+function closePageEditor(){
+  destroyPageEditor();
+  currentEditorPageId = null;
+  admTab('pages', document.querySelectorAll('.adm-ni')[4]);
+}
+
+function destroyPageEditor(){
+  if(pageEditor && typeof pageEditor.destroy==='function'){
+    try { pageEditor.destroy(); } catch(_){}
+  }
+  pageEditor = null;
+  if(autoSaveTimer){ clearTimeout(autoSaveTimer); autoSaveTimer = null; }
+}
+
+// ── Editor.js init ──
+function initPageEditor(holder, data){
+  if(typeof EditorJS==='undefined'){
+    throw new Error('Editor.js yuklenemedi (CDN erisimi yok olabilir)');
+  }
+  const safeData = data && Array.isArray(data.blocks) && data.blocks.length
+    ? data
+    : {blocks:[{type:'paragraph', data:{text:''}}]};
+  // EditorJS plugins expose global classes. Name pattern varies per version.
+  const HeaderCls = window.Header || window.EditorjsHeader;
+  const ParagraphCls = window.Paragraph || window.EditorjsParagraph;
+  const ListCls = window.List || window.EditorjsList || window.NestedList;
+  const ImageCls = window.ImageTool || window.Image || window.EditorjsImage;
+  const DelimiterCls = window.Delimiter || window.EditorjsDelimiter;
+
+  const tools = {};
+  if(HeaderCls) tools.header = {class: HeaderCls, config:{levels:[1,2,3], defaultLevel:2, placeholder:'Başlık'}};
+  if(ParagraphCls) tools.paragraph = {class: ParagraphCls, inlineToolbar:true, config:{placeholder:'Metin yaz...'}};
+  if(ListCls) tools.list = {class: ListCls, inlineToolbar:true};
+  if(ImageCls) tools.image = {class: ImageCls, config:{uploader:{uploadByFile: safakariImageUploader, uploadByUrl: safakariImageByUrl}}};
+  if(DelimiterCls) tools.delimiter = DelimiterCls;
+  tools.button = SafakariButtonTool;
+
+  return new EditorJS({
+    holder,
+    placeholder: 'Yazmaya başla... "/" ile blok ekle',
+    minHeight: 200,
+    data: safeData,
+    tools,
+    onChange: ()=> debouncedAutoSave(),
+    i18n: {
+      messages: {
+        toolNames: {Text:'Metin', Heading:'Başlık', List:'Liste', Image:'Görsel', Delimiter:'Ayraç', Button:'Buton'},
+        blockTunes: {
+          delete: {Delete:'Sil', 'Click to delete':'Silmek icin tikla'},
+          moveUp: {'Move up':'Yukari tasi'},
+          moveDown: {'Move down':'Asagi tasi'}
+        }
+      }
+    }
+  });
+}
+
+// ── Custom "Button" Tool for Editor.js ──
+// Editor.js Block Tool API uyumlu, ~60 satir vanilla JS
+const SafakariButtonTool = class {
+  static get toolbox(){ return {title:'Buton', icon:'<svg width="17" height="15" viewBox="0 0 17 15" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="3" width="15" height="9" rx="2" stroke-width="1.5" stroke="currentColor" fill="none"/><path d="M5 7.5h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'}; }
+  static get isReadOnlySupported(){ return true; }
+  constructor({data, api, readOnly}){
+    this.api = api;
+    this.readOnly = !!readOnly;
+    this.data = {
+      label: (data && typeof data.label==='string') ? data.label : 'İletişime Geç',
+      url:   (data && typeof data.url==='string')   ? data.url   : '#contact'
+    };
+    this.wrapper = null;
+  }
+  render(){
+    const w = document.createElement('div');
+    w.className = 'pb-btn-tool';
+    w.innerHTML = `
+      <label>Buton Metni</label>
+      <input type="text" class="pb-btn-label" placeholder="Butonun uzerinde yazacak metin" value="${escapeHtml(this.data.label)}" ${this.readOnly?'readonly':''}>
+      <label>Baglanti (URL)</label>
+      <input type="text" class="pb-btn-url" placeholder="#contact veya https://... veya tel:+90..." value="${escapeHtml(this.data.url)}" ${this.readOnly?'readonly':''}>
+      <div class="pb-btn-tool-preview">Onizleme: <b class="pb-btn-preview-lbl">${escapeHtml(this.data.label)}</b> → <span class="pb-btn-preview-url">${escapeHtml(this.data.url)}</span></div>
+    `;
+    const labelEl = w.querySelector('.pb-btn-label');
+    const urlEl = w.querySelector('.pb-btn-url');
+    const prevLbl = w.querySelector('.pb-btn-preview-lbl');
+    const prevUrl = w.querySelector('.pb-btn-preview-url');
+    const updatePrev = ()=>{
+      prevLbl.textContent = labelEl.value || '(boş)';
+      prevUrl.textContent = urlEl.value || '#';
+      // trigger editor onChange
+      try { this.api.blocks && this.api.blocks.getCurrentBlockIndex; } catch(_){}
+    };
+    labelEl.addEventListener('input', updatePrev);
+    urlEl.addEventListener('input', updatePrev);
+    this.wrapper = w;
+    return w;
+  }
+  save(){
+    const labelEl = this.wrapper?.querySelector('.pb-btn-label');
+    const urlEl = this.wrapper?.querySelector('.pb-btn-url');
+    return {
+      label: (labelEl?.value || '').trim().slice(0, 120),
+      url:   (urlEl?.value   || '').trim().slice(0, 500)
+    };
+  }
+  static get sanitize(){ return {label:{}, url:{}}; }
+};
+
+// ── Editor.js image uploader (base64 via resizePhotoToDataURL) ──
+async function safakariImageUploader(file){
+  try {
+    if(!file || !/^image\//.test(file.type)){
+      toast('Sadece gorsel dosya yuklenebilir');
+      return {success:0};
+    }
+    const dataUrl = await resizePhotoToDataURL(file, 800, 0.8);
+    return {success:1, file:{url: dataUrl}};
+  } catch(e){
+    toast('Fotograf yuklenemedi');
+    console.warn('image upload failed', e);
+    return {success:0};
+  }
+}
+async function safakariImageByUrl(url){
+  // Musteri URL yapistirirsa: sadece https ya da data URL'i kabul et
+  if(!/^(https?:\/\/|data:image\/)/i.test(url||'')){
+    toast('Gecersiz URL');
+    return {success:0};
+  }
+  return {success:1, file:{url: url}};
+}
+
+// ── Auto-save (debounced 3s) ──
+function debouncedAutoSave(){
+  if(autoSaveTimer) clearTimeout(autoSaveTimer);
+  const ind = document.getElementById('pe_save_ind');
+  if(ind){ ind.textContent = 'Yazılıyor...'; ind.className='pe-save-ind saving'; }
+  autoSaveTimer = setTimeout(()=>{ autoSavePage(); }, 3000);
+}
+
+async function autoSavePage(){
+  if(!pageEditor || !currentEditorPageId) return;
+  try {
+    const out = await pageEditor.save();
+    const clean = sanitizeBlocks(out);
+    const pg = D.pages.find(p=>p.id===currentEditorPageId);
+    if(!pg) return;
+    pg.editorData = clean;
+    const titleEl = document.getElementById('pe_title');
+    if(titleEl) pg.title = titleEl.value.trim() || pg.title;
+    persistPages();
+    // Re-render public page if currently visible
+    const existing = document.getElementById('pg-'+pg.id);
+    if(existing){ existing.remove(); /* will re-render on next showPage */ }
+    const ind = document.getElementById('pe_save_ind');
+    if(ind){ ind.textContent = '✓ Kaydedildi'; ind.className='pe-save-ind saved'; }
+    buildNav();
+  } catch(err){
+    console.warn('autosave fail', err);
+    const ind = document.getElementById('pe_save_ind');
+    if(ind){ ind.textContent = '⚠️ Kaydedilemedi'; ind.className='pe-save-ind'; }
+  }
+}
+
+// ── Publish / Unpublish ──
+async function publishPage(){
+  await autoSavePage();
+  const pg = D.pages.find(p=>p.id===currentEditorPageId);
+  if(!pg) return;
+  pg.visible = true;
+  persistPages();
+  buildNav();
+  // Re-render editor header (badge + action button)
+  openPageEditor(pg.id);
+  toast('Sayfa yayinlandi, navigasyonda gorunuyor');
+}
+async function unpublishPage(){
+  await autoSavePage();
+  const pg = D.pages.find(p=>p.id===currentEditorPageId);
+  if(!pg) return;
+  pg.visible = false;
+  persistPages();
+  buildNav();
+  openPageEditor(pg.id);
+  toast('Sayfa taslaga cevrildi');
+}
+
+// ── Backup: export / import ──
+function exportPagesJSON(){
+  try {
+    const dump = {
+      exportedAt: new Date().toISOString(),
+      schema: 'safakari_pages_v1',
+      pages: D.pages
+    };
+    const blob = new Blob([JSON.stringify(dump, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const d = new Date();
+    const dStr = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    a.href = url;
+    a.download = `safakari-sayfalar-${dStr}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    toast('Yedek indirildi');
+  } catch(e){
+    console.warn('export fail', e);
+    toast('Yedek olusturulamadi');
+  }
+}
+function importPagesJSON(ev){
+  const file = ev?.target?.files?.[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onerror = ()=> toast('Dosya okunamadi');
+  reader.onload = ()=>{
+    try {
+      const parsed = JSON.parse(reader.result);
+      const incoming = Array.isArray(parsed) ? parsed : (parsed && Array.isArray(parsed.pages) ? parsed.pages : null);
+      if(!incoming){ toast('Gecersiz JSON formati'); return; }
+      // Validation: every item needs id + title
+      const valid = incoming.every(p => p && typeof p.id==='string' && typeof p.title==='string');
+      if(!valid){ toast('JSON sema uyumsuz (id + title zorunlu)'); return; }
+      if(!confirm(`${incoming.length} sayfa yuklenecek. Mevcut tum sayfalar silinecek. Devam?`)) return;
+      D.pages = incoming;
+      persistPages();
+      buildNav();
+      admTab('pages', document.querySelectorAll('.adm-ni')[4]);
+      toast(`${incoming.length} sayfa yuklendi`);
+    } catch(e){
+      console.warn('import fail', e);
+      toast('JSON parse hatasi');
+    } finally {
+      ev.target.value = ''; // allow re-upload same file
+    }
+  };
+  reader.readAsText(file);
+}
 
 // ═══ PHONE FORMAT ═══
 function fmtPhone(input){
@@ -1427,12 +2128,15 @@ async function verifyAdminPassword(){
 }
 
 // ═══ INIT ═══
+loadPages(); // localStorage'dan sayfalari yukle (varsa default'lari override eder)
 buildNav();
 showPage('projects');
 initCookieBanner();
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeD();document.getElementById('admOv').classList.remove('open');closeLegal();document.body.classList.remove('modal-open')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeD();document.getElementById('admOv').classList.remove('open');closeLegal();closeTemplateModal();document.body.classList.remove('modal-open')}});
 // Close legal modal by clicking overlay
 document.getElementById('legalOv')?.addEventListener('click',e=>{if(e.target.id==='legalOv')closeLegal()});
+// Close template modal by clicking overlay
+document.getElementById('tmplOv')?.addEventListener('click',e=>{if(e.target.id==='tmplOv')closeTemplateModal()});
 window.addEventListener('resize',()=>{if(mapObj){mapObj.invalidateSize();setTimeout(()=>mapObj.invalidateSize(),200)}});
 // ResizeObserver to handle any dynamic size changes
 if(window.ResizeObserver){
