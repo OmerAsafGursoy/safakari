@@ -462,8 +462,20 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .gpage .pb-list{margin:12px 0 14px 26px;font-size:.92rem;line-height:1.75;color:var(--tx)}
 .gpage .pb-list li{margin-bottom:6px}
 .gpage .pb-img{margin:22px 0;border-radius:var(--rad);overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.08)}
-.gpage .pb-img img{display:block;width:100%;height:auto;object-fit:cover}
+.gpage .pb-img img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
 .gpage .pb-img figcaption{padding:10px 14px;background:rgba(255,255,255,.9);font-size:.78rem;color:var(--txm);text-align:center;font-style:italic}
+/* ── Galeri (multi-image grid) ── */
+.gpage .pb-gallery{display:grid;gap:10px;margin:16px 0}
+.gpage .pb-gal-2{grid-template-columns:repeat(2,1fr)}
+.gpage .pb-gal-3{grid-template-columns:repeat(3,1fr)}
+.gpage .pb-gal-4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:640px){.gpage .pb-gal-3,.gpage .pb-gal-4{grid-template-columns:repeat(2,1fr)}}
+.gpage .pb-gal-item{margin:0;display:flex;flex-direction:column}
+.gpage .pb-gal-item img{aspect-ratio:16/9;object-fit:cover;width:100%;border-radius:8px;display:block}
+.gpage .pb-gal-item figcaption{font-size:.72rem;color:var(--txm);margin-top:4px;text-align:center}
+/* ── Editor.js image preview 16:9 override ── */
+#page_editor .ce-block .image-tool__image-picture,
+#page_editor .ce-block .image-tool__image-picture img{aspect-ratio:16/9;object-fit:cover;width:100%}
 .gpage .pb-btn{display:inline-flex;align-items:center;gap:6px;margin:18px 0;padding:12px 28px;border-radius:50px;font-size:.85rem;font-weight:800;text-decoration:none}
 .gpage .pb-hr{margin:28px auto;border:0;width:80px;height:3px;background:linear-gradient(90deg,var(--acc),var(--pri));border-radius:2px;opacity:.6}
 
@@ -499,26 +511,42 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .pe-save-ind.saving{color:var(--acc-d)}
 .pe-save-ind.saved{color:var(--ok)}
 
-/* ── Template selection modal ── */
-.tmpl-ov{display:none;position:fixed;inset:0;z-index:9800;background:rgba(15,23,42,.55);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:24px;animation:tmplFade .25s ease-out}
-.tmpl-ov.open{display:flex}
-@keyframes tmplFade{from{opacity:0}to{opacity:1}}
-.tmpl-box{width:100%;max-width:820px;max-height:90vh;background:var(--w);border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,.22);display:flex;flex-direction:column;overflow:hidden;animation:aIn .3s ease-out}
-.tmpl-head{padding:20px 26px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between}
-.tmpl-head h2{font-size:1.1rem;font-weight:800;color:var(--dk)}
-.tmpl-head p{font-size:.78rem;color:var(--txm);margin-top:2px}
-.tmpl-bd{flex:1;overflow-y:auto;padding:24px 26px}
-.tmpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.tmpl-card{background:var(--bg);border:2px solid var(--brd);border-radius:var(--rad);padding:20px 16px;cursor:pointer;transition:all var(--sp);text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
-.tmpl-card:hover{border-color:var(--pri);background:var(--pri-l);transform:translateY(-3px);box-shadow:0 6px 20px var(--pri-g)}
-.tmpl-card .tmpl-ic{font-size:2.1rem;margin-bottom:4px}
-.tmpl-card .tmpl-t{font-size:.9rem;font-weight:800;color:var(--dk)}
-.tmpl-card .tmpl-d{font-size:.7rem;color:var(--txm);line-height:1.4}
-.tmpl-card.mini{grid-column:span 3;padding:12px 14px;flex-direction:row;gap:10px;text-align:left;background:#fafafa}
-.tmpl-card.mini .tmpl-ic{font-size:1.2rem;margin:0}
-.tmpl-card.mini .tmpl-t{font-size:.82rem}
-.tmpl-card.mini .tmpl-d{font-size:.68rem}
-@media(max-width:640px){.tmpl-grid{grid-template-columns:1fr}.tmpl-card.mini{grid-column:span 1}}
+/* ── Template picker (inline view-swap, admBd icinde) ── */
+.tmpl-pick{display:flex;flex-direction:column;gap:14px;animation:aIn .25s ease-out}
+.tmpl-pick-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tmpl-pick-head h2{font-size:1.05rem;font-weight:800;color:var(--dk);margin:0}
+.tmpl-pick-head p{font-size:.75rem;color:var(--txm);margin:2px 0 0;width:100%}
+.tmpl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.tmpl-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.tmpl-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.tmpl-grid{grid-template-columns:1fr}}
+.tmpl-card{background:var(--bg);border:2px solid var(--brd);border-radius:var(--rad);padding:18px 14px;cursor:pointer;transition:all var(--sp);text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;min-height:130px}
+.tmpl-card:hover,.tmpl-card:focus-visible{border-color:var(--pri);background:var(--pri-l);transform:translateY(-3px);box-shadow:0 6px 20px var(--pri-g);outline:none}
+.tmpl-card .tmpl-ic{font-size:1.9rem;margin-bottom:2px;line-height:1}
+.tmpl-card .tmpl-t{font-size:.86rem;font-weight:800;color:var(--dk);line-height:1.2}
+.tmpl-card .tmpl-d{font-size:.68rem;color:var(--txm);line-height:1.4}
+
+/* ── Galeri block tool (admin editor) ── */
+.pb-gal-tool{display:flex;flex-direction:column;gap:10px;padding:12px;border:2px dashed rgba(30,58,95,.25);border-radius:var(--rads);background:rgba(30,58,95,.03)}
+.pb-gal-tool-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.72rem;color:var(--txm);font-weight:700}
+.pb-gal-tool-head label{display:inline-flex;align-items:center;gap:4px;cursor:pointer}
+.pb-gal-tool-head input[type=radio]{margin:0}
+.pb-gal-grid{display:grid;gap:8px}
+.pb-gal-grid[data-layout="2"]{grid-template-columns:repeat(2,1fr)}
+.pb-gal-grid[data-layout="3"]{grid-template-columns:repeat(3,1fr)}
+.pb-gal-grid[data-layout="4"]{grid-template-columns:repeat(4,1fr)}
+@media(max-width:640px){.pb-gal-grid[data-layout="3"],.pb-gal-grid[data-layout="4"]{grid-template-columns:repeat(2,1fr)}}
+.pb-gal-slot{position:relative;background:#fff;border:1.5px solid var(--brd);border-radius:var(--rads);overflow:hidden;display:flex;flex-direction:column}
+.pb-gal-slot .pb-gal-preview{aspect-ratio:16/9;background:#f3f4f6 center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:var(--txm);font-size:.72rem;cursor:pointer;text-align:center;padding:10px}
+.pb-gal-slot .pb-gal-preview.empty{border-bottom:1px dashed var(--brd)}
+.pb-gal-slot .pb-gal-cap{padding:6px 8px;font-size:.7rem;border:none;border-top:1px solid var(--brd);font-family:inherit;color:var(--dk);width:100%;background:#fff}
+.pb-gal-slot .pb-gal-cap:focus{outline:none;background:var(--pri-l)}
+.pb-gal-slot .pb-gal-rm{position:absolute;top:5px;right:5px;width:22px;height:22px;border-radius:50%;border:none;background:rgba(220,38,38,.92);color:#fff;font-size:.72rem;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;z-index:2}
+.pb-gal-slot .pb-gal-rm:hover{background:rgba(185,28,28,1)}
+.pb-gal-tool-foot{display:flex;gap:8px;flex-wrap:wrap}
+.pb-gal-tool-foot button{padding:6px 12px;font-size:.72rem;border-radius:6px;border:1.5px solid var(--pri);background:#fff;color:var(--pri);cursor:pointer;font-weight:700}
+.pb-gal-tool-foot button:hover{background:var(--pri);color:#fff}
+.pb-gal-tool-foot button[disabled]{opacity:.45;cursor:not-allowed}
 
 /* ── Page actions bar ── */
 .pe-actions{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
@@ -590,22 +618,6 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
     </div>
   </div>
 </div>
-<!-- ── Template secim modal (page-builder v1) ── -->
-<div class="tmpl-ov" id="tmplOv" role="dialog" aria-modal="true" aria-labelledby="tmplTitle">
-  <div class="tmpl-box">
-    <div class="tmpl-head">
-      <div>
-        <h2 id="tmplTitle">Yeni Sayfa</h2>
-        <p>Baslamak icin bir sablon sec</p>
-      </div>
-      <button class="adm-cls" onclick="closeTemplateModal()" aria-label="Kapat">✕</button>
-    </div>
-    <div class="tmpl-bd">
-      <div class="tmpl-grid" id="tmplGrid" role="list"></div>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1276,6 +1288,18 @@ function sanitizeBlocks(editorJson){
     } else if(b.type==='button' && b.data){
       if(typeof b.data.label==='string') b.data.label = DOMPurify.sanitize(b.data.label, {ALLOWED_TAGS:[]});
       if(typeof b.data.url==='string')   b.data.url   = b.data.url.trim().slice(0,500);
+    } else if(b.type==='gallery' && b.data){
+      if(!['2','3','4'].includes(String(b.data.layout))) b.data.layout = '3';
+      if(!Array.isArray(b.data.images)) b.data.images = [];
+      b.data.images = b.data.images.slice(0,4).map(i => {
+        if(!i || typeof i!=='object') return {url:'', caption:''};
+        const rawUrl = typeof i.url==='string' ? i.url.trim() : '';
+        const url = /^(https?:\/\/|data:image\/|\/)/i.test(rawUrl) ? rawUrl.slice(0, 5_000_000) : '';
+        const caption = typeof i.caption==='string'
+          ? DOMPurify.sanitize(i.caption, {ALLOWED_TAGS:[]}).slice(0,160)
+          : '';
+        return {url, caption};
+      });
     }
   });
   return editorJson;
@@ -1322,6 +1346,19 @@ function renderBlock(b){
       const capHtml = cap ? `<figcaption>${cap}</figcaption>` : '';
       return `<figure class="pb-img"><img src="${safeUrl}" alt="${cap}" loading="lazy">${capHtml}</figure>`;
     }
+    case 'gallery': {
+      const layout = ['2','3','4'].includes(String(d.layout)) ? String(d.layout) : '3';
+      const imgs = (Array.isArray(d.images) ? d.images : []).map(i => {
+        if(!i || !i.url) return '';
+        const safeUrl = /^(https?:|data:image\/|\/)/i.test(String(i.url)) ? String(i.url) : '';
+        if(!safeUrl) return '';
+        const cap = i.caption ? DOMPurify.sanitize(String(i.caption), {ALLOWED_TAGS:[]}) : '';
+        const capHtml = cap ? `<figcaption>${cap}</figcaption>` : '';
+        return `<figure class="pb-gal-item"><img src="${safeUrl}" alt="${cap}" loading="lazy">${capHtml}</figure>`;
+      }).filter(Boolean).join('');
+      if(!imgs) return '';
+      return `<div class="pb-gallery pb-gal-${layout}">${imgs}</div>`;
+    }
     case 'button': {
       const label = DOMPurify.sanitize(d.label||'Detaylı Bilgi', {ALLOWED_TAGS:[]}) || 'Detaylı Bilgi';
       const rawHref = (d.url||'').trim();
@@ -1346,7 +1383,7 @@ const PAGE_TEMPLATES = {
       {type:'paragraph', data:{text:'Proje hakkında kısa açıklama...'}},
       {type:'header', data:{text:'Özellikler', level:2}},
       {type:'list', data:{style:'unordered', items:['Konum avantajı','Daire tipleri','Teslim tarihi']}},
-      {type:'image', data:{file:{url:''}, caption:'Proje görseli'}},
+      {type:'gallery', data:{layout:'3', images:[{url:'',caption:''},{url:'',caption:''},{url:'',caption:''}]}},
       {type:'button', data:{label:'İletişime Geç', url:'#contact'}}
     ]}
   },
@@ -1365,14 +1402,49 @@ const PAGE_TEMPLATES = {
   },
   gallery: {
     key:'gallery', icon:'📸', title:'Referans / Galeri',
-    desc:'Baslik + 6\'li foto grid + aciklama',
+    desc:'Baslik + coklu foto grid + aciklama',
     defaultTitle:'Yeni Galeri',
     data:{time:Date.now(), version:'2.30.7', blocks:[
       {type:'header', data:{text:'Galeri', level:1}},
       {type:'paragraph', data:{text:'Kısa açıklama...'}},
-      {type:'image', data:{file:{url:''}, caption:''}},
-      {type:'image', data:{file:{url:''}, caption:''}},
-      {type:'image', data:{file:{url:''}, caption:''}}
+      {type:'gallery', data:{layout:'3', images:[{url:'',caption:''},{url:'',caption:''},{url:'',caption:''}]}}
+    ]}
+  },
+  campaign: {
+    key:'campaign', icon:'📣', title:'Kampanya',
+    desc:'Tek odakli duyuru sayfasi (buyuk gorsel + CTA)',
+    defaultTitle:'Kampanya / Duyuru',
+    data:{time:Date.now(), version:'2.30.7', blocks:[
+      {type:'header', data:{text:'Kampanya Basligi', level:1}},
+      {type:'paragraph', data:{text:'Kampanya aciklamasi, detaylar burada yer alir...'}},
+      {type:'image', data:{file:{url:''}, caption:'Kampanya gorseli'}},
+      {type:'list', data:{style:'unordered', items:['Avantaj 1','Avantaj 2','Avantaj 3']}},
+      {type:'button', data:{label:'Hemen Bilgi Al', url:'#contact'}}
+    ]}
+  },
+  beforeafter: {
+    key:'beforeafter', icon:'🔄', title:'Oncesi - Sonrasi',
+    desc:'Tadilat/insaat projesi karsilastirma',
+    defaultTitle:'Oncesi - Sonrasi',
+    data:{time:Date.now(), version:'2.30.7', blocks:[
+      {type:'header', data:{text:'Proje Adı', level:1}},
+      {type:'paragraph', data:{text:'Proje hakkında kısa bir açıklama...'}},
+      {type:'header', data:{text:'Oncesi — Sonrasi', level:2}},
+      {type:'gallery', data:{layout:'2', images:[{url:'',caption:'Oncesi'},{url:'',caption:'Sonrasi'}]}},
+      {type:'paragraph', data:{text:'Uygulanan calismalar ve detaylar...'}}
+    ]}
+  },
+  plans: {
+    key:'plans', icon:'📐', title:'Kat Planları',
+    desc:'Daire planlari ve teknik ozellikler',
+    defaultTitle:'Kat Planları',
+    data:{time:Date.now(), version:'2.30.7', blocks:[
+      {type:'header', data:{text:'Kat Planlari', level:1}},
+      {type:'paragraph', data:{text:'Projemizin daire tipleri ve plan ozellikleri...'}},
+      {type:'gallery', data:{layout:'3', images:[{url:'',caption:'2+1 Plan'},{url:'',caption:'3+1 Plan'},{url:'',caption:'4+1 Plan'}]}},
+      {type:'delimiter', data:{}},
+      {type:'header', data:{text:'Teknik Ozellikler', level:2}},
+      {type:'list', data:{style:'unordered', items:['Brut alan: m²','Net alan: m²','Tavan yuksekligi: cm']}}
     ]}
   },
   blank: {
@@ -1391,7 +1463,7 @@ function admPages(bd){
   const customCount = D.pages.filter(p=>p.type==='custom').length;
   bd.innerHTML = `
     <div class="pages-toolbar">
-      <button class="abtn ac" onclick="openTemplateModal()" aria-label="Yeni sayfa olustur">+ Yeni Sayfa</button>
+      <button class="abtn ac" onclick="showTemplatePicker()" aria-label="Yeni sayfa olustur">+ Yeni Sayfa</button>
       <button class="abtn sc" onclick="exportPagesJSON()" aria-label="Sayfalari JSON olarak indir">📥 Yedek İndir</button>
       <label class="abtn sc" for="pg_import_file" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;margin:0" aria-label="JSON dosyasindan sayfa yukle">📤 Yedekten Yükle
         <input id="pg_import_file" type="file" accept="application/json,.json" style="display:none" onchange="importPagesJSON(event)">
@@ -1420,35 +1492,34 @@ function admPages(bd){
   `;
 }
 
-// ── Admin: Template selection modal ──
-function openTemplateModal(){
-  const grid = document.getElementById('tmplGrid');
-  if(!grid) return;
-  // Render 3 main + 1 mini (blank)
-  const order = ['project','service','gallery','blank'];
-  grid.innerHTML = order.map(k=>{
+// ── Admin: Template picker (inline view-swap, admBd icinde) ──
+function showTemplatePicker(){
+  const bd = document.getElementById('admBd');
+  if(!bd) return;
+  const order = ['project','service','gallery','campaign','beforeafter','plans','blank'];
+  const cards = order.map(k=>{
     const t = PAGE_TEMPLATES[k];
-    const cls = k==='blank' ? 'tmpl-card mini' : 'tmpl-card';
-    return `<div class="${cls}" role="listitem" tabindex="0"
+    if(!t) return '';
+    return `<div class="tmpl-card" role="button" tabindex="0"
                  onclick="createPageFromTemplate('${t.key}')"
-                 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();createPageFromTemplate('${t.key}')}">
-      <div class="tmpl-ic">${t.icon}</div>
-      <div>
-        <div class="tmpl-t">${escapeHtml(t.title)}</div>
-        <div class="tmpl-d">${escapeHtml(t.desc)}</div>
-      </div>
+                 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();createPageFromTemplate('${t.key}')}"
+                 aria-label="${escapeHtml(t.title)} sablonunu sec">
+      <div class="tmpl-ic" aria-hidden="true">${t.icon}</div>
+      <div class="tmpl-t">${escapeHtml(t.title)}</div>
+      <div class="tmpl-d">${escapeHtml(t.desc)}</div>
     </div>`;
   }).join('');
-  document.getElementById('tmplOv').classList.add('open');
-  document.body.classList.add('modal-open');
-}
-function closeTemplateModal(){
-  document.getElementById('tmplOv')?.classList.remove('open');
-  // Keep modal-open if admin overlay is still visible
-  if(!document.getElementById('admOv')?.classList.contains('open')
-     && !document.getElementById('legalOv')?.classList.contains('open')){
-    document.body.classList.remove('modal-open');
-  }
+  bd.innerHTML = `
+    <div class="tmpl-pick">
+      <div class="tmpl-pick-head">
+        <button class="abtn sc" onclick="admTab('pages', document.querySelectorAll('.adm-ni')[4])" aria-label="Sayfa listesine don">← Geri</button>
+        <h2>Yeni Sayfa — Sablon Sec</h2>
+        <p>Baslamak icin bir sablon sec. Secim sonrasi dogrudan editor acilir.</p>
+      </div>
+      <div class="tmpl-grid" role="list">${cards}</div>
+    </div>
+  `;
+  bd.scrollTop = 0;
 }
 
 // ── Admin: Slug helper ──
@@ -1484,7 +1555,6 @@ function createPageFromTemplate(tplKey){
   pg.editorData.time = Date.now();
   D.pages.push(pg);
   persistPages();
-  closeTemplateModal();
   openPageEditor(id);
   toast('Taslak olusturuldu, duzenlemeye basla');
 }
@@ -1602,6 +1672,7 @@ function initPageEditor(holder, data){
   if(ImageCls) tools.image = {class: ImageCls, config:{uploader:{uploadByFile: safakariImageUploader, uploadByUrl: safakariImageByUrl}}};
   if(DelimiterCls) tools.delimiter = DelimiterCls;
   tools.button = SafakariButtonTool;
+  tools.gallery = SafakariGalleryTool;
 
   return new EditorJS({
     holder,
@@ -1612,7 +1683,7 @@ function initPageEditor(holder, data){
     onChange: ()=> debouncedAutoSave(),
     i18n: {
       messages: {
-        toolNames: {Text:'Metin', Heading:'Başlık', List:'Liste', Image:'Görsel', Delimiter:'Ayraç', Button:'Buton'},
+        toolNames: {Text:'Metin', Heading:'Başlık', List:'Liste', Image:'Görsel', Delimiter:'Ayraç', Button:'Buton', Gallery:'Galeri'},
         blockTunes: {
           delete: {Delete:'Sil', 'Click to delete':'Silmek icin tikla'},
           moveUp: {'Move up':'Yukari tasi'},
@@ -1671,6 +1742,182 @@ const SafakariButtonTool = class {
     };
   }
   static get sanitize(){ return {label:{}, url:{}}; }
+};
+
+// ── Custom "Gallery" Tool for Editor.js (2/3/4 col grid, max 4 fotograf) ──
+const SafakariGalleryTool = class {
+  static get toolbox(){
+    return {
+      title:'Galeri',
+      icon:'<svg width="17" height="15" viewBox="0 0 17 15" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="7" height="6" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="9" y="1" width="7" height="6" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="1" y="8" width="7" height="6" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="9" y="8" width="7" height="6" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>'
+    };
+  }
+  static get isReadOnlySupported(){ return true; }
+  constructor({data, api, readOnly}){
+    this.api = api;
+    this.readOnly = !!readOnly;
+    const layout = data && ['2','3','4'].includes(String(data.layout)) ? String(data.layout) : '3';
+    const images = (data && Array.isArray(data.images) ? data.images : []).slice(0,4).map(i => ({
+      url: (i && typeof i.url==='string') ? i.url : '',
+      caption: (i && typeof i.caption==='string') ? i.caption : ''
+    }));
+    if(images.length === 0){ images.push({url:'', caption:''}, {url:'', caption:''}); }
+    this.data = { layout, images };
+    this.wrapper = null;
+  }
+  _triggerChange(){
+    try {
+      // Editor.js 2.x: dispatchChange bildirimi (debouncedAutoSave onChange kanaliyla)
+      const idx = this.api && this.api.blocks && this.api.blocks.getCurrentBlockIndex
+        ? this.api.blocks.getCurrentBlockIndex() : -1;
+      if(this.api && this.api.blocks && typeof this.api.blocks.getBlockByIndex === 'function' && idx >= 0){
+        const blk = this.api.blocks.getBlockByIndex(idx);
+        if(blk && typeof blk.dispatchChange === 'function'){ blk.dispatchChange(); }
+      }
+    } catch(_){}
+  }
+  _renderSlot(i){
+    const img = this.data.images[i] || {url:'', caption:''};
+    const preview = img.url
+      ? `<div class="pb-gal-preview" style="background-image:url('${String(img.url).replace(/'/g,"\\'")}')" data-i="${i}" role="button" tabindex="0" aria-label="Fotografi degistir">Degistir</div>`
+      : `<div class="pb-gal-preview empty" data-i="${i}" role="button" tabindex="0" aria-label="Fotograf ekle">+ Foto Ekle</div>`;
+    const rm = img.url ? `<button class="pb-gal-rm" data-i="${i}" aria-label="Fotografi sil" type="button">×</button>` : '';
+    return `<div class="pb-gal-slot" data-slot="${i}">
+      ${rm}
+      ${preview}
+      <input class="pb-gal-cap" data-i="${i}" type="text" placeholder="Altyazi (opsiyonel)" value="${escapeHtml(img.caption||'')}" ${this.readOnly?'readonly':''} maxlength="160">
+    </div>`;
+  }
+  _renderGrid(){
+    const grid = this.wrapper.querySelector('.pb-gal-grid');
+    const n = this.data.images.length;
+    let slots = '';
+    for(let i=0; i<n; i++) slots += this._renderSlot(i);
+    grid.setAttribute('data-layout', this.data.layout);
+    grid.innerHTML = slots;
+    this._wireGrid();
+    this._updateFoot();
+  }
+  _updateFoot(){
+    const addBtn = this.wrapper.querySelector('.pb-gal-add');
+    if(addBtn){ addBtn.disabled = this.data.images.length >= 4; }
+    const countEl = this.wrapper.querySelector('.pb-gal-count');
+    if(countEl){ countEl.textContent = `${this.data.images.length} / 4 fotograf`; }
+  }
+  _wireGrid(){
+    this.wrapper.querySelectorAll('.pb-gal-preview').forEach(el=>{
+      const i = parseInt(el.getAttribute('data-i'),10);
+      const trigger = ()=> this._pickFileFor(i);
+      el.addEventListener('click', trigger);
+      el.addEventListener('keydown', (e)=>{
+        if(e.key==='Enter' || e.key===' '){ e.preventDefault(); trigger(); }
+      });
+    });
+    this.wrapper.querySelectorAll('.pb-gal-rm').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const i = parseInt(btn.getAttribute('data-i'),10);
+        if(!isNaN(i) && this.data.images[i]){
+          this.data.images[i].url = '';
+          this._renderGrid();
+          this._triggerChange();
+        }
+      });
+    });
+    this.wrapper.querySelectorAll('.pb-gal-cap').forEach(inp=>{
+      inp.addEventListener('input', ()=>{
+        const i = parseInt(inp.getAttribute('data-i'),10);
+        if(!isNaN(i) && this.data.images[i]){
+          this.data.images[i].caption = inp.value;
+          this._triggerChange();
+        }
+      });
+    });
+  }
+  async _pickFileFor(i){
+    if(this.readOnly) return;
+    const inp = document.createElement('input');
+    inp.type = 'file';
+    inp.accept = 'image/*';
+    inp.style.display = 'none';
+    document.body.appendChild(inp);
+    inp.addEventListener('change', async ()=>{
+      const file = inp.files && inp.files[0];
+      document.body.removeChild(inp);
+      if(!file) return;
+      try {
+        const res = await safakariImageUploader(file);
+        if(res && res.success && res.file && res.file.url){
+          if(!this.data.images[i]) this.data.images[i] = {url:'', caption:''};
+          this.data.images[i].url = res.file.url;
+          this._renderGrid();
+          this._triggerChange();
+        }
+      } catch(e){ console.warn('gallery upload fail', e); }
+    });
+    inp.click();
+  }
+  render(){
+    const w = document.createElement('div');
+    w.className = 'pb-gal-tool';
+    w.innerHTML = `
+      <div class="pb-gal-tool-head">
+        <span>Duzen:</span>
+        <label><input type="radio" name="gl-${Math.random().toString(36).slice(2,7)}" value="2" ${this.data.layout==='2'?'checked':''}> 2 sutun</label>
+        <label><input type="radio" name="gl-" value="3" ${this.data.layout==='3'?'checked':''}> 3 sutun</label>
+        <label><input type="radio" name="gl-" value="4" ${this.data.layout==='4'?'checked':''}> 4 sutun</label>
+        <span class="pb-gal-count" style="margin-left:auto">${this.data.images.length} / 4 fotograf</span>
+      </div>
+      <div class="pb-gal-grid" data-layout="${this.data.layout}"></div>
+      <div class="pb-gal-tool-foot">
+        <button type="button" class="pb-gal-add" aria-label="Fotograf slotu ekle">+ Foto Slotu</button>
+      </div>
+    `;
+    // Layout radio group: unique name
+    const groupName = 'gl-'+Math.random().toString(36).slice(2,9);
+    w.querySelectorAll('.pb-gal-tool-head input[type=radio]').forEach(r=>{
+      r.name = groupName;
+      r.addEventListener('change', ()=>{
+        if(r.checked){
+          this.data.layout = r.value;
+          const grid = w.querySelector('.pb-gal-grid');
+          if(grid) grid.setAttribute('data-layout', this.data.layout);
+          this._triggerChange();
+        }
+      });
+    });
+    // Add-slot button
+    w.querySelector('.pb-gal-add').addEventListener('click', ()=>{
+      if(this.data.images.length >= 4) return;
+      this.data.images.push({url:'', caption:''});
+      this._renderGrid();
+      this._triggerChange();
+    });
+    this.wrapper = w;
+    // Render initial grid (senkron - this.wrapper atandi)
+    this._renderGrid();
+    return w;
+  }
+  save(){
+    // Caption'lari son DOM state'inden topla (input listener zaten guncelliyor ama yine de merge)
+    if(this.wrapper){
+      this.wrapper.querySelectorAll('.pb-gal-cap').forEach(inp=>{
+        const i = parseInt(inp.getAttribute('data-i'),10);
+        if(!isNaN(i) && this.data.images[i]){
+          this.data.images[i].caption = (inp.value || '').slice(0,160);
+        }
+      });
+    }
+    // Bos slotlari koruyabiliriz; render tarafi filter yapacak
+    const cleaned = this.data.images.slice(0,4).map(i => ({
+      url: (typeof i.url==='string') ? i.url : '',
+      caption: (typeof i.caption==='string') ? i.caption.slice(0,160) : ''
+    }));
+    return {
+      layout: ['2','3','4'].includes(this.data.layout) ? this.data.layout : '3',
+      images: cleaned
+    };
+  }
+  static get sanitize(){ return {layout:{}, images:{}}; }
 };
 
 // ── Editor.js image uploader (base64 via resizePhotoToDataURL) ──
@@ -2132,11 +2379,9 @@ loadPages(); // localStorage'dan sayfalari yukle (varsa default'lari override ed
 buildNav();
 showPage('projects');
 initCookieBanner();
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeD();document.getElementById('admOv').classList.remove('open');closeLegal();closeTemplateModal();document.body.classList.remove('modal-open')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeD();document.getElementById('admOv').classList.remove('open');closeLegal();document.body.classList.remove('modal-open')}});
 // Close legal modal by clicking overlay
 document.getElementById('legalOv')?.addEventListener('click',e=>{if(e.target.id==='legalOv')closeLegal()});
-// Close template modal by clicking overlay
-document.getElementById('tmplOv')?.addEventListener('click',e=>{if(e.target.id==='tmplOv')closeTemplateModal()});
 window.addEventListener('resize',()=>{if(mapObj){mapObj.invalidateSize();setTimeout(()=>mapObj.invalidateSize(),200)}});
 // ResizeObserver to handle any dynamic size changes
 if(window.ResizeObserver){
