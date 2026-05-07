@@ -51,7 +51,9 @@
     "photo_pending": "📷 Photos coming soon",
     "no_projects": "No projects added yet.",
     "aria_image_suffix": "image",
-    "aria_detail_prefix": "view details for"
+    "aria_detail_prefix": "view details for",
+    "tags_more_tooltip": "Others:",
+    "feats_more_tooltip": "Other features:"
   },
   "detail": {
     "units_label": "Units",
@@ -83,7 +85,9 @@
     "video_title_suffix": "drone video",
     "hero_aria_suffix": "featured image",
     "photo_aria_prefix": "photo",
-    "popup_detail": "Details →"
+    "popup_detail": "Details →",
+    "section_map": "📍 Location",
+    "map_aria": "Project location map"
   },
   "wa": {
     "float_aria": "Contact us on WhatsApp"

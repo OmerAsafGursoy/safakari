@@ -51,7 +51,9 @@
     "photo_pending": "📷 Fotos in Kürze",
     "no_projects": "Noch keine Projekte hinzugefügt.",
     "aria_image_suffix": "Bild",
-    "aria_detail_prefix": "Details anzeigen für"
+    "aria_detail_prefix": "Details anzeigen für",
+    "tags_more_tooltip": "Weitere:",
+    "feats_more_tooltip": "Weitere Ausstattung:"
   },
   "detail": {
     "units_label": "Einheiten",
@@ -83,7 +85,9 @@
     "video_title_suffix": "Drohnenvideo",
     "hero_aria_suffix": "Hauptbild",
     "photo_aria_prefix": "Foto",
-    "popup_detail": "Details →"
+    "popup_detail": "Details →",
+    "section_map": "📍 Standort",
+    "map_aria": "Projektstandort-Karte"
   },
   "wa": {
     "float_aria": "Auf WhatsApp kontaktieren"

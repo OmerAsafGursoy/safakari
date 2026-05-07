@@ -51,7 +51,9 @@
     "photo_pending": "📷 Fotoğraflar yakında",
     "no_projects": "Henüz proje eklenmedi.",
     "aria_image_suffix": "görseli",
-    "aria_detail_prefix": "detaylarını görüntüle"
+    "aria_detail_prefix": "detaylarını görüntüle",
+    "tags_more_tooltip": "Diğer:",
+    "feats_more_tooltip": "Diğer özellikler:"
   },
   "detail": {
     "units_label": "Daire",
@@ -83,7 +85,9 @@
     "video_title_suffix": "drone videosu",
     "hero_aria_suffix": "öne çıkan görsel",
     "photo_aria_prefix": "fotoğraf",
-    "popup_detail": "Detay →"
+    "popup_detail": "Detay →",
+    "section_map": "📍 Konum",
+    "map_aria": "Proje konumu haritası"
   },
   "wa": {
     "float_aria": "WhatsApp ile iletişime geçin"

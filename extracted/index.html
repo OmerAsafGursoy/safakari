@@ -184,19 +184,21 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .plist::-webkit-scrollbar{width:4px}.plist::-webkit-scrollbar-thumb{background:var(--brd);border-radius:10px}
 
 /* ── Card ── */
-.card{display:flex;background:rgba(255,255,255,.85);border:1.5px solid rgba(232,228,223,.6);border-radius:var(--rad);overflow:hidden;cursor:pointer;transition:all var(--tr);min-height:130px}
+.card{display:flex;background:rgba(255,255,255,.85);border:1.5px solid rgba(232,228,223,.6);border-radius:var(--rad);overflow:hidden;cursor:pointer;transition:all var(--tr);min-height:150px}
 .card:hover{border-color:var(--pri);box-shadow:0 6px 24px var(--pri-g);transform:translateY(-2px)}
 .card.on{border-color:var(--acc);box-shadow:0 6px 24px var(--acc-g);background:linear-gradient(135deg,rgba(253,246,236,.9),#fff)}
 .card-img{width:120px;min-width:120px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;position:relative;overflow:hidden;background-size:cover;background-position:center}
 .card-badge{position:absolute;top:6px;left:6px;padding:3px 10px;border-radius:50px;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
-.card-body{flex:1;padding:12px 14px;display:flex;flex-direction:column;justify-content:space-between}
-.card-title{font-size:.88rem;font-weight:800;color:var(--dk);transition:color var(--tr)}.card:hover .card-title{color:var(--pri)}
-.card-loc{font-size:.73rem;color:var(--txm);margin-top:2px}
+.card-body{flex:1;padding:12px 14px;display:flex;flex-direction:column;min-width:0}
+.card-body>.card-top{flex:1 0 auto;min-width:0}
+.card-title{font-size:.88rem;font-weight:800;color:var(--dk);transition:color var(--tr);overflow-wrap:anywhere;word-break:break-word;line-height:1.25}.card:hover .card-title{color:var(--pri)}
+.card-loc{font-size:.73rem;color:var(--txm);margin-top:2px;overflow-wrap:anywhere}
 .card-tags{display:flex;gap:4px;margin:6px 0;flex-wrap:wrap}
 .card-tag{background:rgba(240,238,235,.8);padding:2px 8px;border-radius:5px;font-size:.63rem;font-weight:600;color:var(--txm)}
-.card-foot{display:flex;align-items:center;justify-content:space-between}
-.card-price{font-size:.88rem;font-weight:800;color:var(--pri)}
+.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px}
+.card-price{font-size:.88rem;font-weight:800;color:var(--pri);flex-shrink:0;min-width:0;overflow-wrap:anywhere}
 .card-price small{font-size:.63rem;font-weight:500;color:var(--txm)}
+.card-foot .dbtn{flex-shrink:0}
 .dbtn{padding:7px 16px;border-radius:50px;background:linear-gradient(135deg,var(--pri),#2a5078);color:#fff;font-size:.7rem;font-weight:700;transition:all var(--sp);box-shadow:0 2px 8px var(--pri-g)}
 .dbtn:hover{transform:scale(1.06);box-shadow:0 5px 18px var(--pri-g)}
 
@@ -216,7 +218,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .dto-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(232,228,223,.5);background:rgba(255,255,255,.6)}
 .dto-title{font-size:.95rem;font-weight:800;color:var(--dk)}
 .dto-x{width:34px;height:34px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--tx);transition:all var(--sp)}.dto-x:hover{background:#fee2e2;color:#c0392b;transform:rotate(90deg)}
-.dto-body{flex:1;overflow-y:auto;padding:20px}.dto-body::-webkit-scrollbar{width:3px}.dto-body::-webkit-scrollbar-thumb{background:var(--brd);border-radius:10px}
+.dto-body{flex:1;overflow-y:auto;padding:20px;overflow-wrap:anywhere;word-break:break-word}.dto-body::-webkit-scrollbar{width:3px}.dto-body::-webkit-scrollbar-thumb{background:var(--brd);border-radius:10px}
 .dto-hero{border-radius:var(--rad);height:180px;margin-bottom:18px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;position:relative;background-size:cover;background-position:center}
 .dto-hero .st{position:absolute;top:12px;left:12px;padding:6px 16px;border-radius:50px;font-size:.7rem;font-weight:800;box-shadow:0 2px 10px rgba(0,0,0,.15)}
 .dto-name{font-size:1.25rem;font-weight:900;color:var(--dk);margin-bottom:4px}
@@ -237,7 +239,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .ftgrid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
 .fti{padding:7px 14px;border-radius:50px;font-size:.73rem;font-weight:600;color:var(--tx);background:linear-gradient(135deg,rgba(240,238,235,.8),rgba(255,255,255,.5));border:1px solid rgba(232,228,223,.5);transition:all var(--tr)}
 .fti:hover{border-color:var(--pri);color:var(--pri);transform:translateY(-1px)}
-.ddesc{font-size:.82rem;color:var(--txm);line-height:1.8;margin-bottom:20px;padding:16px;border-radius:var(--rad);background:linear-gradient(135deg,rgba(240,238,235,.5),rgba(255,255,255,.3));border-left:3px solid var(--acc)}
+.ddesc{font-size:.82rem;color:var(--txm);line-height:1.8;margin-bottom:20px;padding:16px;border-radius:var(--rad);background:linear-gradient(135deg,rgba(240,238,235,.5),rgba(255,255,255,.3));border-left:3px solid var(--acc);white-space:pre-wrap;overflow-wrap:anywhere}
 .dto-cta{background:rgba(255,255,255,.8);backdrop-filter:blur(10px);border-top:1px solid rgba(232,228,223,.5);padding:14px 20px;display:flex;gap:8px}
 .cta{flex:1;padding:12px;border-radius:var(--rads);font-size:.82rem;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;transition:all var(--sp);border:none;color:#fff}
 .cta:hover{transform:translateY(-2px)}
@@ -249,13 +251,15 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .msub{width:100%;padding:12px;border-radius:var(--rads);background:linear-gradient(135deg,var(--acc),#daa64e);color:var(--dk);font-size:.85rem;font-weight:800;transition:all var(--sp);box-shadow:0 3px 12px var(--acc-g)}.msub:hover{transform:translateY(-2px);box-shadow:0 6px 20px var(--acc-g)}
 
 /* ── Generic page ── */
-.gpage{padding:50px 60px;max-width:1100px;margin:0 auto;width:100%}
+.gpage{padding:50px 60px;max-width:1240px;margin:0 auto;width:100%}
 .gpage h1{font-size:2rem;font-weight:900;color:var(--dk);margin-bottom:8px}
 .gpage .divider{width:50px;height:3px;background:linear-gradient(90deg,var(--acc),var(--pri));border-radius:2px;margin:12px 0 20px}
-.gpage .sub{font-size:.92rem;color:var(--txm);line-height:1.7;margin-bottom:30px;max-width:700px}
+.gpage .sub{font-size:.92rem;color:var(--txm);line-height:1.7;margin-bottom:30px;max-width:820px}
 .gcards{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:40px}
-.gcard{background:rgba(255,255,255,.88);backdrop-filter:blur(8px);border-radius:var(--rad);padding:30px;border:1px solid rgba(232,228,223,.5);transition:all var(--tr)}.gcard:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.08)}
-.gcard h3{font-size:1rem;font-weight:800;color:var(--dk);margin-bottom:10px}.gcard p{font-size:.85rem;color:var(--txm);line-height:1.7}
+/* Uzun metin barindiran ilk kart (about description) tek-satira yayilsin (madde 5a) */
+.gcards .gcard.gcard-wide{grid-column:1/-1}
+.gcard{background:rgba(255,255,255,.88);backdrop-filter:blur(8px);border-radius:var(--rad);padding:30px;border:1px solid rgba(232,228,223,.5);transition:all var(--tr);min-width:0;overflow-wrap:anywhere;word-break:break-word}.gcard:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.08)}
+.gcard h3{font-size:1rem;font-weight:800;color:var(--dk);margin-bottom:10px}.gcard p{font-size:.85rem;color:var(--txm);line-height:1.7;white-space:pre-wrap}
 .gstats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px}
 .gstat{text-align:center;background:rgba(255,255,255,.88);border-radius:var(--rad);padding:24px;border:1px solid rgba(232,228,223,.5);transition:all var(--tr)}.gstat:hover{transform:translateY(-3px);box-shadow:0 6px 20px var(--pri-g);border-color:var(--pri)}
 .gstat .n{font-size:2rem;font-weight:900;background:linear-gradient(135deg,var(--pri),#2a5078);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -406,11 +410,19 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 /* ── Card tags single-line + more chip ── */
 .card-tags{flex-wrap:nowrap!important;overflow:hidden;height:auto}
 .card-tag{white-space:nowrap;flex-shrink:0}
-.card-tag-more{background:var(--pri-l);color:var(--pri);padding:2px 8px;border-radius:5px;font-size:.63rem;font-weight:700;flex-shrink:0;white-space:nowrap}
-.card{min-height:140px}
+.card-tag-more{background:var(--pri-l);color:var(--pri);padding:2px 8px;border-radius:5px;font-size:.63rem;font-weight:700;flex-shrink:0;white-space:nowrap;cursor:default}
+.card{min-height:150px}
+/* ── Card feats single-line + more chip (madde 5c) ── */
+.card-feats{display:flex;gap:4px;margin:4px 0 6px;flex-wrap:nowrap;overflow:hidden;height:auto}
+.card-feat{background:linear-gradient(135deg,rgba(253,246,236,.7),rgba(255,255,255,.7));border:1px solid rgba(200,145,58,.25);padding:2px 8px;border-radius:5px;font-size:.6rem;font-weight:700;color:var(--acc-d);white-space:nowrap;flex-shrink:0}
+.card-feat-more{background:rgba(200,145,58,.15);color:var(--acc-d);padding:2px 8px;border-radius:5px;font-size:.6rem;font-weight:700;flex-shrink:0;white-space:nowrap;cursor:default;border:1px solid rgba(200,145,58,.3)}
+.card-feat-more[title]:hover{background:rgba(200,145,58,.28)}
 /* ── Detail drawer: house types ── */
 .dto-htypes{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
 .dto-htype{background:linear-gradient(135deg,var(--acc-l),#fff);border:1px solid rgba(200,145,58,.3);padding:6px 14px;border-radius:50px;font-size:.73rem;font-weight:700;color:var(--acc-d)}
+/* ── Detail drawer: mini-map (madde 1) ── */
+.dto-map{height:180px;border-radius:var(--rads);overflow:hidden;margin-bottom:18px;border:1px solid var(--brd);background:#eef2f7}
+.dto-map .leaflet-control-attribution{font-size:.55rem;background:rgba(255,255,255,.7)}
 /* ── Detail drawer: photos grid ── */
 .dto-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:18px}
 .dto-photo{aspect-ratio:1/1;border-radius:var(--rads);overflow:hidden;cursor:pointer;background:#eee;border:1px solid var(--brd);transition:all var(--tr)}
@@ -4638,10 +4650,10 @@ function showPage(id){
         }).filter(Boolean).join('')}</div>`;
       })()}
       <div class="gcards">
-        ${aDesc?`<div class="gcard"><h3>${t('about_pg.card_about_title','📋 Hakkımızda')}</h3><p>${aDesc}</p></div>`:''}
-        ${aMis?`<div class="gcard"><h3>${t('about_pg.card_mission_title','🎯 Misyonumuz')}</h3><p>${aMis}</p></div>`:''}
-        ${aVis?`<div class="gcard"><h3>${t('about_pg.card_vision_title','🔭 Vizyonumuz')}</h3><p>${aVis}</p></div>`:''}
-        ${t('about_pg.card_certs_body','')?`<div class="gcard"><h3>${t('about_pg.card_certs_title','🏆 Sertifikalar')}</h3><p>${t('about_pg.card_certs_body','')}</p></div>`:''}
+        ${aDesc?`<div class="gcard ${aDesc.length>320?'gcard-wide':''}"><h3>${t('about_pg.card_about_title','📋 Hakkımızda')}</h3><p>${aDesc}</p></div>`:''}
+        ${aMis?`<div class="gcard ${aMis.length>320?'gcard-wide':''}"><h3>${t('about_pg.card_mission_title','🎯 Misyonumuz')}</h3><p>${aMis}</p></div>`:''}
+        ${aVis?`<div class="gcard ${aVis.length>320?'gcard-wide':''}"><h3>${t('about_pg.card_vision_title','🔭 Vizyonumuz')}</h3><p>${aVis}</p></div>`:''}
+        ${t('about_pg.card_certs_body','')?`<div class="gcard ${t('about_pg.card_certs_body','').length>320?'gcard-wide':''}"><h3>${t('about_pg.card_certs_title','🏆 Sertifikalar')}</h3><p>${t('about_pg.card_certs_body','')}</p></div>`:''}
       </div>
       ${(()=>{
         // Values bloku: en az bir title dolu mu?
@@ -4821,62 +4833,87 @@ function renderCards(list){
     const pName  = tp(p,'name');
     const pLoc   = tp(p,'location');
     const pTags  = tp(p,'tags') || p.tags;
+    const pFeats = tp(p,'feats') || p.feats;
     const pStat  = tStatus(p.status);
     const pPrice = tPrice(p.price);
     const ariaImg = `${pName} ${t('card.aria_image_suffix','görseli')}`;
     const ariaDet = `${pName} ${t('card.aria_detail_prefix','detaylarını görüntüle')}`;
-    c.innerHTML=`<div class="card-img" style="${imgStyle}" role="img" aria-label="${ariaImg}">${emojiBody}<div class="card-badge" style="background:${p.sc};color:${p.sc==='#c8913a'?'var(--dk)':'#fff'}">${pStat}</div>${pendingBadge}</div><div class="card-body"><div><div class="card-title">${pName}</div><div class="card-loc">📍 ${pLoc}</div><div class="card-tags">${(pTags||[]).map(tg=>`<span class="card-tag">${tg}</span>`).join('')}</div></div><div class="card-foot"><div class="card-price">${pPrice}</div><button class="dbtn" aria-label="${ariaDet}">${t('card.detail','Detay →')}</button></div></div>`;
+    const featsHtml = (pFeats && pFeats.length)
+      ? `<div class="card-feats">${pFeats.map(f=>`<span class="card-feat">${f}</span>`).join('')}</div>`
+      : '';
+    c.innerHTML=`<div class="card-img" style="${imgStyle}" role="img" aria-label="${ariaImg}">${emojiBody}<div class="card-badge" style="background:${p.sc};color:${p.sc==='#c8913a'?'var(--dk)':'#fff'}">${pStat}</div>${pendingBadge}</div><div class="card-body"><div class="card-top"><div class="card-title">${pName}</div><div class="card-loc">📍 ${pLoc}</div><div class="card-tags">${(pTags||[]).map(tg=>`<span class="card-tag">${tg}</span>`).join('')}</div>${featsHtml}</div><div class="card-foot"><div class="card-price">${pPrice}</div><button class="dbtn" aria-label="${ariaDet}">${t('card.detail','Detay →')}</button></div></div>`;
     el.appendChild(c);
   });
   document.getElementById('rcount').textContent=list.length+' '+t('filters.count_suffix','proje listeleniyor');
-  // Tags +N collapse pass (madde 3)
-  requestAnimationFrame(()=>applyTagOverflow());
+  // Chips +N collapse pass (madde 5c — generic helper)
+  requestAnimationFrame(()=>{ applyTagOverflow(); applyFeatsOverflow(); });
 }
-// Compute visible tags per card; hide overflow + append "+N" chip
+// ── Generic chips overflow: tek satira sigmayan item'lari +N rozeti ile gizle (madde 5c)
+// opts.itemSel: ic chip class'i (ornegin '.card-tag', '.card-feat')
+// opts.moreClass: +N chip class'i ('card-tag-more', 'card-feat-more')
+// opts.titlePrefix: tooltip prefix (ornegin "Daha fazla:" — gizli item'larin ad listesi gosterilir)
+function applyChipsOverflow(wrap, opts){
+  if(!wrap) return;
+  const itemSel = opts.itemSel;
+  const moreClass = opts.moreClass;
+  const titlePrefix = opts.titlePrefix || '';
+  // Reset: show all + remove previous +N chip
+  wrap.querySelectorAll('.'+moreClass).forEach(n=>n.remove());
+  const items=Array.from(wrap.querySelectorAll(itemSel));
+  items.forEach(t=>{t.style.display=''});
+  const containerW=wrap.clientWidth;
+  if(!containerW||items.length===0) return;
+  const gap=4;
+  let used=0; let lastFitIdx=-1;
+  for(let i=0;i<items.length;i++){
+    const w=items[i].offsetWidth;
+    const next=used + (i>0?gap:0) + w;
+    if(next<=containerW){ used=next; lastFitIdx=i; }
+    else break;
+  }
+  const hiddenCount=items.length - (lastFitIdx+1);
+  if(hiddenCount<=0) return;
+  const chip=document.createElement('span');
+  chip.className=moreClass;
+  chip.textContent=`+${hiddenCount}`;
+  wrap.appendChild(chip);
+  const chipW=chip.offsetWidth;
+  while(lastFitIdx>=0 && (used + gap + chipW) > containerW){
+    items[lastFitIdx].style.display='none';
+    used -= items[lastFitIdx].offsetWidth + (lastFitIdx>0?gap:0);
+    lastFitIdx--;
+  }
+  for(let i=lastFitIdx+1;i<items.length;i++) items[i].style.display='none';
+  const finalHidden = items.length - (lastFitIdx+1);
+  if(finalHidden<=0){ chip.remove(); return; }
+  chip.textContent = `+${finalHidden}`;
+  // Tooltip: gizli item adlari (max 5 + ekstra "..." )
+  const hiddenLabels = items.slice(items.length-finalHidden).map(it=>it.textContent.trim()).filter(Boolean);
+  if(hiddenLabels.length){
+    const showList = hiddenLabels.slice(0,5).join(', ') + (hiddenLabels.length>5?'...':'');
+    chip.setAttribute('title', titlePrefix ? (titlePrefix+' '+showList) : showList);
+  }
+}
 function applyTagOverflow(){
   document.querySelectorAll('.plist .card').forEach(card=>{
-    const wrap=card.querySelector('.card-tags');
-    if(!wrap) return;
-    // Reset: show all tags, remove previous +N chip
-    wrap.querySelectorAll('.card-tag-more').forEach(n=>n.remove());
-    const tags=Array.from(wrap.querySelectorAll('.card-tag'));
-    tags.forEach(t=>{t.style.display=''});
-    const containerW=wrap.clientWidth;
-    if(!containerW||tags.length===0) return;
-    // Measure gap (flex gap). Use approx 4px per spec.
-    const gap=4;
-    let used=0; let lastFitIdx=-1;
-    for(let i=0;i<tags.length;i++){
-      const w=tags[i].offsetWidth;
-      const next=used + (i>0?gap:0) + w;
-      if(next<=containerW){ used=next; lastFitIdx=i; }
-      else break;
-    }
-    const hiddenCount=tags.length - (lastFitIdx+1);
-    if(hiddenCount>0){
-      // Will need room for the "+N" chip. Hide one more tag if needed.
-      const chip=document.createElement('span');
-      chip.className='card-tag-more';
-      chip.textContent=`+${hiddenCount}`;
-      wrap.appendChild(chip);
-      // Measure chip width; if overflow now, hide last visible tag too
-      const chipW=chip.offsetWidth;
-      while(lastFitIdx>=0 && (used + gap + chipW) > containerW){
-        tags[lastFitIdx].style.display='none';
-        used -= tags[lastFitIdx].offsetWidth + (lastFitIdx>0?gap:0);
-        lastFitIdx--;
-      }
-      // Finally hide the tags beyond lastFitIdx
-      for(let i=lastFitIdx+1;i<tags.length;i++) tags[i].style.display='none';
-      // Recompute count: total hidden may differ from initial calc
-      const finalHidden = tags.length - (lastFitIdx+1);
-      if(finalHidden<=0){ chip.remove(); }
-      else chip.textContent = `+${finalHidden}`;
-    }
+    applyChipsOverflow(card.querySelector('.card-tags'), {
+      itemSel: '.card-tag',
+      moreClass: 'card-tag-more',
+      titlePrefix: t('card.tags_more_tooltip','Diğer:')
+    });
+  });
+}
+function applyFeatsOverflow(){
+  document.querySelectorAll('.plist .card').forEach(card=>{
+    applyChipsOverflow(card.querySelector('.card-feats'), {
+      itemSel: '.card-feat',
+      moreClass: 'card-feat-more',
+      titlePrefix: t('card.feats_more_tooltip','Diğer özellikler:')
+    });
   });
 }
 // Re-run on window resize
-window.addEventListener('resize', ()=>{ requestAnimationFrame(applyTagOverflow); });
+window.addEventListener('resize', ()=>{ requestAnimationFrame(()=>{ applyTagOverflow(); applyFeatsOverflow(); }); });
 function fAll(b){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));b.classList.add('on');renderCards(D.projects);showMarkers(D.projects);fitMap()}
 function fBy(cat,b){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));b.classList.add('on');const filtered=D.projects.filter(p=>p.category===cat);renderCards(filtered);showMarkers(filtered);fitMap()}
 function showMarkers(list){const ids=new Set(list.map(p=>p.id));Object.entries(markers).forEach(([id,m])=>{const el=m.getElement();if(el)el.style.display=ids.has(+id)?'':'none'})}
@@ -4919,6 +4956,11 @@ function openD(id){
   const htypesHtml = houseTypes.length
     ? `<div class="sec-t">${t('detail.section_house_types','🏠 Konut Tipleri')}</div><div class="dto-htypes" role="list">${houseTypes.map(ht=>`<span class="dto-htype" role="listitem">${ht}</span>`).join('')}</div>`
     : '';
+  // Mini-map (madde 1): sadece lat+lng dolu projelerde, yoksa blok komple gizli
+  const hasGeo = (typeof p.lat==='number') && (typeof p.lng==='number') && isFinite(p.lat) && isFinite(p.lng);
+  const mapHtml = hasGeo
+    ? `<div class="sec-t">${t('detail.section_map','📍 Konum')}</div><div id="dtoMap" class="dto-map" aria-label="${t('detail.map_aria','Proje konumu haritasi')}"></div>`
+    : '';
   // Daire tipleri (multilang: tt.n, tek dilli: tt.s, tt.p)
   const typesHtml = pTypes && pTypes.length
     ? `<div class="sec-t">${t('detail.section_apt_types','Daire Tipleri')}</div><div class="atgrid">${pTypes.map((tt,i)=>{
@@ -4929,14 +4971,40 @@ function openD(id){
         return `<div class="atc${i===0?' sel':''}" onclick="selType(${i})"><div class="atc-n">${nDisp}</div><div class="atc-s">${sDisp}</div><div class="atc-p">${dispP}</div></div>`;
       }).join('')}</div>`
     : '';
-  bd.innerHTML=`<div class="dto-hero" style="${heroStyle}" role="img" aria-label="${pName} ${t('detail.hero_aria_suffix','öne çıkan görsel')}">${heroBody}<div class="st" style="background:${p.sc};color:${p.sc==='#c8913a'?'var(--dk)':'#fff'}">${pStat}</div></div>${videoHtml}<div class="dto-name">${pName}</div><div class="dto-loc">📍 ${pLoc}</div>${pTL?`<div style="font-size:.75rem;color:var(--txm);margin-bottom:14px">🗓️ ${pTL}</div>`:''}<div class="qstats"><div class="qs"><div class="n">${p.units||'—'}</div><div class="l">${t('detail.units_label','Daire')}</div></div><div class="qs"><div class="n">${p.blocks||'—'}</div><div class="l">${t('detail.blocks_label','Blok')}</div></div><div class="qs"><div class="n">${p.floors||'—'}</div><div class="l">${t('detail.floors_label','Kat')}</div></div></div>${htypesHtml}${photosHtml}${typesHtml}<div class="sec-t">${t('detail.section_features','Özellikler')}</div><div class="ftgrid">${(pFeats||[]).map(f=>`<div class="fti">${f}</div>`).join('')}</div><div class="ddesc">${pDesc}</div><div class="cmini" id="cmini"><h4>${t('detail.contact_form_title','Bu Proje İçin Bilgi Al')}</h4><div class="mfg"><label for="df_name">${t('detail.field_name','Ad Soyad')}</label><input id="df_name" required placeholder="${t('detail.placeholder_name','Adınız Soyadınız')}" aria-label="${t('detail.field_name','Ad Soyad')}" autocomplete="name"><div class="field-error">${t('detail.err_name','Ad Soyad alanı zorunludur')}</div></div><div class="mfg"><label for="df_phone">${t('detail.field_phone','Telefon')}</label><input id="df_phone" required data-phone placeholder="${t('detail.placeholder_phone','0(5XX) XXX XX XX')}" aria-label="${t('detail.aria_phone','Telefon numarası')}" autocomplete="tel"><div class="field-error">${t('detail.err_phone','Geçerli bir telefon numarası girin')}</div></div><div class="mfg"><label for="df_msg">${t('detail.field_msg','Mesaj')}</label><textarea id="df_msg" placeholder="${t('detail.placeholder_msg_prefix','Mesajınız... (')}${pName}${t('detail.placeholder_msg_suffix',' hakkında bilgi almak istiyorum)')}" aria-label="${t('detail.aria_msg','Mesaj')}"></textarea></div><button class="msub" onclick="submitForm(this,document.getElementById('df_name'),document.getElementById('df_phone'),document.getElementById('df_msg'))">${t('detail.submit','📩 Bilgi Talep Et')}</button></div>`;
+  bd.innerHTML=`<div class="dto-hero" style="${heroStyle}" role="img" aria-label="${pName} ${t('detail.hero_aria_suffix','öne çıkan görsel')}">${heroBody}<div class="st" style="background:${p.sc};color:${p.sc==='#c8913a'?'var(--dk)':'#fff'}">${pStat}</div></div>${videoHtml}<div class="dto-name">${pName}</div><div class="dto-loc">📍 ${pLoc}</div>${pTL?`<div style="font-size:.75rem;color:var(--txm);margin-bottom:14px">🗓️ ${pTL}</div>`:''}<div class="qstats"><div class="qs"><div class="n">${p.units||'—'}</div><div class="l">${t('detail.units_label','Daire')}</div></div><div class="qs"><div class="n">${p.blocks||'—'}</div><div class="l">${t('detail.blocks_label','Blok')}</div></div><div class="qs"><div class="n">${p.floors||'—'}</div><div class="l">${t('detail.floors_label','Kat')}</div></div></div>${htypesHtml}${mapHtml}${photosHtml}${typesHtml}<div class="sec-t">${t('detail.section_features','Özellikler')}</div><div class="ftgrid">${(pFeats||[]).map(f=>`<div class="fti">${f}</div>`).join('')}</div><div class="ddesc">${pDesc}</div><div class="cmini" id="cmini"><h4>${t('detail.contact_form_title','Bu Proje İçin Bilgi Al')}</h4><div class="mfg"><label for="df_name">${t('detail.field_name','Ad Soyad')}</label><input id="df_name" required placeholder="${t('detail.placeholder_name','Adınız Soyadınız')}" aria-label="${t('detail.field_name','Ad Soyad')}" autocomplete="name"><div class="field-error">${t('detail.err_name','Ad Soyad alanı zorunludur')}</div></div><div class="mfg"><label for="df_phone">${t('detail.field_phone','Telefon')}</label><input id="df_phone" required data-phone placeholder="${t('detail.placeholder_phone','0(5XX) XXX XX XX')}" aria-label="${t('detail.aria_phone','Telefon numarası')}" autocomplete="tel"><div class="field-error">${t('detail.err_phone','Geçerli bir telefon numarası girin')}</div></div><div class="mfg"><label for="df_msg">${t('detail.field_msg','Mesaj')}</label><textarea id="df_msg" placeholder="${t('detail.placeholder_msg_prefix','Mesajınız... (')}${pName}${t('detail.placeholder_msg_suffix',' hakkında bilgi almak istiyorum)')}" aria-label="${t('detail.aria_msg','Mesaj')}"></textarea></div><button class="msub" onclick="submitForm(this,document.getElementById('df_name'),document.getElementById('df_phone'),document.getElementById('df_msg'))">${t('detail.submit','📩 Bilgi Talep Et')}</button></div>`;
   bd.scrollTop=0;
   requestAnimationFrame(()=>{
-    bd.querySelectorAll('.dto-hero,.dto-name,.dto-loc,.qstats,.dto-htypes,.dto-photos,.atgrid,.ftgrid,.ddesc,.cmini').forEach((el,i)=>{el.style.animation=`dFade .4s ease-out ${i*.05}s backwards`});
+    bd.querySelectorAll('.dto-hero,.dto-name,.dto-loc,.qstats,.dto-htypes,.dto-map,.dto-photos,.atgrid,.ftgrid,.ddesc,.cmini').forEach((el,i)=>{el.style.animation=`dFade .4s ease-out ${i*.05}s backwards`});
   });
+  // Mini-map mount (madde 1) — sadece lat/lng dolu projelerde
+  destroyDtoMiniMap();
+  if (hasGeo){
+    // bd henuz DOM'a yeni eklendi; map host visible olmadan once invalidate gerekiyor
+    // Animation framesini bekle ki host yukseklik 180px olsun
+    requestAnimationFrame(()=>{
+      const host = document.getElementById('dtoMap');
+      if (!host) return;
+      try {
+        dtoMiniMap = L.map(host, { zoomControl: false, attributionControl: true, scrollWheelZoom: false, dragging: true })
+          .setView([p.lat, p.lng], 14);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OSM © CARTO' }).addTo(dtoMiniMap);
+        L.marker([p.lat, p.lng], { icon: mkIcon(p.sc||'#1e3a5f', p.emoji||'🏢') }).addTo(dtoMiniMap)
+          .bindPopup(`<div class="pp-t">${pName}</div><div class="pp-l">📍 ${pLoc}</div>`);
+        // dto panel transition sonrasi (kapali->acik) host boyutu netlessin
+        setTimeout(()=>{ try { dtoMiniMap && dtoMiniMap.invalidateSize(); } catch(_){} }, 380);
+      } catch(err){ console.warn('[dto-map] init failed', err); }
+    });
+  }
   document.getElementById('dto').classList.add('open');
 }
-function closeD(){document.getElementById('dto')?.classList.remove('open');document.querySelectorAll('.card').forEach(c=>c.classList.remove('on'));window.__currentDtoId=null}
+let dtoMiniMap = null;
+function destroyDtoMiniMap(){
+  if (dtoMiniMap){
+    try { dtoMiniMap.remove(); } catch(_){}
+    dtoMiniMap = null;
+  }
+}
+function closeD(){document.getElementById('dto')?.classList.remove('open');document.querySelectorAll('.card').forEach(c=>c.classList.remove('on'));window.__currentDtoId=null;destroyDtoMiniMap();}
 function selType(i){document.querySelectorAll('.atc').forEach((c,j)=>c.classList.toggle('sel',j===i))}
 
 // ═══ ADMIN ACCESS ═══

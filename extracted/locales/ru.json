@@ -51,7 +51,9 @@
     "photo_pending": "📷 Фотографии скоро",
     "no_projects": "Проекты ещё не добавлены.",
     "aria_image_suffix": "изображение",
-    "aria_detail_prefix": "подробнее о"
+    "aria_detail_prefix": "подробнее о",
+    "tags_more_tooltip": "Другие:",
+    "feats_more_tooltip": "Другие особенности:"
   },
   "detail": {
     "units_label": "Квартир",
@@ -83,7 +85,9 @@
     "video_title_suffix": "видео с дрона",
     "hero_aria_suffix": "главное изображение",
     "photo_aria_prefix": "фото",
-    "popup_detail": "Подробнее →"
+    "popup_detail": "Подробнее →",
+    "section_map": "📍 Расположение",
+    "map_aria": "Карта расположения проекта"
   },
   "wa": {
     "float_aria": "Связаться через WhatsApp"

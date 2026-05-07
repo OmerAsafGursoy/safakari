@@ -51,7 +51,9 @@
     "photo_pending": "📷 الصور قريبًا",
     "no_projects": "لم تتم إضافة مشاريع بعد.",
     "aria_image_suffix": "صورة",
-    "aria_detail_prefix": "عرض تفاصيل"
+    "aria_detail_prefix": "عرض تفاصيل",
+    "tags_more_tooltip": "أخرى:",
+    "feats_more_tooltip": "ميزات أخرى:"
   },
   "detail": {
     "units_label": "الوحدات",
@@ -83,7 +85,9 @@
     "video_title_suffix": "فيديو الدرون",
     "hero_aria_suffix": "الصورة الرئيسية",
     "photo_aria_prefix": "صورة",
-    "popup_detail": "التفاصيل →"
+    "popup_detail": "التفاصيل →",
+    "section_map": "📍 الموقع",
+    "map_aria": "خريطة موقع المشروع"
   },
   "wa": {
     "float_aria": "تواصل معنا عبر واتساب"
