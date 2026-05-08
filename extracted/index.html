@@ -154,16 +154,58 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 }
 .topbar .logo{height:36px;width:auto;flex-shrink:0;transition:transform var(--tr)}
 .topbar .logo:hover{transform:scale(1.04)}
-.topbar-nav{display:flex;gap:4px;margin:0 auto;justify-content:center;flex-wrap:wrap}
-.nav-btn{padding:7px 16px;border-radius:50px;font-size:.76rem;font-weight:600;color:var(--txm);transition:all var(--tr)}
+.topbar-logo-link{display:inline-flex;align-items:center;flex-shrink:0}
+/* Hamburger (default hidden, <700px'de gorunur) */
+.topbar-burger{display:none;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;color:var(--dk);background:transparent;flex-shrink:0;transition:background var(--tr)}
+.topbar-burger:hover{background:var(--pri-l);color:var(--pri)}
+.topbar-burger:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+.topbar-nav{display:flex;gap:4px;margin:0 auto;justify-content:center;flex-wrap:nowrap;min-width:0;overflow:hidden}
+.nav-btn{padding:7px 16px;border-radius:50px;font-size:.76rem;font-weight:600;color:var(--txm);transition:all var(--tr);white-space:nowrap;flex-shrink:0}
 .nav-btn:hover{color:var(--pri);background:var(--pri-l)}
 .nav-btn.on{color:var(--pri);background:var(--pri-l);font-weight:700}
-.topbar-r{display:flex;gap:8px;flex-shrink:0}
-.tb{padding:8px 18px;border-radius:50px;font-size:.76rem;font-weight:700;transition:all var(--tr);display:inline-flex;align-items:center;gap:6px}
+.topbar-r{display:flex;gap:8px;flex-shrink:0;align-items:center}
+.tb{padding:8px 18px;border-radius:50px;font-size:.76rem;font-weight:700;transition:all var(--tr);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .tb.acc{background:linear-gradient(135deg,var(--acc),#daa64e);color:var(--dk);box-shadow:0 3px 12px var(--acc-g)}
 .tb.pri{background:linear-gradient(135deg,var(--pri),#2a5078);color:#fff;box-shadow:0 3px 12px var(--pri-g)}
 .tb:hover{transform:translateY(-2px)}
 .tb.adm{background:var(--dk);color:var(--acc);display:none}
+
+/* ── Mobile drawer (slide from left, <700px) ── */
+.topbar-drawer-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(4px);z-index:9500;opacity:0;transition:opacity .25s ease;pointer-events:none}
+.topbar-drawer-backdrop.open{opacity:1;pointer-events:auto}
+.topbar-drawer{position:fixed;top:0;left:0;bottom:0;width:min(82vw,320px);background:rgba(255,255,255,.98);backdrop-filter:blur(18px);box-shadow:6px 0 32px rgba(0,0,0,.16);z-index:9600;display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.topbar-drawer[hidden]{display:none}
+.topbar-drawer.open{transform:translateX(0)}
+.topbar-drawer-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--brd)}
+.topbar-drawer-head .logo{height:30px}
+.topbar-drawer-close{width:36px;height:36px;border-radius:50%;background:var(--bg);color:var(--tx);font-size:1.4rem;line-height:1;display:flex;align-items:center;justify-content:center;transition:all var(--tr)}
+.topbar-drawer-close:hover{background:#fee2e2;color:#c0392b;transform:rotate(90deg)}
+.topbar-drawer-close:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+.topbar-drawer-nav{flex:1;overflow-y:auto;padding:14px 14px;display:flex;flex-direction:column;gap:4px}
+.topbar-drawer-nav .nav-btn{justify-content:flex-start;text-align:left;padding:11px 16px;font-size:.88rem;width:100%;display:flex;align-items:center;border-radius:10px}
+.topbar-drawer-foot{padding:12px 14px;border-top:1px solid var(--brd);display:flex;flex-direction:column;gap:8px;background:rgba(247,245,242,.5)}
+.topbar-drawer-foot .tb{justify-content:center;width:100%;padding:10px 16px}
+
+/* ── Lang dropdown (compact single button + menu) ── */
+.lang-switcher{position:relative;display:inline-flex;flex-shrink:0}
+.lang-switcher-btn{display:inline-flex;align-items:center;gap:4px;padding:7px 12px;border-radius:50px;background:rgba(247,245,242,.85);border:1px solid rgba(232,228,223,.7);color:var(--dk);font-family:inherit;font-size:.72rem;font-weight:700;letter-spacing:.4px;cursor:pointer;transition:all var(--tr);line-height:1;min-width:50px;justify-content:center}
+.lang-switcher-btn:hover{background:#eaf1f8;border-color:var(--pri);color:var(--pri)}
+.lang-switcher-btn:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+.lang-switcher-btn[aria-expanded="true"]{background:linear-gradient(135deg,var(--pri),#2a5078);color:#fff;border-color:var(--pri);box-shadow:0 2px 8px var(--pri-g)}
+.lang-switcher-btn .lang-chev{width:10px;height:10px;transition:transform .2s ease}
+.lang-switcher-btn[aria-expanded="true"] .lang-chev{transform:rotate(180deg)}
+.lang-switcher-menu{position:absolute;top:calc(100% + 6px);right:0;min-width:140px;background:rgba(255,255,255,.98);backdrop-filter:blur(12px);border:1px solid var(--brd);border-radius:12px;box-shadow:0 10px 32px rgba(0,0,0,.14);padding:4px;list-style:none;margin:0;z-index:9001;animation:langMenuIn .18s ease-out}
+@keyframes langMenuIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.lang-switcher-menu[hidden]{display:none}
+.lang-switcher-menu li{margin:0}
+.lang-switcher-opt{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:8px 14px;background:transparent;color:var(--tx);border-radius:8px;font-family:inherit;font-size:.78rem;font-weight:600;cursor:pointer;transition:all var(--tr);text-align:left;line-height:1.2}
+.lang-switcher-opt:hover,.lang-switcher-opt:focus-visible{background:var(--pri-l);color:var(--pri);outline:none}
+.lang-switcher-opt[aria-selected="true"]{color:var(--pri);font-weight:800;background:rgba(30,58,95,.06)}
+.lang-switcher-opt .lang-check{font-weight:900;font-size:.88rem;opacity:0}
+.lang-switcher-opt[aria-selected="true"] .lang-check{opacity:1}
+/* Drawer icindeki dropdown menu sola acilsin (taşmasin) */
+.topbar-drawer .lang-switcher{align-self:flex-start}
+.topbar-drawer .lang-switcher-menu{right:auto;left:0}
 
 /* ── Content area ── */
 .content{flex:1;min-height:0;position:relative;z-index:1;overflow:hidden}
@@ -472,12 +514,19 @@ html[lang="ar"] .filters-row{ flex-direction: row; }
   .loan-section{padding:20px}
 }
 /* ── Responsive ── */
-/* Mac iter-5: dar masaustu pencere (950-1100px) icin topbar sikistir */
-@media(max-width:1100px){
+/* Mac iter-6 (2026-05-08): yeni breakpoint matrix
+   >1280px : tam tek satir, tum elemanlar acik
+   1280-950 : tel CTA gizle, kompakt nav + lang dropdown
+   950-700  : font/padding kucult, nav hala yatay
+   <700px   : hamburger drawer modu (nav header'dan kalkar, drawer'a tasinir)
+   <480px   : kompakt — sadece icon + lang kisa */
+@media(max-width:1280px){
   .topbar{padding:0 14px;gap:8px}
   .topbar .logo{height:32px}
   .nav-btn{padding:6px 12px;font-size:.72rem}
   .tb{padding:7px 14px;font-size:.72rem}
+  /* tel CTA gizle - sadece WhatsApp + lang dropdown gosterilir */
+  #tbPhone{display:none!important}
 }
 @media(max-width:950px){
   .side{width:300px;max-width:38vw;min-width:220px}
@@ -485,16 +534,23 @@ html[lang="ar"] .filters-row{ flex-direction: row; }
   .gpage{padding:30px 24px}
   .gcards,.gstats,.gvals,.cgrid{grid-template-columns:1fr}
   .gstats{grid-template-columns:repeat(2,1fr)}
-  /* Mac iter-5: dar pencerede topbar wrap (700px'in ustunde de gerekebilir, tablet portrait/landscape) */
+  /* Topbar sikistir, nav hala yatay */
+  .topbar{padding:0 12px;gap:6px}
+  .topbar .logo{height:30px}
   .topbar-nav{gap:2px}
   .nav-btn{padding:5px 10px;font-size:.68rem}
-  .tb{padding:6px 10px;font-size:.68rem}
+  .tb{padding:6px 12px;font-size:.68rem}
+  .lang-switcher-btn{padding:6px 10px;font-size:.68rem;min-width:46px}
 }
 @media(max-width:700px){
-  .topbar{flex-wrap:wrap;height:auto;padding:10px 12px;gap:6px}
-  .topbar-nav{order:3;width:100%;justify-content:center;padding-top:6px;border-top:1px solid var(--brd);gap:2px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
-  .topbar-nav::-webkit-scrollbar{display:none}
-  .nav-btn{padding:5px 10px;font-size:.7rem;flex-shrink:0;white-space:nowrap}.tb{padding:6px 12px;font-size:.7rem}
+  /* Hamburger drawer modu — desktop nav gizle */
+  .topbar{flex-wrap:nowrap;height:56px;padding:0 12px;gap:8px;justify-content:space-between}
+  .topbar-burger{display:inline-flex}
+  .topbar-nav{display:none}
+  .topbar-logo-link{margin-right:auto}
+  .topbar-r{gap:6px}
+  .tb{padding:6px 12px;font-size:.7rem}
+  /* Layout fix'leri */
   .split{flex-direction:column;overflow-y:auto}
   .side{width:100%!important;max-width:100%!important;min-width:auto!important;height:auto;max-height:38vh;flex-shrink:0;border-right:none;border-bottom:1px solid var(--brd)}
   .mapwrap{flex:1;min-height:250px}
@@ -507,16 +563,19 @@ html[lang="ar"] .filters-row{ flex-direction: row; }
   .footer-inner{grid-template-columns:1fr!important}
   .footer-bottom{flex-direction:column;gap:8px;text-align:center}
 }
-/* Mac iter-5: kucuk mobile (<480px) - topbar daha sikistir, dil switcher kucult */
+/* Kucuk mobile (<480px) - topbar daha sikistir, lang sadece kod */
 @media(max-width:480px){
-  .topbar{padding:8px 10px;gap:4px}
-  .topbar .logo{height:28px}
+  .topbar{padding:0 10px;gap:4px}
+  .topbar .logo{height:26px}
   .topbar-r{gap:4px}
-  .tb{padding:5px 10px;font-size:.65rem}
-  .tb.pri span:not([aria-hidden]),.tb.adm span:not([aria-hidden]){display:none} /* sadece icon */
-  .nav-btn{padding:4px 8px;font-size:.64rem}
-  .lang-switcher,.ln-flag-list{font-size:.65rem!important}
+  .tb{padding:6px 10px;font-size:.65rem}
+  /* WhatsApp text gizle, sadece icon — tb.pri ve tb.adm icin */
+  .tb.pri span:not([aria-hidden]),.tb.adm span:not([aria-hidden]){display:none}
+  .lang-switcher-btn{padding:6px 8px;font-size:.64rem;min-width:40px;gap:2px}
+  .lang-switcher-btn .lang-chev{width:8px;height:8px}
   .filters-row .chip{padding:6px 12px;font-size:.7rem}
+  /* Drawer kuculur ama icerik okunabilir kalir */
+  .topbar-drawer{width:min(86vw,300px)}
 }
 
 /* ═══════════════════════════════════════════════════
@@ -634,7 +693,10 @@ html[lang="ar"] .filters-row{ flex-direction: row; }
 <div class="particles" id="pts"></div>
 
 <header class="topbar" role="banner">
-  <a href="#" onclick="showPage('projects');return false" data-i18n-attr="aria-label:topbar.aria_home" aria-label="Ana sayfa"><img src="logo-main.png" data-i18n-attr="alt:topbar.logo_alt" alt="Logo" class="logo" id="logoEl"></a>
+  <button class="topbar-burger" id="topbarBurger" type="button" aria-label="Menü" aria-controls="topbarDrawer" aria-expanded="false">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+  </button>
+  <a href="#" class="topbar-logo-link" onclick="showPage('projects');return false" data-i18n-attr="aria-label:topbar.aria_home" aria-label="Ana sayfa"><img src="logo-main.png" data-i18n-attr="alt:topbar.logo_alt" alt="Logo" class="logo" id="logoEl"></a>
   <nav class="topbar-nav" id="topNav" data-i18n-attr="aria-label:topbar.aria_nav" aria-label="Ana navigasyon"></nav>
   <div class="topbar-r">
     <a href="#" id="tbPhone" class="tb acc" data-i18n-attr="aria-label:topbar.aria_phone" aria-label="Telefon ile arayın" style="display:none">📞</a>
@@ -642,6 +704,19 @@ html[lang="ar"] .filters-row{ flex-direction: row; }
     <button class="tb adm" id="adminBtn" onclick="toggleAdminMode()" data-i18n-attr="aria-label:topbar.admin_aria" aria-label="Admin paneli"><span aria-hidden="true">⚙️ </span><span data-i18n="topbar.admin_label">Admin</span></button>
   </div>
 </header>
+<!-- Mobile drawer (slide from left) - <700px breakpoint'inde gorunur -->
+<div class="topbar-drawer-backdrop" id="topbarDrawerBackdrop" hidden></div>
+<aside class="topbar-drawer" id="topbarDrawer" role="dialog" aria-modal="true" aria-label="Menü" hidden>
+  <div class="topbar-drawer-head">
+    <img src="logo-main.png" alt="Logo" class="logo">
+    <button class="topbar-drawer-close" id="topbarDrawerClose" type="button" aria-label="Kapat">&times;</button>
+  </div>
+  <nav class="topbar-drawer-nav" id="topbarDrawerNav" aria-label="Mobil navigasyon"></nav>
+  <div class="topbar-drawer-foot">
+    <a href="#" id="dwPhone" class="tb acc" style="display:none">📞 <span class="dw-phone-text"></span></a>
+    <a href="#" id="dwWa" target="_blank" rel="noopener" class="tb pri" style="display:none"><span aria-hidden="true">💬 </span><span data-i18n="topbar.whatsapp_label">WhatsApp</span></a>
+  </div>
+</aside>
 
 <main class="content" id="content"></main>
 
@@ -4616,6 +4691,101 @@ function wireDynamicLinks(){
       fl.style.display = 'none';
     }
   }
+  // Drawer phone (mobile)
+  const dwPhone = document.getElementById('dwPhone');
+  if (dwPhone){
+    if (phone1){
+      dwPhone.style.display = 'inline-flex';
+      dwPhone.href = 'tel:'+tel;
+      const txt = dwPhone.querySelector('.dw-phone-text');
+      if (txt) txt.textContent = phone1;
+    } else {
+      dwPhone.style.display = 'none';
+    }
+  }
+  // Drawer WhatsApp (mobile)
+  const dwWa = document.getElementById('dwWa');
+  if (dwWa){
+    if (waDigits){
+      dwWa.style.display = 'inline-flex';
+      dwWa.href = 'https://wa.me/'+waDigits;
+    } else {
+      dwWa.style.display = 'none';
+    }
+  }
+}
+
+// ═══ MOBILE DRAWER (hamburger menu, <700px) ═══
+function initTopbarDrawer(){
+  const burger = document.getElementById('topbarBurger');
+  const drawer = document.getElementById('topbarDrawer');
+  const backdrop = document.getElementById('topbarDrawerBackdrop');
+  const closeBtn = document.getElementById('topbarDrawerClose');
+  if (!burger || !drawer || !backdrop) return;
+
+  let lastFocus = null;
+
+  function openDrawer(){
+    lastFocus = document.activeElement;
+    drawer.hidden = false;
+    backdrop.hidden = false;
+    // animation tetigi icin bir tick bekle
+    requestAnimationFrame(() => {
+      drawer.classList.add('open');
+      backdrop.classList.add('open');
+    });
+    burger.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    // Drawer icindeki nav'i guncelle (master nav'dan kopya)
+    syncDrawerNav();
+    // Close button'a focus
+    setTimeout(() => { closeBtn && closeBtn.focus(); }, 200);
+  }
+  function closeDrawer(){
+    drawer.classList.remove('open');
+    backdrop.classList.remove('open');
+    burger.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      drawer.hidden = true;
+      backdrop.hidden = true;
+    }, 280);
+    if (lastFocus && typeof lastFocus.focus === 'function'){
+      try { lastFocus.focus(); } catch(_){}
+    }
+  }
+
+  function syncDrawerNav(){
+    const src = document.getElementById('topNav');
+    const dst = document.getElementById('topbarDrawerNav');
+    if (!src || !dst) return;
+    dst.innerHTML = '';
+    Array.from(src.children).forEach(btn => {
+      const clone = btn.cloneNode(true);
+      // Drawer'da onclick koru ama tikladiktan sonra drawer kapansin
+      const orig = clone.getAttribute('onclick') || '';
+      clone.removeAttribute('onclick');
+      clone.addEventListener('click', () => {
+        try { (new Function(orig)).call(clone); } catch(_){}
+        closeDrawer();
+      });
+      dst.appendChild(clone);
+    });
+  }
+
+  burger.addEventListener('click', openDrawer);
+  closeBtn && closeBtn.addEventListener('click', closeDrawer);
+  backdrop.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !drawer.hidden) closeDrawer();
+  });
+  // Resize: 700px ustune cikarsa drawer kapansin
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 700 && !drawer.hidden) closeDrawer();
+  });
+
+  // buildNav her cagrildiginda drawer'i da senkronize et
+  window.__syncDrawerNav = syncDrawerNav;
 }
 
 // ═══ NAV BUILD ═══
@@ -4638,6 +4808,10 @@ function buildNav(){
   });
   // Kredi hesaplama - sabit, kaldirilamaz (farklilasma)
   nav.innerHTML+=`<button class="nav-btn" data-pg="loan" onclick="showPage('loan')">💰 ${t('nav.loan','Kredi Hesapla')}</button>`;
+  // Drawer (mobile) icindeki nav'i da master ile senkron tut
+  if (typeof window.__syncDrawerNav === 'function') {
+    try { window.__syncDrawerNav(); } catch(_){}
+  }
 }
 
 // ═══ PAGE SYSTEM ═══
@@ -7199,6 +7373,7 @@ function attachI18nHooks(){
 }
 attachI18nHooks();
 
+initTopbarDrawer();
 buildNav();
 wireDynamicLinks();
 showPage('projects');
