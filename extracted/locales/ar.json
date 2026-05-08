@@ -35,7 +35,6 @@
     "projects": "المشاريع",
     "about": "من نحن",
     "contact": "اتصل بنا",
-    "medya": "الإعلام",
     "loan": "حاسبة القرض",
     "kvkk": "الخصوصية"
   },
@@ -234,13 +233,7 @@
   "pages": {
     "about_title": "من نحن",
     "contact_title": "اتصل بنا",
-    "medya_title": "الإعلام",
     "kvkk_title": "الخصوصية",
-    "medya_content": "",
-    "medya_section_news_title": "الأخبار",
-    "medya_section_news_text": "",
-    "medya_section_gallery_title": "المعرض",
-    "medya_section_gallery_text": "",
     "kvkk_content": ""
   },
   "status": {

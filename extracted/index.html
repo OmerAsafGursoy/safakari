@@ -154,7 +154,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 }
 .topbar .logo{height:36px;width:auto;flex-shrink:0;transition:transform var(--tr)}
 .topbar .logo:hover{transform:scale(1.04)}
-.topbar-nav{display:flex;gap:4px;margin:0 auto}
+.topbar-nav{display:flex;gap:4px;margin:0 auto;justify-content:center;flex-wrap:wrap}
 .nav-btn{padding:7px 16px;border-radius:50px;font-size:.76rem;font-weight:600;color:var(--txm);transition:all var(--tr)}
 .nav-btn:hover{color:var(--pri);background:var(--pri-l)}
 .nav-btn.on{color:var(--pri);background:var(--pri-l);font-weight:700}
@@ -4165,15 +4165,6 @@ const D = {
       visible: true
     },
     {
-      id: "medya",
-      title: "Medya",
-      type: "custom",
-      visible: true,
-      icon: "📰",
-      content: "",
-      sections: []
-    },
-    {
       id: "kvkk",
       title: "KVKK",
       type: "custom",
@@ -4510,12 +4501,11 @@ let admEditLang = 'tr'; // hangi dilde duzenleniyor
 // ═══ I18N HELPERS ═══
 // Kisa erisim: t('key','default'); guvenli — I18N henuz boot etmediyse default doner
 function t(key, def){ return (window.I18N && window.I18N.t) ? window.I18N.t(key, def) : (def != null ? def : key); }
-// Builtin sayfa basligi cevirisi (about, contact, medya, kvkk vs.)
+// Builtin sayfa basligi cevirisi (about, contact, kvkk vs.)
 function pageTitle(p){
   // Builtin pages
   if (p.id === 'about')   return t('pages.about_title',   p.title);
   if (p.id === 'contact') return t('pages.contact_title', p.title);
-  if (p.id === 'medya')   return t('pages.medya_title',   p.title);
   if (p.id === 'kvkk')    return t('pages.kvkk_title',    p.title);
   return p.title;
 }
@@ -5891,11 +5881,34 @@ function loadPages(){
     const data = JSON.parse(raw);
     if(data && Array.isArray(data.pages) && data.pages.length){
       // Merge: localStorage has priority over defaults, but ensure builtin pages still exist
-      const saved = data.pages;
+      let saved = data.pages;
+      // Mac iter-4 (2026-05-08): deprecated 'medya' built-in + bos default-titled
+      // gallery sayfalari (Yeni Galeri / New Gallery / Новая галерея / معرض جديد / Neue Galerie)
+      // navigasyondan kaldirildi. localStorage'a kaydolmus eski kayitlari da temizle.
+      const DEFAULT_GALLERY_TITLES = new Set([
+        'Yeni Galeri','New Gallery','Новая галерея','Новая Галерея',
+        'معرض جديد','Neue Galerie','Galerie'
+      ]);
+      saved = saved.filter(p=>{
+        if(!p || !p.id) return false;
+        if(p.id === 'medya') return false; // deprecated builtin
+        // Custom gallery sayfasi default title'da kalmis ve icerigi/section'i bossa cikar
+        const isUnedited = (
+          p.type === 'custom' &&
+          DEFAULT_GALLERY_TITLES.has(p.title || '') &&
+          !(p.content && String(p.content).trim()) &&
+          !(Array.isArray(p.sections) && p.sections.length) &&
+          !(p.editorData && Array.isArray(p.editorData.blocks) && p.editorData.blocks.length)
+        );
+        if(isUnedited) return false;
+        return true;
+      });
       const savedIds = new Set(saved.map(p=>p.id));
       // Keep builtin defaults that are missing from storage
       D.pages.filter(p=>p.type==='builtin' && !savedIds.has(p.id)).forEach(bp=>saved.push(bp));
       D.pages = saved;
+      // Migration sonucunu hemen persist et — bir sonraki acilista da temiz olsun
+      try { persistPages(); } catch(_){ /* best-effort */ }
     }
   } catch(e){ /* ignore parse/storage errors, keep defaults */ }
 }

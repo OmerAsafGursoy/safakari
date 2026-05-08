@@ -35,7 +35,6 @@
     "projects": "Projeler",
     "about": "Biz Kimiz",
     "contact": "İletişim",
-    "medya": "Medya",
     "loan": "Kredi Hesapla",
     "kvkk": "KVKK"
   },
@@ -234,13 +233,7 @@
   "pages": {
     "about_title": "Biz Kimiz",
     "contact_title": "İletişim",
-    "medya_title": "Medya",
     "kvkk_title": "KVKK",
-    "medya_content": "",
-    "medya_section_news_title": "Haberler",
-    "medya_section_news_text": "",
-    "medya_section_gallery_title": "Galeri",
-    "medya_section_gallery_text": "",
     "kvkk_content": ""
   },
   "status": {

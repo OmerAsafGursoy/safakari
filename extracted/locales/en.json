@@ -35,7 +35,6 @@
     "projects": "Projects",
     "about": "About Us",
     "contact": "Contact",
-    "medya": "Media",
     "loan": "Mortgage Calculator",
     "kvkk": "Privacy"
   },
@@ -234,13 +233,7 @@
   "pages": {
     "about_title": "About Us",
     "contact_title": "Contact",
-    "medya_title": "Media",
     "kvkk_title": "Privacy",
-    "medya_content": "",
-    "medya_section_news_title": "News",
-    "medya_section_news_text": "",
-    "medya_section_gallery_title": "Gallery",
-    "medya_section_gallery_text": "",
     "kvkk_content": ""
   },
   "status": {

@@ -35,7 +35,6 @@
     "projects": "Projekte",
     "about": "Über uns",
     "contact": "Kontakt",
-    "medya": "Medien",
     "loan": "Kreditrechner",
     "kvkk": "Datenschutz"
   },
@@ -234,13 +233,7 @@
   "pages": {
     "about_title": "Über uns",
     "contact_title": "Kontakt",
-    "medya_title": "Medien",
     "kvkk_title": "Datenschutz",
-    "medya_content": "",
-    "medya_section_news_title": "News",
-    "medya_section_news_text": "",
-    "medya_section_gallery_title": "Galerie",
-    "medya_section_gallery_text": "",
     "kvkk_content": ""
   },
   "status": {

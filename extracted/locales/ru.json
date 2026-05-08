@@ -35,7 +35,6 @@
     "projects": "Проекты",
     "about": "О нас",
     "contact": "Контакты",
-    "medya": "Медиа",
     "loan": "Кредитный калькулятор",
     "kvkk": "Конфиденциальность"
   },
@@ -234,13 +233,7 @@
   "pages": {
     "about_title": "О нас",
     "contact_title": "Контакты",
-    "medya_title": "Медиа",
     "kvkk_title": "Конфиденциальность",
-    "medya_content": "",
-    "medya_section_news_title": "Новости",
-    "medya_section_news_text": "",
-    "medya_section_gallery_title": "Галерея",
-    "medya_section_gallery_text": "",
     "kvkk_content": ""
   },
   "status": {
