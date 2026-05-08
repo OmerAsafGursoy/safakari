@@ -579,18 +579,20 @@ html[lang="ar"] .filters-row{ flex-direction: row; }
 }
 /* ── Responsive ── */
 /* Mac iter-6 (2026-05-08): yeni breakpoint matrix
-   >1280px : tam tek satir, tum elemanlar acik
-   1280-950 : tel CTA gizle, kompakt nav + lang dropdown
+   >1280px : tam tek satir, tum elemanlar acik (tel = icon + numara)
+   1280-700 : tel CTA icon-only (.tb-phone-text gizli), kompakt nav + lang dropdown
    950-700  : font/padding kucult, nav hala yatay
    <700px   : hamburger drawer modu (nav header'dan kalkar, drawer'a tasinir)
-   <480px   : kompakt — sadece icon + lang kisa */
+              tel + WA topbar'da icon-only KAL — drawer footer'i bonus erisim
+   Mac v2-bugfix 2026-05-08: telefon CTA tum genisliklerde gozukmeli (insaat
+   firmasi icin musteri iletisim noktasi). Eskiden 1280 alti display:none idi. */
 @media(max-width:1280px){
   .topbar{padding:0 14px;gap:8px}
   .topbar .logo{height:32px}
   .nav-btn{padding:6px 12px;font-size:.72rem}
   .tb{padding:7px 14px;font-size:.72rem}
-  /* tel CTA gizle - sadece WhatsApp + lang dropdown gosterilir */
-  #tbPhone{display:none!important}
+  /* tel CTA icon-only: text gizle, ikon kal */
+  #tbPhone .tb-phone-text{display:none}
 }
 @media(max-width:950px){
   .side{width:300px;max-width:38vw;min-width:220px}
@@ -4615,10 +4617,13 @@ function pageTitle(p){
 }
 // Project field cevirisi — D.projects multilang storage'dan cek (schema v2)
 // Legacy fallback: dictionary'de projects.p<id>.<field> varsa onu kullan
+// Mac v2-bugfix 2026-05-08: location field Schema v3'te tek-string. i18n
+// fallback'i icin tProject lookup degeri "projects.p<id>.location" key path'i
+// donduguyse (yani sozlukte yok), ham string'e dus.
 function tp(project, field){
   if (!project) return '';
   const raw = project[field];
-  if (raw && typeof raw === 'object'){
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)){
     // Multilang obje (yeni schema)
     return getMl(raw);
   }
@@ -4626,10 +4631,18 @@ function tp(project, field){
     // Legacy array (tags/feats vs)
     return raw;
   }
-  // String/legacy: i18n dictionary fallback dene
+  // v3: location tek-string. Direkt raw donuyor, i18n lookup yapma —
+  // dictionary'de tanimli olmadigi icin "projects.p<id>.location" key path
+  // string'i geri donuyordu (Bug A 2026-05-08 Mac).
+  if (field === 'location'){
+    return raw != null ? String(raw) : '';
+  }
+  // Diger string field'lar icin legacy i18n dictionary fallback dene
   if (window.I18N && window.I18N.tProject){
     const v = window.I18N.tProject(project.id, field);
-    if (v != null) return v;
+    // tProject "projects.p<id>.<field>" key'i bulamayinca key path string
+    // donduruyor (i18n.js t() varsayilan davranis). O durumda raw kullan.
+    if (v != null && v !== ('projects.p' + project.id + '.' + field)) return v;
   }
   return raw != null ? raw : '';
 }
@@ -4656,13 +4669,14 @@ function wireDynamicLinks(){
   const wa = c.whatsapp || '';
   const waDigits = wa.replace(/\D/g,'');
   const tel = phone1.replace(/[^+0-9]/g,'');
-  // Topbar phone
+  // Topbar phone — Mac v2-bugfix 2026-05-08: tum genisliklerde gozuksun.
+  // 1280px alti CSS ile text gizlenip icon-only mode'a gecer (.tb-phone-text).
   const tbPhone = document.getElementById('tbPhone');
   if (tbPhone){
     if (phone1){
       tbPhone.style.display = 'inline-flex';
       tbPhone.href = 'tel:'+tel;
-      tbPhone.innerHTML = '📞 '+phone1;
+      tbPhone.innerHTML = '<span aria-hidden="true">📞</span><span class="tb-phone-text"> '+phone1+'</span>';
     } else {
       tbPhone.style.display = 'none';
     }
