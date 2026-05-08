@@ -12,6 +12,17 @@
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://safakari.com/">
 
+  <!-- ── hreflang 5 dil (TR/EN/RU/AR/DE + x-default) — domain karari sonra fix edilecek ── -->
+  <link rel="alternate" hreflang="tr" href="https://safakari.com/?lang=tr">
+  <link rel="alternate" hreflang="en" href="https://safakari.com/?lang=en">
+  <link rel="alternate" hreflang="ru" href="https://safakari.com/?lang=ru">
+  <link rel="alternate" hreflang="ar" href="https://safakari.com/?lang=ar">
+  <link rel="alternate" hreflang="de" href="https://safakari.com/?lang=de">
+  <link rel="alternate" hreflang="x-default" href="https://safakari.com/">
+
+  <!-- ── theme-color (mobile address bar marka rengi) ── -->
+  <meta name="theme-color" content="#1e3a5f">
+
   <!-- ── Open Graph ── -->
   <meta property="og:type" content="website">
   <meta property="og:locale" content="tr_TR">
@@ -108,22 +119,40 @@
   </script>
 
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H"
+        crossorigin="anonymous">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH"
+          crossorigin="anonymous"></script>
 
   <!-- ── i18n: 5 dil (TR/EN/RU/AR/DE) — boot scripti async DOMContentLoaded'a kadar bekler ── -->
   <link rel="prefetch" href="locales/tr.json">
   <script src="assets/i18n.js" defer></script>
 
-  <!-- ── Editor.js core + plugins (page-builder v1) — versiyonlar PIN'LI ── -->
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.30.7/dist/editorjs.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.8.8/dist/header.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@2.11.7/dist/paragraph.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@2.10.2/dist/image.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@1.4.2/dist/delimiter.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@1.10.0/dist/list.umd.js"></script>
+  <!-- ── Editor.js core + plugins (page-builder v1) — versiyonlar PIN'LI + SRI integrity ── -->
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.30.7/dist/editorjs.umd.min.js"
+          integrity="sha384-epCcifFeVlG/jgroe1K9cNHZXF5EegGkEQ/F8sTPYe5KRwYaGSQ/XRtjykWUHYaR"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.8.8/dist/header.umd.min.js"
+          integrity="sha384-J2N453rePuqsP7i3A56e5A45QOjK2njuCnGPYZ1U7k02J2JxP8h8/p+NxU0ekegS"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@2.11.7/dist/paragraph.umd.min.js"
+          integrity="sha384-eDjehA3KwzZVHeTrIgWQaK1EOTeZ8cS6Rj6Vgh8sXGsgs6YfP5CN3niIsQoLdqhB"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@2.10.2/dist/image.umd.min.js"
+          integrity="sha384-rj0gW+mokHJAAPRCc/JVJm7E8u6iKeMxoBXPX4WKB5DKf+lazOahwBPsqbiFPTLE"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@1.4.2/dist/delimiter.umd.min.js"
+          integrity="sha384-Uv4Z4GsgfrA5pg3scHQtmhD8yCstnJ2cDPCDFmwlfPdW689hXTo451CHKh/ZI3/h"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@1.10.0/dist/list.umd.js"
+          integrity="sha384-pt2axkhrlqv09EbFmJffXfINJyTZxEnHXulBal/0IZoIT/DIjN9Q8pxYzvJmol8z"
+          crossorigin="anonymous"></script>
   <!-- DOMPurify (zorunlu — her save ve render'da sanitize) -->
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"
+          integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu"
+          crossorigin="anonymous"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -494,11 +523,46 @@ html[lang="ar"] .filters-row{ flex-direction: row; }
 /* ── Detail drawer: mini-map (madde 1) ── */
 .dto-map{height:180px;border-radius:var(--rads);overflow:hidden;margin-bottom:18px;border:1px solid var(--brd);background:#eef2f7}
 .dto-map .leaflet-control-attribution{font-size:.55rem;background:rgba(255,255,255,.7)}
-/* ── Detail drawer: photos grid ── */
+/* ── Detail drawer: photos grid (Mac v2-polish 2026-05-08: ilk 2 + +X overlay) ── */
 .dto-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:18px}
-.dto-photo{aspect-ratio:1/1;border-radius:var(--rads);overflow:hidden;cursor:pointer;background:#eee;border:1px solid var(--brd);transition:all var(--tr)}
+.dto-photo{position:relative;aspect-ratio:1/1;border-radius:var(--rads);overflow:hidden;cursor:pointer;background:#eee;border:1px solid var(--brd);transition:all var(--tr)}
 .dto-photo:hover{transform:scale(1.03);box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.dto-photo:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
 .dto-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.dto-photo .ph-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);color:#fff;font-size:1.45rem;font-weight:800;letter-spacing:.5px;backdrop-filter:blur(2px);text-shadow:0 2px 6px rgba(0,0,0,.4);pointer-events:none}
+/* ── Lightbox modal ── */
+.lb-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;animation:lbFade .25s ease-out;padding:18px}
+.lb-overlay[hidden]{display:none!important}
+@keyframes lbFade{from{opacity:0}to{opacity:1}}
+.lb-stage{position:relative;width:100%;max-width:1100px;height:100%;max-height:88vh;display:flex;align-items:center;justify-content:center}
+.lb-img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:6px;box-shadow:0 12px 38px rgba(0,0,0,.6);user-select:none;animation:lbZoom .3s ease-out}
+@keyframes lbZoom{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.lb-cap{position:absolute;left:0;right:0;bottom:-44px;text-align:center;color:#e6e6e6;font-size:.78rem;font-weight:600;letter-spacing:.3px;text-shadow:0 1px 4px rgba(0,0,0,.6);pointer-events:none}
+.lb-btn{position:absolute;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;width:46px;height:46px;border-radius:50%;font-size:1.4rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s ease;backdrop-filter:blur(6px);line-height:1}
+.lb-btn:hover{background:rgba(255,255,255,.22);transform:scale(1.06)}
+.lb-btn:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.lb-prev{left:14px;top:50%;transform:translateY(-50%)}
+.lb-prev:hover{transform:translateY(-50%) scale(1.06)}
+.lb-next{right:14px;top:50%;transform:translateY(-50%)}
+.lb-next:hover{transform:translateY(-50%) scale(1.06)}
+.lb-close{top:14px;right:14px;width:42px;height:42px}
+.lb-counter{position:absolute;top:18px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.55);color:#fff;font-size:.78rem;font-weight:700;letter-spacing:.5px;padding:6px 14px;border-radius:50px;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.18)}
+.lb-thumbs{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;padding:6px 10px;background:rgba(0,0,0,.45);border-radius:50px;max-width:90%;overflow-x:auto;backdrop-filter:blur(6px)}
+.lb-thumbs::-webkit-scrollbar{display:none}
+.lb-thumb{width:42px;height:42px;border-radius:6px;overflow:hidden;flex-shrink:0;cursor:pointer;border:2px solid transparent;opacity:.55;transition:all .2s ease;background:#222}
+.lb-thumb.on{opacity:1;border-color:#fff}
+.lb-thumb:hover{opacity:.85}
+.lb-thumb img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+@media(max-width:640px){
+  .lb-overlay{padding:8px}
+  .lb-btn{width:40px;height:40px;font-size:1.2rem}
+  .lb-prev{left:6px}
+  .lb-next{right:6px}
+  .lb-close{top:8px;right:8px;width:38px;height:38px}
+  .lb-counter{top:8px;font-size:.7rem;padding:4px 10px}
+  .lb-thumb{width:36px;height:36px}
+  .dto-photo .ph-overlay{font-size:1.2rem}
+}
 /* ── Loan rate unit toggle ── */
 .ln-rate-toggle{display:inline-flex;gap:0;margin-bottom:6px;border:1.5px solid var(--brd);border-radius:50px;padding:3px;background:var(--bg)}
 .ln-rate-toggle label{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:50px;cursor:pointer;font-size:.72rem;font-weight:700;color:var(--txm);transition:all var(--tr)}
@@ -515,18 +579,20 @@ html[lang="ar"] .filters-row{ flex-direction: row; }
 }
 /* ── Responsive ── */
 /* Mac iter-6 (2026-05-08): yeni breakpoint matrix
-   >1280px : tam tek satir, tum elemanlar acik
-   1280-950 : tel CTA gizle, kompakt nav + lang dropdown
+   >1280px : tam tek satir, tum elemanlar acik (tel = icon + numara)
+   1280-700 : tel CTA icon-only (.tb-phone-text gizli), kompakt nav + lang dropdown
    950-700  : font/padding kucult, nav hala yatay
    <700px   : hamburger drawer modu (nav header'dan kalkar, drawer'a tasinir)
-   <480px   : kompakt — sadece icon + lang kisa */
+              tel + WA topbar'da icon-only KAL — drawer footer'i bonus erisim
+   Mac v2-bugfix 2026-05-08: telefon CTA tum genisliklerde gozukmeli (insaat
+   firmasi icin musteri iletisim noktasi). Eskiden 1280 alti display:none idi. */
 @media(max-width:1280px){
   .topbar{padding:0 14px;gap:8px}
   .topbar .logo{height:32px}
   .nav-btn{padding:6px 12px;font-size:.72rem}
   .tb{padding:7px 14px;font-size:.72rem}
-  /* tel CTA gizle - sadece WhatsApp + lang dropdown gosterilir */
-  #tbPhone{display:none!important}
+  /* tel CTA icon-only: text gizle, ikon kal */
+  #tbPhone .tb-phone-text{display:none}
 }
 @media(max-width:950px){
   .side{width:300px;max-width:38vw;min-width:220px}
@@ -686,6 +752,21 @@ html[lang="ar"] .filters-row{ flex-direction: row; }
 /* ── Pages listesi ek: backup butonlari ── */
 .pages-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .pages-toolbar .abtn{padding:7px 14px;font-size:.74rem}
+
+/* ── prefers-reduced-motion (WCAG 2.3.3, vestibular kullanicilar) ──
+   Tum animasyon/transition'lari neredeyse anlik yapar. Drawer slide,
+   lightbox fade/zoom, lang dropdown chevron, dto.open, keyframes —
+   hepsi bu blok ile override edilir. */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+  .particles{display:none}
+}
 </style>
 </head>
 <body>
@@ -768,10 +849,15 @@ html[lang="ar"] .filters-row{ flex-direction: row; }
 
 <script>
 // ═══ DATA ═══
-// SCHEMA v2 (2026-05-07) — Demo icerik tamamen sifir, multilang storage
-// Coklu dilli alanlar: { tr, en, ru, ar, de } objesi olarak saklanir
+// SCHEMA v3 (2026-05-08, Mac v2-polish) — Lokasyon tek-dilli (TR sabit) + sayfalar multilang
+// Coklu dilli alanlar (proje): name, timeline, desc, tags, feats, houseTypes, types[].n
+// Coklu dilli alanlar (sirket/about): name, slogan, address, title, subtitle, description, mission, vision, values[].title, values[].desc, stats[].num, stats[].label
+// Coklu dilli alanlar (sayfa - YENI v3): editorData (tum custom pages, blok yapisi her dilde ayri)
 // Tek dilli alanlar: id, status, slug, color, lat, lng, photos, youtubeId, prices, area, units, blocks, floors, year, phone, email, instagram, facebook, whatsapp, founded
-// Migration: SafakariMigrate.upgradeAll(D) load anaminda eski string'leri multilang objesine sarar
+// Tek dilli (v3 YENI): location — yer ismi TR sabit, tum dillerde ayni string olarak gorunur
+// Migration:
+//   v1 (string-based) -> v2: SafakariMigrate.upgradeAll string'leri multilang objelerine sarar
+//   v2 -> v3: location multilang -> string (.tr indirilir); pages.editorData tek-dilli -> {tr,en,ru,ar,de}
 const SUPPORTED_LANGS = ['tr','en','ru','ar','de'];
 function emptyMl(){ return { tr:'', en:'', ru:'', ar:'', de:'' }; }
 function emptyMlArr(){ return { tr:[], en:[], ru:[], ar:[], de:[] }; }
@@ -793,12 +879,17 @@ const D = {
       ar: "نبني على الأساس الصحيح",
       de: "Wir bauen auf dem richtigen Fundament"
     },
+    // Mac v2-polish 2026-05-08: yer adlari TR sabit (Şeker / Adapazarı / Sakarya).
+    // Onceki: en="Seker / Adapazari" (diakritik kayip), ru="Адапазары / Сакарья" (ceviri),
+    // ar="أدابازاري / سكاريا" (ceviri). Brief: lokasyon isimleri cevrilmesin, TR orijinal.
+    // Sokak/cadde/sehir kismi (mahalle, cadde, "is merkezi", "no") dile gore aciklama
+    // amacli cevrilebilir, ama yer ismi (Şeker / Adapazarı / Sakarya) sabit.
     address: {
       tr: "Şeker Mah. Ahmet Yesevi Cad. Arı İş Merkezi No: 76/3 Adapazarı / Sakarya",
-      en: "Seker Mah. Ahmet Yesevi Cad. Ari Is Merkezi No: 76/3 Adapazari / Sakarya",
-      ru: "Şeker Mah. Ahmet Yesevi Cad. Arı İş Merkezi No: 76/3 Адапазары / Сакарья",
-      ar: "حي شكر، شارع أحمد يسوي، مجمع آري التجاري، رقم 76/3، أدابازاري / سكاريا",
-      de: "Seker Mah. Ahmet Yesevi Cad. Ari Is Merkezi Nr. 76/3 Adapazari / Sakarya"
+      en: "Şeker Mah. Ahmet Yesevi Cad. Arı İş Merkezi No: 76/3 Adapazarı / Sakarya",
+      ru: "Şeker Mah. Ahmet Yesevi Cad. Arı İş Merkezi No: 76/3 Adapazarı / Sakarya",
+      ar: "Şeker Mah. شارع أحمد يسوي، مجمع آري التجاري، رقم 76/3، Adapazarı / Sakarya",
+      de: "Şeker Mah. Ahmet Yesevi Cad. Arı İş Merkezi Nr. 76/3 Adapazarı / Sakarya"
     },
     phone1: "+902642773007",
     phone2: "+905413635454",
@@ -981,13 +1072,7 @@ const D = {
         ar: "Ozanlar 2+1",
         de: "Ozanlar 2+1"
       },
-      location: {
-        tr: "Ozanlar / Adapazarı / Sakarya",
-        en: "Ozanlar / Adapazarı / Sakarya",
-        ru: "Ozanlar / Adapazarı / Sakarya",
-        ar: "Ozanlar / Adapazarı / Sakarya",
-        de: "Ozanlar / Adapazarı / Sakarya"
-      },
+      location: "Ozanlar / Adapazarı / Sakarya",
       timeline: {
         tr: "2025 - 2026",
         en: "2025 - 2026",
@@ -1076,13 +1161,7 @@ const D = {
         ar: "Rest Vills Karasu Aziziye Mahallesi",
         de: "Rest Vills Karasu Aziziye Mahallesi"
       },
-      location: {
-        tr: "Aziziye Mahallesi / Karasu / Sakarya",
-        en: "Aziziye Mahallesi / Karasu / Sakarya",
-        ru: "Aziziye Mahallesi / Karasu / Sakarya",
-        ar: "Aziziye Mahallesi / Karasu / Sakarya",
-        de: "Aziziye Mahallesi / Karasu / Sakarya"
-      },
+      location: "Aziziye Mahallesi / Karasu / Sakarya",
       timeline: {
         tr: "2023 - 2025",
         en: "2023 - 2025",
@@ -1207,13 +1286,7 @@ const D = {
         ar: "Poyraz Vills Yenimahalle",
         de: "Poyraz Vills Yenimahalle"
       },
-      location: {
-        tr: "Yenimahalle / Karasu / Sakarya",
-        en: "Yenimahalle / Karasu / Sakarya",
-        ru: "Yenimahalle / Karasu / Sakarya",
-        ar: "Yenimahalle / Karasu / Sakarya",
-        de: "Yenimahalle / Karasu / Sakarya"
-      },
+      location: "Yenimahalle / Karasu / Sakarya",
       timeline: {
         tr: "2023 - 2024",
         en: "2023 - 2024",
@@ -1331,13 +1404,7 @@ const D = {
         ar: "Bahçekent Life",
         de: "Bahçekent Life"
       },
-      location: {
-        tr: "Tepekum Mahallesi / Sakarya",
-        en: "Tepekum Mahallesi / Sakarya",
-        ru: "Tepekum Mahallesi / Sakarya",
-        ar: "Tepekum Mahallesi / Sakarya",
-        de: "Tepekum Mahallesi / Sakarya"
-      },
+      location: "Tepekum Mahallesi / Sakarya",
       timeline: {
         tr: "2022 - 2026",
         en: "2022 - 2026",
@@ -1493,13 +1560,7 @@ const D = {
         ar: "Şeker Mah Arı Apartmanı",
         de: "Şeker Mah Arı Apartmanı"
       },
-      location: {
-        tr: "Şeker Mahallesi / Adapazarı / Sakarya",
-        en: "Şeker Mahallesi / Adapazarı / Sakarya",
-        ru: "Şeker Mahallesi / Adapazarı / Sakarya",
-        ar: "Şeker Mahallesi / Adapazarı / Sakarya",
-        de: "Şeker Mahallesi / Adapazarı / Sakarya"
-      },
+      location: "Şeker Mahallesi / Adapazarı / Sakarya",
       timeline: {
         tr: "2020 - 2021",
         en: "2020 - 2021",
@@ -1640,13 +1701,7 @@ const D = {
         ar: "Arena54 Evleri",
         de: "Arena54 Evleri"
       },
-      location: {
-        tr: "Güneşler / Adapazarı / Sakarya",
-        en: "Güneşler / Adapazarı / Sakarya",
-        ru: "Güneşler / Adapazarı / Sakarya",
-        ar: "Güneşler / Adapazarı / Sakarya",
-        de: "Güneşler / Adapazarı / Sakarya"
-      },
+      location: "Güneşler / Adapazarı / Sakarya",
       timeline: {
         tr: "2021 - 2023",
         en: "2021 - 2023",
@@ -1872,13 +1927,7 @@ const D = {
         ar: "Kuyudibi Arı Apartmanı",
         de: "Kuyudibi Arı Apartmanı"
       },
-      location: {
-        tr: "Adapazarı / Sakarya",
-        en: "Adapazarı / Sakarya",
-        ru: "Adapazarı / Sakarya",
-        ar: "Adapazarı / Sakarya",
-        de: "Adapazarı / Sakarya"
-      },
+      location: "Adapazarı / Sakarya",
       timeline: {
         tr: "2020 - 2020",
         en: "2020 - 2020",
@@ -2027,13 +2076,7 @@ const D = {
         ar: "Şeker İşyeri-Konut",
         de: "Şeker İşyeri-Konut"
       },
-      location: {
-        tr: "Şeker Mahallesi / Adapazarı / Sakarya",
-        en: "Şeker Mahallesi / Adapazarı / Sakarya",
-        ru: "Şeker Mahallesi / Adapazarı / Sakarya",
-        ar: "Şeker Mahallesi / Adapazarı / Sakarya",
-        de: "Şeker Mahallesi / Adapazarı / Sakarya"
-      },
+      location: "Şeker Mahallesi / Adapazarı / Sakarya",
       timeline: {
         tr: "2019 - 2019",
         en: "2019 - 2019",
@@ -2130,13 +2173,7 @@ const D = {
         ar: "Şafakarı İnş. Şafak Apartmanı",
         de: "Şafakarı İnş. Şafak Apartmanı"
       },
-      location: {
-        tr: "Ozanlar / Şeker Mahallesi / Adapazarı / Sakarya",
-        en: "Ozanlar / Şeker Mahallesi / Adapazarı / Sakarya",
-        ru: "Ozanlar / Şeker Mahallesi / Adapazarı / Sakarya",
-        ar: "Ozanlar / Şeker Mahallesi / Adapazarı / Sakarya",
-        de: "Ozanlar / Şeker Mahallesi / Adapazarı / Sakarya"
-      },
+      location: "Ozanlar / Şeker Mahallesi / Adapazarı / Sakarya",
       timeline: {
         tr: "2020 - 2020",
         en: "2020 - 2020",
@@ -2291,13 +2328,7 @@ const D = {
         ar: "Tepekum Nehirpark2 36 Daire",
         de: "Tepekum Nehirpark2 36 Daire"
       },
-      location: {
-        tr: "Tepekum Mahallesi / Adapazarı / Sakarya",
-        en: "Tepekum Mahallesi / Adapazarı / Sakarya",
-        ru: "Tepekum Mahallesi / Adapazarı / Sakarya",
-        ar: "Tepekum Mahallesi / Adapazarı / Sakarya",
-        de: "Tepekum Mahallesi / Adapazarı / Sakarya"
-      },
+      location: "Tepekum Mahallesi / Adapazarı / Sakarya",
       timeline: {
         tr: "2020 - 2021",
         en: "2020 - 2021",
@@ -2492,13 +2523,7 @@ const D = {
         ar: "Turna",
         de: "Turna"
       },
-      location: {
-        tr: "Sakarya",
-        en: "Sakarya",
-        ru: "Sakarya",
-        ar: "Sakarya",
-        de: "Sakarya"
-      },
+      location: "Sakarya",
       timeline: {
         tr: "",
         en: "",
@@ -2587,13 +2612,7 @@ const D = {
         ar: "Ticaret Borsası",
         de: "Ticaret Borsası"
       },
-      location: {
-        tr: "Sakarya",
-        en: "Sakarya",
-        ru: "Sakarya",
-        ar: "Sakarya",
-        de: "Sakarya"
-      },
+      location: "Sakarya",
       timeline: {
         tr: "",
         en: "",
@@ -2705,13 +2724,7 @@ const D = {
         ar: "Şehri Bahçe Evleri",
         de: "Şehri Bahçe Evleri"
       },
-      location: {
-        tr: "Sakarya",
-        en: "Sakarya",
-        ru: "Sakarya",
-        ar: "Sakarya",
-        de: "Sakarya"
-      },
+      location: "Sakarya",
       timeline: {
         tr: "2014 - 2015",
         en: "2014 - 2015",
@@ -2832,13 +2845,7 @@ const D = {
         ar: "Nehirpark Evleri",
         de: "Nehirpark Evleri"
       },
-      location: {
-        tr: "Güneşler / Adapazarı / Sakarya",
-        en: "Güneşler / Adapazarı / Sakarya",
-        ru: "Güneşler / Adapazarı / Sakarya",
-        ar: "Güneşler / Adapazarı / Sakarya",
-        de: "Güneşler / Adapazarı / Sakarya"
-      },
+      location: "Güneşler / Adapazarı / Sakarya",
       timeline: {
         tr: "2015 - 2017",
         en: "2015 - 2017",
@@ -3073,13 +3080,7 @@ const D = {
         ar: "Merkez Evleri",
         de: "Merkez Evleri"
       },
-      location: {
-        tr: "Şeker Mahallesi / Adapazarı / Sakarya",
-        en: "Şeker Mahallesi / Adapazarı / Sakarya",
-        ru: "Şeker Mahallesi / Adapazarı / Sakarya",
-        ar: "Şeker Mahallesi / Adapazarı / Sakarya",
-        de: "Şeker Mahallesi / Adapazarı / Sakarya"
-      },
+      location: "Şeker Mahallesi / Adapazarı / Sakarya",
       timeline: {
         tr: "2012 - 2013",
         en: "2012 - 2013",
@@ -3194,13 +3195,7 @@ const D = {
         ar: "Karasu Yalı",
         de: "Karasu Yalı"
       },
-      location: {
-        tr: "Yalı Mahallesi / Karasu / Sakarya",
-        en: "Yalı Mahallesi / Karasu / Sakarya",
-        ru: "Yalı Mahallesi / Karasu / Sakarya",
-        ar: "Yalı Mahallesi / Karasu / Sakarya",
-        de: "Yalı Mahallesi / Karasu / Sakarya"
-      },
+      location: "Yalı Mahallesi / Karasu / Sakarya",
       timeline: {
         tr: "2008 - 2011",
         en: "2008 - 2011",
@@ -3292,13 +3287,7 @@ const D = {
         ar: "Karasu 3'lü Villa",
         de: "Karasu 3'lü Villa"
       },
-      location: {
-        tr: "Karasu / Sakarya",
-        en: "Karasu / Sakarya",
-        ru: "Karasu / Sakarya",
-        ar: "Karasu / Sakarya",
-        de: "Karasu / Sakarya"
-      },
+      location: "Karasu / Sakarya",
       timeline: {
         tr: "",
         en: "",
@@ -3391,13 +3380,7 @@ const D = {
         ar: "Güneş Evleri",
         de: "Güneş Evleri"
       },
-      location: {
-        tr: "Sakarya",
-        en: "Sakarya",
-        ru: "Sakarya",
-        ar: "Sakarya",
-        de: "Sakarya"
-      },
+      location: "Sakarya",
       timeline: {
         tr: "",
         en: "",
@@ -3489,13 +3472,7 @@ const D = {
         ar: "Cevizli Park 3",
         de: "Cevizli Park 3"
       },
-      location: {
-        tr: "Güneşler / Adapazarı / Sakarya",
-        en: "Güneşler / Adapazarı / Sakarya",
-        ru: "Güneşler / Adapazarı / Sakarya",
-        ar: "Güneşler / Adapazarı / Sakarya",
-        de: "Güneşler / Adapazarı / Sakarya"
-      },
+      location: "Güneşler / Adapazarı / Sakarya",
       timeline: {
         tr: "2009 - 2010",
         en: "2009 - 2010",
@@ -3578,13 +3555,7 @@ const D = {
         ar: "Altınova Çark Evleri",
         de: "Altınova Çark Evleri"
       },
-      location: {
-        tr: "Adapazarı / Sakarya",
-        en: "Adapazarı / Sakarya",
-        ru: "Adapazarı / Sakarya",
-        ar: "Adapazarı / Sakarya",
-        de: "Adapazarı / Sakarya"
-      },
+      location: "Adapazarı / Sakarya",
       timeline: {
         tr: "",
         en: "",
@@ -3675,13 +3646,7 @@ const D = {
         ar: "Akademi",
         de: "Akademi"
       },
-      location: {
-        tr: "Ozanlar / Adapazarı / Sakarya",
-        en: "Ozanlar / Adapazarı / Sakarya",
-        ru: "Ozanlar / Adapazarı / Sakarya",
-        ar: "Ozanlar / Adapazarı / Sakarya",
-        de: "Ozanlar / Adapazarı / Sakarya"
-      },
+      location: "Ozanlar / Adapazarı / Sakarya",
       timeline: {
         tr: "2011 - 2012",
         en: "2011 - 2012",
@@ -3823,13 +3788,7 @@ const D = {
         ar: "Camili Villa",
         de: "Camili Villa"
       },
-      location: {
-        tr: "Camili / Adapazarı / Sakarya",
-        en: "Camili / Adapazarı / Sakarya",
-        ru: "Camili / Adapazarı / Sakarya",
-        ar: "Camili / Adapazarı / Sakarya",
-        de: "Camili / Adapazarı / Sakarya"
-      },
+      location: "Camili / Adapazarı / Sakarya",
       timeline: {
         tr: "",
         en: "",
@@ -3939,13 +3898,7 @@ const D = {
         ar: "Cevizli Park 4",
         de: "Cevizli Park 4"
       },
-      location: {
-        tr: "Sakarya",
-        en: "Sakarya",
-        ru: "Sakarya",
-        ar: "Sakarya",
-        de: "Sakarya"
-      },
+      location: "Sakarya",
       timeline: {
         tr: "2013 - 2015",
         en: "2013 - 2015",
@@ -4089,13 +4042,7 @@ const D = {
         ar: "Başak 1",
         de: "Başak 1"
       },
-      location: {
-        tr: "Güneşler / Adapazarı / Sakarya",
-        en: "Güneşler / Adapazarı / Sakarya",
-        ru: "Güneşler / Adapazarı / Sakarya",
-        ar: "Güneşler / Adapazarı / Sakarya",
-        de: "Güneşler / Adapazarı / Sakarya"
-      },
+      location: "Güneşler / Adapazarı / Sakarya",
       timeline: {
         tr: "2017 - 2018",
         en: "2017 - 2018",
@@ -4520,12 +4467,26 @@ function toMlArr(val){
   return emptyMlArr();
 }
 
-// ═══ MIGRATION: schema v1 (string-based) -> v2 (multilang) ═══
+// ═══ MIGRATION: schema v1 -> v2 -> v3 ═══
+// v3 (2026-05-08): location tek-dilli (TR sabit) + pages.editorData multilang
+function locationToString(val){
+  // location v2 multilang objesinden v3 string'e indirir.
+  // Oncelik: tr > en > ru > ar > de > '' (ilk dolu olan).
+  if (typeof val === 'string') return val;
+  if (val && typeof val === 'object'){
+    for (const lg of ['tr','en','ru','ar','de']){
+      const v = val[lg];
+      if (typeof v === 'string' && v.trim()) return v.trim();
+    }
+  }
+  return '';
+}
 const SafakariMigrate = {
   upgradeProject(p){
     if (!p || typeof p !== 'object') return p;
     p.name      = toMl(p.name);
-    p.location  = toMl(p.location);
+    // v3: location tek-dilli string. Eski v2 multilang ise .tr indir.
+    p.location  = locationToString(p.location);
     p.timeline  = toMl(p.timeline);
     p.desc      = toMl(p.desc);
     p.tags      = toMlArr(p.tags);
@@ -4580,8 +4541,40 @@ const SafakariMigrate = {
     }
     return a;
   },
+  // Mac v2-polish 2026-05-08: page.editorData tek-dilli -> multilang (Schema v3)
+  // Eski format: pg.editorData = { time, blocks, version }
+  // Yeni format: pg.editorData = { tr: { time, blocks, version }, en: {...}, ru: {...}, ar: {...}, de: {...} }
+  // Yeni format ayni zamanda title icin: pg.title -> pg.titleMl multilang olabilir,
+  // ama geriye uyum icin pg.title TR sabit kalir (ana dil; UI'de TR sekmesinde duzenlenir).
+  upgradePageEditorData(pg){
+    if (!pg || typeof pg !== 'object') return pg;
+    if (pg.type === 'builtin') return pg; // builtin page'lerin icerigi i18n dictionary'den
+    const ed = pg.editorData;
+    // Zaten multilang formatinda mi? (tr key altinda blocks varsa)
+    if (ed && typeof ed === 'object' && ed.tr && Array.isArray(ed.tr.blocks)){
+      // Eksik dilleri ekle (boş block ile)
+      ['en','ru','ar','de'].forEach(lg => {
+        if (!ed[lg] || !Array.isArray(ed[lg].blocks)){
+          ed[lg] = { time: Date.now(), blocks: [{type:'paragraph', data:{text:''}}], version: ed.tr.version || '2.30.7' };
+        }
+      });
+      return pg;
+    }
+    // Tek-dilli legacy: mevcut blocks'lari .tr'ye indir, digerleri bos.
+    const legacyBlocks = (ed && Array.isArray(ed.blocks)) ? ed.blocks : [{type:'paragraph', data:{text:''}}];
+    const legacyVersion = (ed && ed.version) ? ed.version : '2.30.7';
+    pg.editorData = {
+      tr: { time: (ed && ed.time) || Date.now(), blocks: legacyBlocks, version: legacyVersion },
+      en: { time: Date.now(), blocks: [{type:'paragraph', data:{text:''}}], version: legacyVersion },
+      ru: { time: Date.now(), blocks: [{type:'paragraph', data:{text:''}}], version: legacyVersion },
+      ar: { time: Date.now(), blocks: [{type:'paragraph', data:{text:''}}], version: legacyVersion },
+      de: { time: Date.now(), blocks: [{type:'paragraph', data:{text:''}}], version: legacyVersion }
+    };
+    return pg;
+  },
   upgradeAll(D){
     if (!D || typeof D !== 'object') return D;
+    // v3 hedef: Tum schema asamalarini sirayla uygula
     if (!D.schema || D.schema < 2){
       D.schema = 2;
       D.company = D.company || {};
@@ -4592,11 +4585,16 @@ const SafakariMigrate = {
         D.projects.forEach(p => this.upgradeProject(p));
       }
     } else {
-      // v2 ise bile saglamlik icin alanlari ml-zorla (tarayici cache'i bozuksa)
+      // v2/v3: saglamlik icin alanlari yeniden normalize et (tarayici cache'i bozuksa)
       if (D.company) this.upgradeCompany(D.company);
       if (D.about)   this.upgradeAbout(D.about);
       if (Array.isArray(D.projects)) D.projects.forEach(p => this.upgradeProject(p));
     }
+    // v2 -> v3: pages.editorData multilang
+    if (Array.isArray(D.pages)){
+      D.pages.forEach(pg => this.upgradePageEditorData(pg));
+    }
+    D.schema = 3;
     return D;
   }
 };
@@ -4619,10 +4617,13 @@ function pageTitle(p){
 }
 // Project field cevirisi — D.projects multilang storage'dan cek (schema v2)
 // Legacy fallback: dictionary'de projects.p<id>.<field> varsa onu kullan
+// Mac v2-bugfix 2026-05-08: location field Schema v3'te tek-string. i18n
+// fallback'i icin tProject lookup degeri "projects.p<id>.location" key path'i
+// donduguyse (yani sozlukte yok), ham string'e dus.
 function tp(project, field){
   if (!project) return '';
   const raw = project[field];
-  if (raw && typeof raw === 'object'){
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)){
     // Multilang obje (yeni schema)
     return getMl(raw);
   }
@@ -4630,10 +4631,18 @@ function tp(project, field){
     // Legacy array (tags/feats vs)
     return raw;
   }
-  // String/legacy: i18n dictionary fallback dene
+  // v3: location tek-string. Direkt raw donuyor, i18n lookup yapma —
+  // dictionary'de tanimli olmadigi icin "projects.p<id>.location" key path
+  // string'i geri donuyordu (Bug A 2026-05-08 Mac).
+  if (field === 'location'){
+    return raw != null ? String(raw) : '';
+  }
+  // Diger string field'lar icin legacy i18n dictionary fallback dene
   if (window.I18N && window.I18N.tProject){
     const v = window.I18N.tProject(project.id, field);
-    if (v != null) return v;
+    // tProject "projects.p<id>.<field>" key'i bulamayinca key path string
+    // donduruyor (i18n.js t() varsayilan davranis). O durumda raw kullan.
+    if (v != null && v !== ('projects.p' + project.id + '.' + field)) return v;
   }
   return raw != null ? raw : '';
 }
@@ -4660,13 +4669,14 @@ function wireDynamicLinks(){
   const wa = c.whatsapp || '';
   const waDigits = wa.replace(/\D/g,'');
   const tel = phone1.replace(/[^+0-9]/g,'');
-  // Topbar phone
+  // Topbar phone — Mac v2-bugfix 2026-05-08: tum genisliklerde gozuksun.
+  // 1280px alti CSS ile text gizlenip icon-only mode'a gecer (.tb-phone-text).
   const tbPhone = document.getElementById('tbPhone');
   if (tbPhone){
     if (phone1){
       tbPhone.style.display = 'inline-flex';
       tbPhone.href = 'tel:'+tel;
-      tbPhone.innerHTML = '📞 '+phone1;
+      tbPhone.innerHTML = '<span aria-hidden="true">📞</span><span class="tb-phone-text"> '+phone1+'</span>';
     } else {
       tbPhone.style.display = 'none';
     }
@@ -4784,6 +4794,28 @@ function initTopbarDrawer(){
     if (window.innerWidth > 700 && !drawer.hidden) closeDrawer();
   });
 
+  // ── Tab focus trap (a11y MED-3 fix) ── drawer acikken Tab focus icinde dolasmali
+  drawer.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab' || drawer.hidden) return;
+    const focusables = drawer.querySelectorAll(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    const visible = Array.from(focusables).filter(el => {
+      // display:none veya offsetParent null olanlari atla (drawer-foot tb display:none olabilir)
+      return el.offsetParent !== null || el === document.activeElement;
+    });
+    if (visible.length === 0) return;
+    const first = visible[0];
+    const last = visible[visible.length - 1];
+    if (e.shiftKey && document.activeElement === first){
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last){
+      e.preventDefault();
+      first.focus();
+    }
+  });
+
   // buildNav her cagrildiginda drawer'i da senkronize et
   window.__syncDrawerNav = syncDrawerNav;
 }
@@ -4855,8 +4887,8 @@ function showPage(id){
     const aMis   = tf(a.mission) || t('about.mission','');
     const aVis   = tf(a.vision)  || t('about.vision','');
     // Tagline + cert body: admin'den girilmiyor (sabit i18n key)
-    el.innerHTML=`<div class="gpage">
-      <h1>${aTitle}</h1>
+    el.innerHTML=`<section class="gpage" aria-labelledby="about-pg-title">
+      <h1 id="about-pg-title">${aTitle}</h1>
       <div class="divider"></div>
       ${aSub?`<p class="sub">${aSub}</p>`:''}
       ${t('about_pg.tagline','')?`<p style="font-size:.9rem;color:var(--tx);margin-bottom:22px;font-weight:500">${t('about_pg.tagline','')}</p>`:''}
@@ -4902,7 +4934,7 @@ function showPage(id){
           return `<div class="gval"><div class="icon">${v.icon}</div><h4>${title}</h4><p>${desc}</p></div>`;
         }).filter(Boolean).join('')}</div>`;
       })()}
-    </div>${buildFooter()}`;
+    </section>${buildFooter()}`;
     showPg('pg-'+id);return;
   }
 
@@ -4926,7 +4958,7 @@ function showPage(id){
       insta ? `<div class="citem"><span class="ci">📸</span><div>${t('contact_pg.label_instagram','Instagram:')} ${insta}</div></div>` : '',
       fb ? `<div class="citem"><span class="ci">📘</span><div>${t('contact_pg.label_facebook','Facebook:')} ${fb}</div></div>` : ''
     ].filter(Boolean).join('');
-    el.innerHTML=`<div class="gpage"><h1>${t('contact_pg.title','Bize Ulaşın')}</h1><div class="divider"></div><div class="cgrid"><div class="cinfo"><h3>${t('contact_pg.info_title','İletişim Bilgileri')}</h3>${infoBlocks}</div><div class="cform"><h3>${t('contact_pg.form_title','Mesaj Gönderin')}</h3><div class="cfg"><label for="cf_name">${t('contact_pg.field_name','Ad Soyad')}</label><input id="cf_name" required placeholder="${t('contact_pg.placeholder_name','Adınız Soyadınız')}" autocomplete="name"><div class="field-error" id="cf_name_err">${t('contact_pg.err_name','Bu alan zorunludur')}</div></div><div class="cfg"><label for="cf_phone">${t('contact_pg.field_phone','Telefon')}</label><input id="cf_phone" required data-phone placeholder="${t('contact_pg.placeholder_phone','0(5XX) XXX XX XX')}" autocomplete="tel"><div class="field-error" id="cf_phone_err">${t('contact_pg.err_phone','Geçerli bir telefon numarası girin')}</div></div><div class="cfg"><label for="cf_email">${t('contact_pg.field_email','E-Posta')}</label><input id="cf_email" type="email" placeholder="${t('contact_pg.placeholder_email','ornek@mail.com')}" autocomplete="email"><div class="field-error" id="cf_email_err">${t('contact_pg.err_email','Geçerli bir e-posta adresi girin')}</div></div><div class="cfg"><label for="cf_msg">${t('contact_pg.field_msg','Mesaj')}</label><textarea id="cf_msg" placeholder="${t('contact_pg.placeholder_msg','Mesajınız...')}"></textarea></div><button class="abtn sv" style="width:100%" onclick="submitForm(this,document.getElementById('cf_name'),document.getElementById('cf_phone'),document.getElementById('cf_msg'),document.getElementById('cf_email'))">${t('contact_pg.submit','📩 Gönder')}</button></div></div></div>${buildFooter()}`;
+    el.innerHTML=`<section class="gpage" aria-labelledby="contact-pg-title"><h1 id="contact-pg-title">${t('contact_pg.title','Bize Ulaşın')}</h1><div class="divider"></div><div class="cgrid"><div class="cinfo"><h3>${t('contact_pg.info_title','İletişim Bilgileri')}</h3>${infoBlocks}</div><div class="cform"><h3>${t('contact_pg.form_title','Mesaj Gönderin')}</h3><div class="cfg"><label for="cf_name">${t('contact_pg.field_name','Ad Soyad')}</label><input id="cf_name" required placeholder="${t('contact_pg.placeholder_name','Adınız Soyadınız')}" autocomplete="name"><div class="field-error" id="cf_name_err">${t('contact_pg.err_name','Bu alan zorunludur')}</div></div><div class="cfg"><label for="cf_phone">${t('contact_pg.field_phone','Telefon')}</label><input id="cf_phone" required data-phone placeholder="${t('contact_pg.placeholder_phone','0(5XX) XXX XX XX')}" autocomplete="tel"><div class="field-error" id="cf_phone_err">${t('contact_pg.err_phone','Geçerli bir telefon numarası girin')}</div></div><div class="cfg"><label for="cf_email">${t('contact_pg.field_email','E-Posta')}</label><input id="cf_email" type="email" placeholder="${t('contact_pg.placeholder_email','ornek@mail.com')}" autocomplete="email"><div class="field-error" id="cf_email_err">${t('contact_pg.err_email','Geçerli bir e-posta adresi girin')}</div></div><div class="cfg"><label for="cf_msg">${t('contact_pg.field_msg','Mesaj')}</label><textarea id="cf_msg" placeholder="${t('contact_pg.placeholder_msg','Mesajınız...')}"></textarea></div><button class="abtn sv" style="width:100%" onclick="submitForm(this,document.getElementById('cf_name'),document.getElementById('cf_phone'),document.getElementById('cf_msg'),document.getElementById('cf_email'))">${t('contact_pg.submit','📩 Gönder')}</button></div></div></section>${buildFooter()}`;
     showPg('pg-'+id);return;
   }
 
@@ -4934,8 +4966,8 @@ function showPage(id){
   if(id==='loan'){
     const el = ensurePg(id, true);
     el.innerHTML = `
-      <div class="gpage">
-        <h1>${t('loan.title','💰 Konut Kredisi Hesaplama')}</h1>
+      <section class="gpage" aria-labelledby="loan-pg-title">
+        <h1 id="loan-pg-title">${t('loan.title','💰 Konut Kredisi Hesaplama')}</h1>
         <div class="divider"></div>
         <p class="sub">${t('loan.subtitle','Düşündüğünüz konut için aylık taksit, toplam ödeme ve faiz tutarını anında hesaplayın. Bilgiler bilgilendirme amaçlıdır.')}</p>
         <div class="loan-section">
@@ -4970,7 +5002,7 @@ function showPage(id){
             <div class="loan-results" id="ln_output"></div>
           </div>
         </div>
-      </div>${buildFooter()}`;
+      </section>${buildFooter()}`;
     showPg('pg-'+id);
     // Wire up calculator after DOM insertion
     setTimeout(attachLoanCalc, 50);
@@ -5048,8 +5080,10 @@ function renderCards(list){
     return;
   }
   list.forEach((p,i)=>{
-    const c=document.createElement('div');
+    // Semantic: proje karti <article> — screen reader "next article" jump shortcut'una uyar
+    const c=document.createElement('article');
     c.className='card';c.id='c'+p.id;c.style.animationDelay=i*.06+'s';
+    c.setAttribute('aria-label', tp(p,'name') || 'Proje');
     // Mac iter-2 fix B: kart container LTR zorla (AR'de bidi flex'i tersliyor)
     c.setAttribute('dir','ltr');
     c.onclick=()=>openD(p.id);
@@ -5199,11 +5233,31 @@ function openD(id){
     ? `background-image:url('${p.photos[0]}');background-color:#222`
     : `background:${p.grad}`;
   const heroBody = hasPhoto ? '' : p.emoji;
-  // Photo grid (tum photos)
+  // Photo grid (Mac v2-polish 2026-05-08: ilk 2 thumbnail + 3. slot ya 3. foto ya da +X overlay; tikla -> lightbox)
+  // Lightbox handler global fonksiyon (openLightbox), bu render'da sadece HTML uretilir.
   const photoLabel = t('detail.photo_aria_prefix','fotoğraf');
-  const photosHtml = hasPhoto
-    ? `<div class="sec-t">${t('detail.section_photos','📷 Fotoğraflar')}</div><div class="dto-photos" role="list">${p.photos.map((src,i)=>`<div class="dto-photo" role="listitem" tabindex="0" onclick="window.open('${src}','_blank')" onkeydown="if(event.key==='Enter')window.open('${src}','_blank')"><img src="${src}" alt="${pName} ${photoLabel} ${i+1}" loading="lazy"></div>`).join('')}</div>`
-    : '';
+  let photosHtml = '';
+  if (hasPhoto){
+    const allPhotos = p.photos;
+    const total = allPhotos.length;
+    // Maksimum 3 thumbnail goster: ilk 2 + (varsa 3.) ya da ilk 2 + +X overlay
+    const slotCount = Math.min(total, 3);
+    const slots = [];
+    for (let i=0; i<slotCount; i++){
+      const src = allPhotos[i];
+      const isMoreSlot = (i === 2) && (total > 3);
+      const remaining = total - 2; // +X = kalan toplam (3. dahil)
+      const overlay = isMoreSlot
+        ? `<span class="ph-overlay" aria-hidden="true">+${remaining}</span>`
+        : '';
+      const ariaLabel = isMoreSlot
+        ? `${pName} - ${remaining} ${t('detail.photo_more_aria','daha fazla fotoğraf')}`
+        : `${pName} ${photoLabel} ${i+1}`;
+      // data-pid ve data-idx ile lightbox click handler eslesir
+      slots.push(`<div class="dto-photo${isMoreSlot?' ph-more':''}" role="listitem" tabindex="0" data-lb-pid="${p.id}" data-lb-idx="${i}" aria-label="${escapeHtml(ariaLabel)}"><img src="${src}" alt="${escapeHtml(pName + ' ' + photoLabel + ' ' + (i+1))}" loading="lazy">${overlay}</div>`);
+    }
+    photosHtml = `<div class="sec-t">${t('detail.section_photos','📷 Fotoğraflar')}</div><div class="dto-photos" role="list" data-lb-total="${total}">${slots.join('')}</div>`;
+  }
   // House types (madde 4)
   const houseTypes = Array.isArray(p.houseTypes) ? p.houseTypes : [];
   const htypesHtml = houseTypes.length
@@ -5238,6 +5292,18 @@ function openD(id){
   requestAnimationFrame(()=>{
     bd.querySelectorAll('.dto-hero,.dto-name,.dto-loc,.qstats,.dto-htypes,.dto-map,.dto-photos,.atgrid,.ftgrid,.ddesc,.cmini').forEach((el,i)=>{el.style.animation=`dFade .4s ease-out ${i*.05}s backwards`});
   });
+  // Mac v2-polish 2026-05-08: dto-photos click -> openLightbox(p.photos, idx)
+  // Tum thumbnail (3.+X dahil) ayni handler'i paylasir; dto-photo[data-lb-pid][data-lb-idx]
+  if (hasPhoto){
+    bd.querySelectorAll('.dto-photo[data-lb-pid]').forEach(el => {
+      const idx = parseInt(el.getAttribute('data-lb-idx'),10) || 0;
+      const open = ()=> openLightbox(p.photos, idx, pName);
+      el.addEventListener('click', open);
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); }
+      });
+    });
+  }
   // Mini-map mount (madde 1) — sadece lat/lng dolu projelerde
   destroyDtoMiniMap();
   if (hasGeo){
@@ -5268,6 +5334,119 @@ function destroyDtoMiniMap(){
 }
 function closeD(){document.getElementById('dto')?.classList.remove('open');document.querySelectorAll('.card').forEach(c=>c.classList.remove('on'));window.__currentDtoId=null;destroyDtoMiniMap();}
 function selType(i){document.querySelectorAll('.atc').forEach((c,j)=>c.classList.toggle('sel',j===i))}
+
+// ═══ LIGHTBOX (Mac v2-polish 2026-05-08) ═══
+// Detay panelinde foto thumbnail tiklaninca tum fotolari tam boyutta gosteren modal.
+// Kontrol: prev/next (klavye + buton + thumbs), ESC kapat, outside click kapat, ARIA dialog.
+// Tek instance global; var olan overlay yeniden kullanilir.
+let __lbState = { photos: [], idx: 0, title: '', prevFocus: null, keyHandler: null };
+function openLightbox(photos, startIdx, title){
+  if (!Array.isArray(photos) || !photos.length) return;
+  const safeStart = Math.max(0, Math.min(parseInt(startIdx,10)||0, photos.length-1));
+  __lbState.photos = photos.slice();
+  __lbState.idx = safeStart;
+  __lbState.title = String(title||'');
+  __lbState.prevFocus = document.activeElement;
+  // Olustur veya mevcut overlay'i tekrar kullan
+  let ov = document.getElementById('lbOverlay');
+  if (!ov){
+    ov = document.createElement('div');
+    ov.id = 'lbOverlay';
+    ov.className = 'lb-overlay';
+    ov.setAttribute('role', 'dialog');
+    ov.setAttribute('aria-modal', 'true');
+    ov.setAttribute('aria-label', 'Fotoğraf görüntüleyici');
+    document.body.appendChild(ov);
+    ov.addEventListener('click', e => { if (e.target === ov) closeLightbox(); });
+  }
+  ov.hidden = false;
+  document.body.style.overflow = 'hidden';
+  renderLightbox();
+  // Keyboard handler
+  __lbState.keyHandler = (e)=>{
+    if (e.key === 'Escape'){ e.preventDefault(); closeLightbox(); }
+    else if (e.key === 'ArrowRight'){ e.preventDefault(); lbNext(); }
+    else if (e.key === 'ArrowLeft'){ e.preventDefault(); lbPrev(); }
+  };
+  document.addEventListener('keydown', __lbState.keyHandler);
+  // Focus management: close button receives focus
+  setTimeout(()=>{
+    const btn = document.querySelector('#lbOverlay .lb-close');
+    if (btn) btn.focus();
+  }, 50);
+}
+function renderLightbox(){
+  const ov = document.getElementById('lbOverlay');
+  if (!ov) return;
+  const { photos, idx, title } = __lbState;
+  const total = photos.length;
+  const src = photos[idx] || '';
+  const safeTitle = title ? escapeHtml(title) : '';
+  const captionText = total > 1
+    ? `${safeTitle ? safeTitle + ' — ' : ''}${idx+1} / ${total}`
+    : safeTitle;
+  const thumbs = photos.map((p,i)=>`<button type="button" class="lb-thumb${i===idx?' on':''}" data-lb-thumb="${i}" aria-label="Fotoğraf ${i+1}"><img src="${p}" alt="" loading="lazy"></button>`).join('');
+  // Prev/next sadece >1 fotoda gorunur
+  const navBtns = total > 1
+    ? `<button type="button" class="lb-btn lb-prev" aria-label="Önceki fotoğraf" data-lb-act="prev">‹</button>
+       <button type="button" class="lb-btn lb-next" aria-label="Sonraki fotoğraf" data-lb-act="next">›</button>
+       <div class="lb-counter" aria-live="polite">${idx+1} / ${total}</div>`
+    : '';
+  const thumbBar = total > 1 ? `<div class="lb-thumbs" role="tablist">${thumbs}</div>` : '';
+  ov.innerHTML = `
+    <div class="lb-stage">
+      <button type="button" class="lb-btn lb-close" aria-label="Kapat" data-lb-act="close">×</button>
+      ${navBtns}
+      <img class="lb-img" src="${src}" alt="${safeTitle}">
+      ${captionText ? `<div class="lb-cap">${captionText}</div>` : ''}
+      ${thumbBar}
+    </div>
+  `;
+  // Buton listeners (delegate)
+  ov.querySelectorAll('[data-lb-act]').forEach(btn => {
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const act = btn.getAttribute('data-lb-act');
+      if (act === 'close') closeLightbox();
+      else if (act === 'next') lbNext();
+      else if (act === 'prev') lbPrev();
+    });
+  });
+  ov.querySelectorAll('[data-lb-thumb]').forEach(t => {
+    t.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const i = parseInt(t.getAttribute('data-lb-thumb'),10) || 0;
+      __lbState.idx = i;
+      renderLightbox();
+    });
+  });
+}
+function lbNext(){
+  const total = __lbState.photos.length;
+  if (total < 2) return;
+  __lbState.idx = (__lbState.idx + 1) % total;
+  renderLightbox();
+}
+function lbPrev(){
+  const total = __lbState.photos.length;
+  if (total < 2) return;
+  __lbState.idx = (__lbState.idx - 1 + total) % total;
+  renderLightbox();
+}
+function closeLightbox(){
+  const ov = document.getElementById('lbOverlay');
+  if (ov) ov.hidden = true;
+  document.body.style.overflow = '';
+  if (__lbState.keyHandler){
+    document.removeEventListener('keydown', __lbState.keyHandler);
+    __lbState.keyHandler = null;
+  }
+  // Focus geri ver
+  if (__lbState.prevFocus && typeof __lbState.prevFocus.focus === 'function'){
+    try { __lbState.prevFocus.focus(); } catch(_){}
+  }
+  __lbState.prevFocus = null;
+}
 
 // ═══ ADMIN ACCESS ═══
 let admUnlocked=false,logoClicks=0,logoTimer=null;
@@ -5338,30 +5517,34 @@ function renderLangTabs(opts){
 function wireLangTabs(redrawCb){
   const isFn = typeof redrawCb === 'function';
   const obj = (redrawCb && typeof redrawCb === 'object') ? redrawCb : null;
+  // Mac v2-polish 2026-05-08: async callback destegi (page editor lang swap'inda Editor.js.save() bekler)
   document.querySelectorAll('.adm-lang-pill').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       const lang = btn.getAttribute('data-lang');
       if (!lang || lang === admEditLang) return;
-      // Mevcut input degerlerini state'e yaz (callback)
-      if (isFn) redrawCb('save');
-      else if (obj && typeof obj.onChange === 'function') obj.onChange('save');
+      // Mevcut input degerlerini state'e yaz (callback) — async olabilir, await
+      try {
+        if (isFn) await redrawCb('save');
+        else if (obj && typeof obj.onChange === 'function') await obj.onChange('save');
+      } catch(e){ console.warn('langTab save fail', e); }
       admEditLang = lang;
       // P2-3: aktif tab'i sessionStorage'a yaz
       try { sessionStorage.setItem('safakari_admin_active_lang', lang); } catch(_){}
-      if (isFn) redrawCb('redraw');
-      else if (obj && typeof obj.onChange === 'function') obj.onChange('redraw');
+      try {
+        if (isFn) await redrawCb('redraw');
+        else if (obj && typeof obj.onChange === 'function') await obj.onChange('redraw');
+      } catch(e){ console.warn('langTab redraw fail', e); }
     });
   });
-  // P1-1: Kopyala butonu wire
+  // P1-1: Kopyala butonu wire (async-aware)
   document.querySelectorAll('.adm-copy-from-tr').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       if (admEditLang === 'tr') return;
       let copied = 0;
       if (isFn) {
         // Eski sema: redrawCb('copyFromTr') desteklenmiyor; sadece form-level copy fn varsa
-        // hicbir sey yapmiyoruz (form-level helper'i drawer kendisi cagirir)
       } else if (obj && typeof obj.onCopyFromTr === 'function'){
-        copied = obj.onCopyFromTr() || 0;
+        try { copied = (await obj.onCopyFromTr()) || 0; } catch(e){ console.warn('copyFromTr fail', e); }
       }
       if (typeof toast === 'function'){
         if (copied > 0) toast(`${copied} alan TR'den ${admEditLang.toUpperCase()}'e kopyalandı`);
@@ -5386,9 +5569,10 @@ const HOUSE_TYPES=['Villa','Apartman','Dubleks','Residence','Müstakil Ev'];
 
 function editProj(id){
   // Mevcut proje bul ya da bos sablon (tum multilang alanlar emptyMl)
+  // Mac v2-polish 2026-05-08 (Schema v3): location tek-dilli string (TR sabit, yer adi)
   const tplProj = ()=>({
     id:0, category:'satilik',
-    name:emptyMl(), location:emptyMl(), timeline:emptyMl(), desc:emptyMl(),
+    name:emptyMl(), location:'', timeline:emptyMl(), desc:emptyMl(),
     tags:emptyMlArr(), feats:emptyMlArr(), houseTypes:emptyMlArr(),
     types:[],
     lat:40.78, lng:30.40,
@@ -5406,7 +5590,7 @@ function editProj(id){
     id: p.id || 0,
     category: p.category || 'satilik',
     name: toMl(p.name),
-    location: toMl(p.location),
+    location: locationToString(p.location), // v3: tek-dilli string
     timeline: toMl(p.timeline),
     desc: toMl(p.desc),
     tags: toMlArr(p.tags),
@@ -5434,7 +5618,8 @@ function drawEditProjForm(){
   const lang = admEditLang;
   // Bu dildeki degerleri cek
   const nVal  = d.name[lang]     || '';
-  const lVal  = d.location[lang] || '';
+  // v3: location tek-dilli (TR sabit yer adi). Lang-bagimsiz tek input.
+  const lVal  = (typeof d.location === 'string') ? d.location : '';
   const tlVal = d.timeline[lang] || '';
   const dVal  = d.desc[lang]     || '';
   const tgVal = (d.tags[lang]||[]).join(', ');
@@ -5442,11 +5627,12 @@ function drawEditProjForm(){
   const curHouseTypes = d.houseTypes[lang] || [];
   const bd=document.getElementById('admBd');
   // Projeler form scope: epDraft icindeki multilang field'larin doluluk haritasi
-  const projFields = ['name','location','timeline','desc','tags','feats','houseTypes'];
+  // v3: location tek-dilli, multilang scope'tan cikarildi
+  const projFields = ['name','timeline','desc','tags','feats','houseTypes'];
   const cov = getCompletenessMap(d, projFields);
   bd.innerHTML=`<div style="display:flex;gap:8px;margin-bottom:16px"><button class="abtn sc" onclick="admTab('projects',document.querySelector('.adm-ni'))">← Geri</button><button class="abtn sv" onclick="saveProj(${id})">${id?'Güncelle':'Ekle'}</button></div>
     ${renderLangTabs({completeness: cov, allowCopyFromTr: true})}
-    <div class="ar2"><div class="af"><label for="ep_n">Proje Adı (${lang.toUpperCase()})</label><input id="ep_n" value="${escapeHtml(nVal)}"></div><div class="af"><label for="ep_l">Konum (${lang.toUpperCase()})</label><input id="ep_l" value="${escapeHtml(lVal)}"></div></div>
+    <div class="ar2"><div class="af"><label for="ep_n">Proje Adı (${lang.toUpperCase()})</label><input id="ep_n" value="${escapeHtml(nVal)}"></div><div class="af"><label for="ep_l">Konum <span style="color:var(--txm);font-weight:500;text-transform:none">(yer adı, tüm dillerde aynı)</span></label><input id="ep_l" value="${escapeHtml(lVal)}" placeholder="örn. Aziziye Mahallesi / Karasu / Sakarya"></div></div>
     <div class="ar3"><div class="af"><label for="ep_c">Kategori <span style="color:var(--txm);font-weight:500;text-transform:none">(tüm dillerde aynı)</span></label><select id="ep_c"><option value="satilik" ${d.category==='satilik'?'selected':''}>Satışta</option><option value="yapim" ${d.category==='yapim'?'selected':''}>Yapımda</option><option value="tamamlanan" ${d.category==='tamamlanan'?'selected':''}>Tamamlanan</option></select></div><div class="af"><label for="ep_e">Emoji</label><input id="ep_e" value="${escapeHtml(d.emoji)}"></div><div class="af"><label for="ep_tl">Timeline (${lang.toUpperCase()})</label><input id="ep_tl" value="${escapeHtml(tlVal)}" placeholder="örn. Ağu 2022 – Oca 2026"></div></div>
     <div class="ar3"><div class="af"><label for="ep_u">Daire</label><input id="ep_u" type="number" value="${d.units}"></div><div class="af"><label for="ep_b">Blok</label><input id="ep_b" type="number" value="${d.blocks}"></div><div class="af"><label for="ep_f">Kat</label><input id="ep_f" type="number" value="${d.floors}"></div></div>
     <div class="ar2"><div class="af"><label for="ep_lat">Enlem</label><input id="ep_lat" type="number" step=".00001" value="${d.lat}"></div><div class="af"><label for="ep_lng">Boylam</label><input id="ep_lng" type="number" step=".00001" value="${d.lng}"></div></div>
@@ -5514,7 +5700,8 @@ function saveEpDraftFromInputs(){
   const v = (id)=> document.getElementById(id)?.value ?? '';
   // Multilang field'lar
   epDraft.name[lang] = v('ep_n').trim();
-  epDraft.location[lang] = v('ep_l').trim();
+  // v3: location tek-dilli string (yer adi TR sabit, dile bagimsiz tek input)
+  epDraft.location = v('ep_l').trim();
   epDraft.timeline[lang] = v('ep_tl').trim();
   epDraft.desc[lang] = v('ep_d').trim();
   epDraft.tags[lang] = v('ep_tg').split(',').map(s=>s.trim()).filter(Boolean);
@@ -6133,33 +6320,91 @@ function loadPages(){
       // Keep builtin defaults that are missing from storage
       D.pages.filter(p=>p.type==='builtin' && !savedIds.has(p.id)).forEach(bp=>saved.push(bp));
       D.pages = saved;
+      // Mac v2-polish 2026-05-08 (Schema v3): Eski tek-dilli editorData -> multilang
+      // localStorage'tan gelen sayfalarda editorData.blocks (legacy) varsa multilang'a indir
+      D.pages.forEach(pg => {
+        if (pg && pg.type === 'custom') {
+          if (typeof SafakariMigrate !== 'undefined' && SafakariMigrate.upgradePageEditorData){
+            SafakariMigrate.upgradePageEditorData(pg);
+          }
+        }
+      });
       // Migration sonucunu hemen persist et — bir sonraki acilista da temiz olsun
       try { persistPages(); } catch(_){ /* best-effort */ }
     }
   } catch(e){ /* ignore parse/storage errors, keep defaults */ }
 }
 
-// ── Runtime migration: legacy page (sections/content) → editorData blocks ──
+// ── Runtime migration: legacy page (sections/content) → editorData blocks (multilang) ──
+// Mac v2-polish 2026-05-08: editorData multilang formatına migrate.
+// Yeni format: pg.editorData = { tr: {time,blocks,version}, en:..., ru:..., ar:..., de:... }
 function migratePageToBlocks(pg){
   if(!pg) return pg;
-  if(pg.editorData && Array.isArray(pg.editorData.blocks) && pg.editorData.blocks.length){
-    return pg; // already migrated
-  }
-  const blocks = [];
-  if(pg.content && String(pg.content).trim()){
-    blocks.push({type:'paragraph', data:{text: String(pg.content)}});
-  }
-  if(Array.isArray(pg.sections)){
-    pg.sections.forEach(s=>{
-      if(s && s.title) blocks.push({type:'header', data:{text: String(s.title), level:2}});
-      if(s && s.text)  blocks.push({type:'paragraph', data:{text: String(s.text)}});
+  // Zaten multilang format (tr key + blocks) varsa, sadece eksik dilleri tamamla
+  if (pg.editorData && typeof pg.editorData === 'object' && pg.editorData.tr && Array.isArray(pg.editorData.tr.blocks)){
+    ['en','ru','ar','de'].forEach(lg => {
+      if (!pg.editorData[lg] || !Array.isArray(pg.editorData[lg].blocks)){
+        pg.editorData[lg] = { time: Date.now(), blocks: [{type:'paragraph', data:{text:''}}], version: pg.editorData.tr.version || '2.30.7' };
+      }
     });
+    return pg;
   }
-  if(!blocks.length){
-    blocks.push({type:'paragraph', data:{text:''}});
+  // Legacy tek-dilli editorData veya sections/content: blocks topla, .tr'ye koy, digerleri bos
+  let trBlocks = null;
+  if (pg.editorData && Array.isArray(pg.editorData.blocks) && pg.editorData.blocks.length){
+    trBlocks = pg.editorData.blocks;
+  } else {
+    const blocks = [];
+    if (pg.content && String(pg.content).trim()){
+      blocks.push({type:'paragraph', data:{text: String(pg.content)}});
+    }
+    if (Array.isArray(pg.sections)){
+      pg.sections.forEach(s=>{
+        if (s && s.title) blocks.push({type:'header', data:{text: String(s.title), level:2}});
+        if (s && s.text)  blocks.push({type:'paragraph', data:{text: String(s.text)}});
+      });
+    }
+    if (!blocks.length){
+      blocks.push({type:'paragraph', data:{text:''}});
+    }
+    trBlocks = blocks;
   }
-  pg.editorData = {time: Date.now(), blocks, version:'2.30.7'};
+  const ver = (pg.editorData && pg.editorData.version) || '2.30.7';
+  pg.editorData = {
+    tr: { time: Date.now(), blocks: trBlocks, version: ver },
+    en: { time: Date.now(), blocks: [{type:'paragraph', data:{text:''}}], version: ver },
+    ru: { time: Date.now(), blocks: [{type:'paragraph', data:{text:''}}], version: ver },
+    ar: { time: Date.now(), blocks: [{type:'paragraph', data:{text:''}}], version: ver },
+    de: { time: Date.now(), blocks: [{type:'paragraph', data:{text:''}}], version: ver }
+  };
   return pg;
+}
+// ── Lang-aware editorData getter (publish render + admin editor) ──
+// Aktif dilde dolu blok varsa onu, yoksa TR fallback, yoksa bos paragraph.
+function getPageDataForLang(pg, lang){
+  const empty = { time: Date.now(), blocks: [{type:'paragraph', data:{text:''}}], version: '2.30.7' };
+  if (!pg) return empty;
+  migratePageToBlocks(pg);
+  const ed = pg.editorData;
+  const langData = ed && ed[lang];
+  const isLangFilled = langData && Array.isArray(langData.blocks) && langData.blocks.some(b => {
+    if (!b || !b.data) return false;
+    if ((b.type === 'header' || b.type === 'paragraph') && typeof b.data.text === 'string'){
+      return !!b.data.text.trim();
+    }
+    if (b.type === 'list' && Array.isArray(b.data.items)) return b.data.items.length > 0;
+    if (b.type === 'image' && b.data.file && b.data.file.url) return true;
+    if (b.type === 'gallery' && Array.isArray(b.data.images)) return b.data.images.some(i => i && i.url);
+    if (b.type === 'button' && b.data.url) return true;
+    if (b.type === 'delimiter') return true;
+    return false;
+  });
+  if (isLangFilled) return langData;
+  // TR fallback (her zaman ana dil)
+  if (ed && ed.tr && Array.isArray(ed.tr.blocks) && ed.tr.blocks.length){
+    return ed.tr;
+  }
+  return empty;
 }
 
 // ── DOMPurify sanitizer (her save oncesi) ──
@@ -6201,13 +6446,19 @@ function sanitizeBlocks(editorJson){
 }
 
 // ── Public render: editorData → HTML ──
+// Mac v2-polish 2026-05-08: Custom sayfalarda aktif dile gore editorData seç (TR fallback)
 function renderPageBlocks(pg){
-  const migrated = migratePageToBlocks(pg);
+  migratePageToBlocks(pg);
   // i18n: pg.title icin builtin sayfalarda ceviri kullan
   const title = pageTitle(pg);
-  let html = `<div class="gpage"><h1>${escapeHtml(pg.icon||'📄')} ${escapeHtml(title||'')}</h1><div class="divider"></div>`;
-  (migrated.editorData.blocks||[]).forEach(b => { html += renderBlock(b); });
-  html += `</div>`;
+  // Custom sayfa wrapper'i <section> — landmark + aria-labelledby ile h1'e bagli
+  const safeId = 'custom-pg-title-' + (pg.id || Math.random().toString(36).slice(2,8));
+  let html = `<section class="gpage" aria-labelledby="${safeId}"><h1 id="${safeId}">${escapeHtml(pg.icon||'📄')} ${escapeHtml(title||'')}</h1><div class="divider"></div>`;
+  // Aktif dilin editorData'sini al, yoksa TR'ye dus
+  const data = (pg.type === 'custom') ? getPageDataForLang(pg, curLang()) : pg.editorData;
+  const blocks = (data && Array.isArray(data.blocks)) ? data.blocks : [];
+  blocks.forEach(b => { html += renderBlock(b); });
+  html += `</section>`;
   return html;
 }
 function renderBlock(b){
@@ -6487,54 +6738,142 @@ function togglePgVis(id){
 let pageEditor = null;
 let currentEditorPageId = null;
 let autoSaveTimer = null;
+// Mac v2-polish 2026-05-08: editor su an hangi dilde acik (multilang sayfa editor)
+let currentEditorLang = 'tr';
 
 // ── Admin: Open page editor (custom pages only) ──
 function openPageEditor(id){
   const pg = D.pages.find(p=>p.id===id);
   if(!pg || pg.type!=='custom'){ toast('Bu sayfa duzenlenemiyor'); return; }
-  migratePageToBlocks(pg); // ensure editorData exists
+  migratePageToBlocks(pg); // ensure editorData exists (multilang)
   currentEditorPageId = id;
+  // Aktif dilde ac (admEditLang gibi state — admEditLang ile sync calisalim)
+  try {
+    const last = sessionStorage.getItem('safakari_admin_active_lang');
+    if (last && SUPPORTED_LANGS.includes(last)) admEditLang = last;
+  } catch(_){}
+  currentEditorLang = admEditLang || 'tr';
+  drawPageEditorUI(pg);
+}
+// Lang tab degistiginde bu fonksiyon yeniden cizilir (eski dilde editor.save() yapildiktan sonra).
+function drawPageEditorUI(pg){
   const bd = document.getElementById('admBd');
   const pubTxt = pg.visible ? '✅ Yayında' : '💾 Taslak';
   const pubStatus = pg.visible ? 'live' : 'draft';
+  // Coverage map: hangi dillerde icerik dolu? (rozet icin)
+  const cov = { tr:false, en:false, ru:false, ar:false, de:false };
+  ['tr','en','ru','ar','de'].forEach(lg => {
+    const ld = pg.editorData && pg.editorData[lg];
+    if (ld && Array.isArray(ld.blocks)){
+      cov[lg] = ld.blocks.some(b => {
+        if (!b || !b.data) return false;
+        if ((b.type==='header'||b.type==='paragraph') && typeof b.data.text==='string'){
+          return !!b.data.text.trim();
+        }
+        if (b.type==='list' && Array.isArray(b.data.items)) return b.data.items.length > 0;
+        if (b.type==='image' && b.data.file && b.data.file.url) return true;
+        if (b.type==='gallery' && Array.isArray(b.data.images)) return b.data.images.some(i => i && i.url);
+        if (b.type==='button' && b.data.url) return true;
+        return false;
+      });
+    }
+  });
 
   bd.innerHTML = `
     <div class="pe-topbar">
       <button class="abtn sc" onclick="closePageEditor()" aria-label="Sayfa listesine don">← Geri</button>
-      <input class="pe-title-in" id="pe_title" value="${escapeHtml(pg.title)}" placeholder="Sayfa basligi" aria-label="Sayfa basligi">
+      <input class="pe-title-in" id="pe_title" value="${escapeHtml(pg.title)}" placeholder="Sayfa basligi" aria-label="Sayfa basligi (tüm dillerde aynı)">
       <span class="pe-badge" id="pe_badge" data-status="${pubStatus}" aria-live="polite">${pubTxt}</span>
       <span class="pe-save-ind" id="pe_save_ind" aria-live="polite">Hazır</span>
     </div>
+    ${renderLangTabs({completeness: cov, allowCopyFromTr: true})}
     <div class="pe-actions">
       ${pg.visible
         ? `<button class="abtn sc" onclick="unpublishPage()" aria-label="Sayfayi taslaga cevir">💾 Taslağa Çevir</button>`
         : `<button class="abtn sv" onclick="publishPage()" aria-label="Sayfayi yayinla">✅ Yayınla</button>`}
-      <span style="font-size:.72rem;color:var(--txm);margin-left:8px">💡 Yazmaya basla, "/" ile blok ekle. Degisiklikler otomatik kaydedilir.</span>
+      <span style="font-size:.72rem;color:var(--txm);margin-left:8px">💡 Aktif dil: <b>${currentEditorLang.toUpperCase()}</b>. "/" ile blok ekle. Değişiklikler otomatik kaydedilir.</span>
     </div>
     <div id="page_editor" aria-label="Sayfa icerik editoru"></div>
     <div class="pe-danger-zone">
-      <button class="abtn dn" onclick="deletePage('${escapeHtml(id)}')" aria-label="Sayfayi sil">🗑️ Sayfayi Sil</button>
+      <button class="abtn dn" onclick="deletePage('${escapeHtml(pg.id)}')" aria-label="Sayfayi sil">🗑️ Sayfayi Sil</button>
     </div>
   `;
 
-  // Wire title input to auto-save
+  // Wire title input to auto-save (title TR sabit, lang'tan bagimsiz)
   document.getElementById('pe_title').addEventListener('input', ()=>{
     const v = document.getElementById('pe_title').value;
     const cur = D.pages.find(p=>p.id===currentEditorPageId);
     if(cur){ cur.title = v; debouncedAutoSave(); }
   });
 
+  // Lang tab swap: once mevcut dilin editor degerini kaydet, sonra yeni dilde init
+  wireLangTabs({
+    onChange: async (mode) => {
+      if (mode === 'save'){
+        // Mevcut dilin Editor.js datasini pg.editorData[currentEditorLang]'a yaz
+        await saveCurrentLangEditor();
+      } else if (mode === 'redraw'){
+        // admEditLang'i yeni dile gec, editor'u yeni datayla yeniden cizdir
+        currentEditorLang = admEditLang;
+        const cur = D.pages.find(p => p.id === currentEditorPageId);
+        if (cur) drawPageEditorUI(cur);
+      }
+    },
+    onCopyFromTr: async () => {
+      // Mevcut input degerlerini state'e yaz
+      await saveCurrentLangEditor();
+      const cur = D.pages.find(p => p.id === currentEditorPageId);
+      if (!cur || admEditLang === 'tr') return 0;
+      const trBlocks = cur.editorData && cur.editorData.tr && Array.isArray(cur.editorData.tr.blocks) ? cur.editorData.tr.blocks : [];
+      if (!trBlocks.length || (trBlocks.length===1 && (!trBlocks[0].data || !trBlocks[0].data.text || !trBlocks[0].data.text.trim()))){
+        return 0;
+      }
+      // Deep clone TR'yi hedef dile
+      cur.editorData[admEditLang] = {
+        time: Date.now(),
+        blocks: JSON.parse(JSON.stringify(trBlocks)),
+        version: cur.editorData.tr.version || '2.30.7'
+      };
+      persistPages();
+      drawPageEditorUI(cur);
+      return 1; // 1 kopyalama olayi
+    }
+  });
+
   // Destroy previous editor if any
   destroyPageEditor();
-  // Init Editor.js
+  // Aktif dilde editor'u init et
+  const langData = pg.editorData[currentEditorLang] || { time: Date.now(), blocks:[{type:'paragraph', data:{text:''}}] };
   try {
-    pageEditor = initPageEditor('page_editor', pg.editorData);
+    pageEditor = initPageEditor('page_editor', langData);
   } catch(err){
     console.error('Editor.js init fail:', err);
     document.getElementById('page_editor').innerHTML =
       `<p style="color:#c0392b;padding:20px">Editor yuklenemedi. Sayfayi yenileyip tekrar deneyin.<br><small>Detay: ${escapeHtml(err.message||err)}</small></p>`;
   }
   bd.scrollTop = 0;
+}
+// Mevcut Editor.js datasini pg.editorData[currentEditorLang]'a yaz (sync save, persist).
+// autoSavePage'in lang-aware versiyonu — lang tab degisikliginde cagrilir.
+async function saveCurrentLangEditor(){
+  if (!pageEditor || !currentEditorPageId) return;
+  try {
+    const out = await pageEditor.save();
+    const clean = sanitizeBlocks(out);
+    const pg = D.pages.find(p => p.id === currentEditorPageId);
+    if (!pg) return;
+    migratePageToBlocks(pg);
+    pg.editorData[currentEditorLang] = {
+      time: Date.now(),
+      blocks: (clean && clean.blocks) || [{type:'paragraph', data:{text:''}}],
+      version: (clean && clean.version) || '2.30.7'
+    };
+    const titleEl = document.getElementById('pe_title');
+    if (titleEl) pg.title = titleEl.value.trim() || pg.title;
+    persistPages();
+  } catch(err){
+    console.warn('saveCurrentLangEditor fail', err);
+  }
 }
 
 function closePageEditor(){
@@ -6860,7 +7199,13 @@ async function autoSavePage(){
     const clean = sanitizeBlocks(out);
     const pg = D.pages.find(p=>p.id===currentEditorPageId);
     if(!pg) return;
-    pg.editorData = clean;
+    // Mac v2-polish 2026-05-08: editorData multilang -> aktif dilin altina yaz
+    migratePageToBlocks(pg);
+    pg.editorData[currentEditorLang] = {
+      time: Date.now(),
+      blocks: (clean && clean.blocks) || [{type:'paragraph', data:{text:''}}],
+      version: (clean && clean.version) || '2.30.7'
+    };
     const titleEl = document.getElementById('pe_title');
     if(titleEl) pg.title = titleEl.value.trim() || pg.title;
     persistPages();
@@ -6868,7 +7213,7 @@ async function autoSavePage(){
     const existing = document.getElementById('pg-'+pg.id);
     if(existing){ existing.remove(); /* will re-render on next showPage */ }
     const ind = document.getElementById('pe_save_ind');
-    if(ind){ ind.textContent = '✓ Kaydedildi'; ind.className='pe-save-ind saved'; }
+    if(ind){ ind.textContent = '✓ Kaydedildi ('+currentEditorLang.toUpperCase()+')'; ind.className='pe-save-ind saved'; }
     buildNav();
   } catch(err){
     console.warn('autosave fail', err);

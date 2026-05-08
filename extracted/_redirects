@@ -1,0 +1,14 @@
+# Safakari Insaat - URL redirects
+# Format: <from> <to> <status>
+
+# KVKK ve alt sayfalar anchor'a yonlendir
+/kvkk          /#kvkk-politikasi    301
+/iletisim      /#iletisim           301
+/projeler      /#projeler           301
+/hakkimizda    /#hakkimizda         301
+/hizmetler     /#hizmetler          301
+
+# Eski/yanlis path'ler
+/home          /                    301
+/index         /                    301
+/index.htm     /                    301

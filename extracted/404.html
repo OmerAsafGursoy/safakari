@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — Sayfa Bulunamadi · Safakari Insaat</title>
+<meta name="robots" content="noindex, follow">
+<link rel="icon" type="image/png" href="/logo-main.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--pri:#1e3a5f;--pri-d:#152d4a;--pri-l:#eaf1f8;--acc:#c8913a;--bg:#f7f5f2;--w:#fff;--dk:#1a1a2e;--tx:#3d3d4e;--txm:#8e8e9e}
+html,body{height:100%}
+body{font-family:'Montserrat',sans-serif;background:linear-gradient(135deg,var(--bg) 0%,#ece8e2 100%);color:var(--tx);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;line-height:1.5}
+.box{max-width:520px;width:100%;background:rgba(255,255,255,.92);backdrop-filter:blur(18px);border:1px solid rgba(232,228,223,.6);border-radius:18px;box-shadow:0 12px 48px rgba(15,23,42,.10);padding:36px 28px;text-align:center}
+.logo{height:48px;margin:0 auto 16px;display:block}
+.code{font-size:4.5rem;font-weight:900;background:linear-gradient(135deg,var(--pri),var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:6px;letter-spacing:-2px}
+.title{font-size:1.15rem;font-weight:800;color:var(--dk);margin-bottom:14px}
+.msg{font-size:.86rem;color:var(--txm);margin-bottom:6px;font-weight:500}
+.msg-multi{display:flex;flex-direction:column;gap:4px;margin:12px 0 22px;padding:14px 16px;background:rgba(30,58,95,.04);border-radius:12px;font-size:.78rem;color:var(--tx);font-weight:600}
+.msg-multi span{display:block}
+.msg-multi span:first-child{color:var(--pri);font-weight:800}
+.msg-multi[dir="rtl"]{text-align:right}
+.btn{display:inline-block;padding:12px 28px;border-radius:50px;background:linear-gradient(135deg,var(--pri),#2a5078);color:#fff;font-size:.85rem;font-weight:700;text-decoration:none;transition:transform .25s ease, box-shadow .25s ease;box-shadow:0 4px 14px rgba(30,58,95,.25)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(30,58,95,.35)}
+.btn:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:0s !important;transition-duration:0s !important}
+}
+</style>
+</head>
+<body>
+<main class="box" role="main">
+  <img src="/logo-main.png" alt="Safakari Insaat" class="logo">
+  <div class="code" aria-hidden="true">404</div>
+  <h1 class="title">Sayfa bulunamadi</h1>
+  <p class="msg">Aradiginiz sayfaya ulasilamadi. Ana sayfaya donerek devam edebilirsiniz.</p>
+  <div class="msg-multi">
+    <span lang="tr">TR · Sayfa bulunamadi</span>
+    <span lang="en">EN · Page not found</span>
+    <span lang="ru">RU · Страница не найдена</span>
+    <span lang="ar" dir="rtl">AR · الصفحة غير موجودة</span>
+    <span lang="de">DE · Seite nicht gefunden</span>
+  </div>
+  <a href="/" class="btn" aria-label="Ana sayfaya don">&larr; Ana sayfa</a>
+</main>
+</body>
+</html>

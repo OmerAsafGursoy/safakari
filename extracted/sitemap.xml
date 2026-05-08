@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  NOT: domain placeholder olarak `safakari.com.tr` kullanildi. Musteri ile final domain (.com vs .com.tr)
+  kararlastiginda buradaki + robots.txt + extracted/index.html canonical/JSON-LD/OG-url alanlari birlikte
+  guncellenmeli. Hreflang 5 dil ?lang=XX query paramiyla ayni HTML'i farkli locale ile sunar (TR x-default).
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://safakari.com.tr/</loc>
+    <lastmod>2026-05-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://safakari.com.tr/?lang=tr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://safakari.com.tr/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://safakari.com.tr/?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://safakari.com.tr/?lang=ar"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://safakari.com.tr/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://safakari.com.tr/"/>
+  </url>
+</urlset>
