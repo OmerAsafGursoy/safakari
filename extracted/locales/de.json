@@ -82,6 +82,7 @@
     "err_name": "Name ist erforderlich",
     "err_phone": "Bitte gültige Telefonnummer eingeben",
     "video_pending": "Drohnenvideo in Kürze",
+    "no_info": "Keine Info",
     "video_title_suffix": "Drohnenvideo",
     "hero_aria_suffix": "Hauptbild",
     "photo_aria_prefix": "Foto",

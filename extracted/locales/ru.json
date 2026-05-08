@@ -82,6 +82,7 @@
     "err_name": "Поле имени обязательно",
     "err_phone": "Введите корректный номер телефона",
     "video_pending": "Видео с дрона скоро",
+    "no_info": "Нет данных",
     "video_title_suffix": "видео с дрона",
     "hero_aria_suffix": "главное изображение",
     "photo_aria_prefix": "фото",

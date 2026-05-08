@@ -82,6 +82,7 @@
     "err_name": "حقل الاسم مطلوب",
     "err_phone": "يرجى إدخال رقم هاتف صحيح",
     "video_pending": "فيديو الدرون قريبًا",
+    "no_info": "لا توجد معلومات",
     "video_title_suffix": "فيديو الدرون",
     "hero_aria_suffix": "الصورة الرئيسية",
     "photo_aria_prefix": "صورة",

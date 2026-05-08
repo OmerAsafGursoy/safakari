@@ -82,6 +82,7 @@
     "err_name": "Ad Soyad alanı zorunludur",
     "err_phone": "Geçerli bir telefon numarası girin",
     "video_pending": "Drone videosu yakında",
+    "no_info": "Bilgi yok",
     "video_title_suffix": "drone videosu",
     "hero_aria_suffix": "öne çıkan görsel",
     "photo_aria_prefix": "fotoğraf",

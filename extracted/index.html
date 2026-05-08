@@ -184,13 +184,14 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .plist::-webkit-scrollbar{width:4px}.plist::-webkit-scrollbar-thumb{background:var(--brd);border-radius:10px}
 
 /* ── Card ── */
-.card{display:flex;background:rgba(255,255,255,.85);border:1.5px solid rgba(232,228,223,.6);border-radius:var(--rad);overflow:hidden;cursor:pointer;transition:all var(--tr);min-height:150px;max-width:100%;contain:layout}
+/* Sabit yukseklik (170px) — tum kartlar grid'de hizali, opsiyonel feats alani genisletmesin (Mac iter-2 fix A) */
+.card{display:flex;background:rgba(255,255,255,.85);border:1.5px solid rgba(232,228,223,.6);border-radius:var(--rad);overflow:hidden;cursor:pointer;transition:all var(--tr);height:170px;min-height:170px;max-height:170px;max-width:100%;contain:layout;flex-shrink:0}
 .card:hover{border-color:var(--pri);box-shadow:0 6px 24px var(--pri-g);transform:translateY(-2px)}
 .card.on{border-color:var(--acc);box-shadow:0 6px 24px var(--acc-g);background:linear-gradient(135deg,rgba(253,246,236,.9),#fff)}
 .card-img{width:120px;min-width:120px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;position:relative;overflow:hidden;background-size:cover;background-position:center}
 .card-badge{position:absolute;top:6px;left:6px;padding:3px 10px;border-radius:50px;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
-.card-body{flex:1;padding:12px 14px;display:flex;flex-direction:column;min-width:0}
-.card-body>.card-top{flex:1 0 auto;min-width:0}
+.card-body{flex:1;padding:12px 14px;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.card-body>.card-top{flex:1 1 auto;min-width:0;min-height:0;overflow:hidden}
 .card-title{font-size:.88rem;font-weight:800;color:var(--dk);transition:color var(--tr);overflow-wrap:anywhere;word-break:break-word;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.card:hover .card-title{color:var(--pri)}
 .card-loc{font-size:.73rem;color:var(--txm);margin-top:2px;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 /* card-tags: wrap yerine nowrap + overflow:hidden -> applyTagOverflow tek-satir hesabi tutarli olsun, uzun chip listesi karti tasdirmasin */
@@ -412,7 +413,27 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .card-tags{flex-wrap:nowrap!important;overflow:hidden;height:auto}
 .card-tag{white-space:nowrap;flex-shrink:0}
 .card-tag-more{background:var(--pri-l);color:var(--pri);padding:2px 8px;border-radius:5px;font-size:.63rem;font-weight:700;flex-shrink:0;white-space:nowrap;cursor:default}
-.card{min-height:150px}
+/* Mac iter-2 fix A: card sabit 170px (yukarida tanimli) — bu eski override kaldirildi */
+/* ── Mac iter-2 fix B: AR side panel LTR zorla ── */
+/* AR icin _meta.dir="ltr" zaten ayarli ama lang="ar" + Arabic strong-RTL karakterler flex/text-align'i tersliyor.
+   Side panel (filters + plist + cards) container'larini explicit LTR'ye sabitle ki TR ile pixel-pixel ayni dursun.
+   Ic metin (chip Arapcasi, kart basligi vb.) kendi okunusuna gore kalir. */
+html[lang="ar"] .side,
+html[lang="ar"] .filters,
+html[lang="ar"] .filters-row,
+html[lang="ar"] .rcount,
+html[lang="ar"] .plist,
+html[lang="ar"] .card,
+html[lang="ar"] .card-body,
+html[lang="ar"] .card-top,
+html[lang="ar"] .card-tags,
+html[lang="ar"] .card-feats,
+html[lang="ar"] .card-foot{
+  direction: ltr;
+  text-align: start;
+}
+/* Filter chip sirasi tersine dondu — explicit row yonu (ihtiyaten) */
+html[lang="ar"] .filters-row{ flex-direction: row; }
 /* ── Card feats single-line + more chip (madde 5c) ── */
 .card-feats{display:flex;gap:4px;margin:4px 0 6px;flex-wrap:nowrap;overflow:hidden;height:auto}
 .card-feat{background:linear-gradient(135deg,rgba(253,246,236,.7),rgba(255,255,255,.7));border:1px solid rgba(200,145,58,.25);padding:2px 8px;border-radius:5px;font-size:.6rem;font-weight:700;color:var(--acc-d);white-space:nowrap;flex-shrink:0}
@@ -4594,7 +4615,8 @@ function showPage(id){
 
   if(id==='projects'){
     if(!document.getElementById('pg-projects')){
-      ct.innerHTML=`<div class="pg on" id="pg-projects"><div class="split"><div class="side"><div class="filters"><div class="filters-row"><button class="chip on" onclick="fAll(this)">${t('filters.all','Tümü')}</button><button class="chip" onclick="fBy('satilik',this)">${t('filters.satilik','Satışta')}</button><button class="chip" onclick="fBy('yapim',this)">${t('filters.yapim','Yapımda')}</button><button class="chip" onclick="fBy('tamamlanan',this)">${t('filters.tamamlanan','Tamamlanan')}</button></div><div class="rcount" id="rcount"></div></div><div class="plist" id="plist"></div></div><div class="mapwrap"><div id="map"></div><div class="dto" id="dto"><div class="dto-head"><span class="dto-title" id="dtoTitle">${t('nav.projects','Projeler')}</span><button class="dto-x" onclick="closeD()">✕</button></div><div class="dto-body" id="dtoBd"></div><div class="dto-cta"><a href="tel:+902642773007" class="cta ph" aria-label="${t('detail.cta_call_aria','Telefon ile ara')}">${t('detail.cta_call','📞 Ara')}</a><a href="https://wa.me/905413635454" target="_blank" rel="noopener" class="cta wa" aria-label="${t('detail.cta_whatsapp_aria','WhatsApp ile yaz')}">${t('detail.cta_whatsapp','💬 WhatsApp')}</a><button class="cta ms" onclick="document.getElementById('cmini')?.scrollIntoView({behavior:'smooth'})">${t('detail.cta_msg','✉️ Mesaj')}</button></div></div></div></div></div>`;
+      // Mac iter-2 fix B: side / filters / plist explicit dir="ltr" — Arabic'te container LTR kalsin
+      ct.innerHTML=`<div class="pg on" id="pg-projects"><div class="split"><div class="side" dir="ltr"><div class="filters" dir="ltr"><div class="filters-row" dir="ltr"><button class="chip on" onclick="fAll(this)">${t('filters.all','Tümü')}</button><button class="chip" onclick="fBy('satilik',this)">${t('filters.satilik','Satışta')}</button><button class="chip" onclick="fBy('yapim',this)">${t('filters.yapim','Yapımda')}</button><button class="chip" onclick="fBy('tamamlanan',this)">${t('filters.tamamlanan','Tamamlanan')}</button></div><div class="rcount" id="rcount"></div></div><div class="plist" id="plist" dir="ltr"></div></div><div class="mapwrap"><div id="map"></div><div class="dto" id="dto"><div class="dto-head"><span class="dto-title" id="dtoTitle">${t('nav.projects','Projeler')}</span><button class="dto-x" onclick="closeD()">✕</button></div><div class="dto-body" id="dtoBd"></div><div class="dto-cta"><a href="tel:+902642773007" class="cta ph" aria-label="${t('detail.cta_call_aria','Telefon ile ara')}">${t('detail.cta_call','📞 Ara')}</a><a href="https://wa.me/905413635454" target="_blank" rel="noopener" class="cta wa" aria-label="${t('detail.cta_whatsapp_aria','WhatsApp ile yaz')}">${t('detail.cta_whatsapp','💬 WhatsApp')}</a><button class="cta ms" onclick="document.getElementById('cmini')?.scrollIntoView({behavior:'smooth'})">${t('detail.cta_msg','✉️ Mesaj')}</button></div></div></div></div></div>`;
       initMap();
     }
     showPg('pg-projects');
@@ -4820,6 +4842,8 @@ function renderCards(list){
   list.forEach((p,i)=>{
     const c=document.createElement('div');
     c.className='card';c.id='c'+p.id;c.style.animationDelay=i*.06+'s';
+    // Mac iter-2 fix B: kart container LTR zorla (AR'de bidi flex'i tersliyor)
+    c.setAttribute('dir','ltr');
     c.onclick=()=>openD(p.id);
     c.onmouseenter=()=>{const e=markers[p.id]?.getElement()?.querySelector('div');if(e)e.style.transform='scale(1.3)'};
     c.onmouseleave=()=>{const e=markers[p.id]?.getElement()?.querySelector('div');if(e)e.style.transform='scale(1)'};
@@ -4939,9 +4963,10 @@ function openD(id){
   const pFeats = tp(p,'feats') || p.feats;
   document.getElementById('dtoTitle').textContent=pName;
   const bd=document.getElementById('dtoBd');
+  // Mac iter-2 fix C: youtubeId yoksa placeholder hic gosterme (cirkin "Drone videosu yakinda" panel gorunuyordu)
   const videoHtml = p.youtubeId
     ? `<div class="yt-wrap"><iframe src="https://www.youtube.com/embed/${encodeURIComponent(p.youtubeId)}?rel=0" title="${pName} ${t('detail.video_title_suffix','drone videosu')}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`
-    : `<div class="yt-placeholder" aria-label="${t('detail.video_pending','Drone videosu yakında')}"><div class="yt-ph-in"><span>🎬</span>${t('detail.video_pending','Drone videosu yakında')}</div></div>`;
+    : '';
   // Hero: photo wins over emoji
   const hasPhoto = Array.isArray(p.photos) && p.photos.length>0;
   const heroStyle = hasPhoto
@@ -4963,6 +4988,15 @@ function openD(id){
   const mapHtml = hasGeo
     ? `<div class="sec-t">${t('detail.section_map','📍 Konum')}</div><div id="dtoMap" class="dto-map" aria-label="${t('detail.map_aria','Proje konumu haritasi')}"></div>`
     : '';
+  // Mac iter-2 fix C: qstats — sadece dolu (>0) stat'lari render et, hicbiri yoksa blogu gizle
+  // Eski davranis: 0/null/undefined yerine '—' placeholder gosteriyordu (cirkin)
+  const statItems = [];
+  if (p.units  && Number(p.units)  > 0) statItems.push({ n: p.units,  l: t('detail.units_label', 'Daire') });
+  if (p.blocks && Number(p.blocks) > 0) statItems.push({ n: p.blocks, l: t('detail.blocks_label','Blok')  });
+  if (p.floors && Number(p.floors) > 0) statItems.push({ n: p.floors, l: t('detail.floors_label','Kat')   });
+  const qstatsHtml = statItems.length
+    ? `<div class="qstats" style="grid-template-columns:repeat(${statItems.length},1fr)">${statItems.map(s=>`<div class="qs"><div class="n">${s.n}</div><div class="l">${s.l}</div></div>`).join('')}</div>`
+    : '';
   // Daire tipleri (multilang: tt.n, tek dilli: tt.s, tt.p)
   const typesHtml = pTypes && pTypes.length
     ? `<div class="sec-t">${t('detail.section_apt_types','Daire Tipleri')}</div><div class="atgrid">${pTypes.map((tt,i)=>{
@@ -4973,7 +5007,7 @@ function openD(id){
         return `<div class="atc${i===0?' sel':''}" onclick="selType(${i})"><div class="atc-n">${nDisp}</div><div class="atc-s">${sDisp}</div><div class="atc-p">${dispP}</div></div>`;
       }).join('')}</div>`
     : '';
-  bd.innerHTML=`<div class="dto-hero" style="${heroStyle}" role="img" aria-label="${pName} ${t('detail.hero_aria_suffix','öne çıkan görsel')}">${heroBody}<div class="st" style="background:${p.sc};color:${p.sc==='#c8913a'?'var(--dk)':'#fff'}">${pStat}</div></div>${videoHtml}<div class="dto-name">${pName}</div><div class="dto-loc">📍 ${pLoc}</div>${pTL?`<div style="font-size:.75rem;color:var(--txm);margin-bottom:14px">🗓️ ${pTL}</div>`:''}<div class="qstats"><div class="qs"><div class="n">${p.units||'—'}</div><div class="l">${t('detail.units_label','Daire')}</div></div><div class="qs"><div class="n">${p.blocks||'—'}</div><div class="l">${t('detail.blocks_label','Blok')}</div></div><div class="qs"><div class="n">${p.floors||'—'}</div><div class="l">${t('detail.floors_label','Kat')}</div></div></div>${htypesHtml}${mapHtml}${photosHtml}${typesHtml}<div class="sec-t">${t('detail.section_features','Özellikler')}</div><div class="ftgrid">${(pFeats||[]).map(f=>`<div class="fti">${f}</div>`).join('')}</div><div class="ddesc">${pDesc}</div><div class="cmini" id="cmini"><h4>${t('detail.contact_form_title','Bu Proje İçin Bilgi Al')}</h4><div class="mfg"><label for="df_name">${t('detail.field_name','Ad Soyad')}</label><input id="df_name" required placeholder="${t('detail.placeholder_name','Adınız Soyadınız')}" aria-label="${t('detail.field_name','Ad Soyad')}" autocomplete="name"><div class="field-error">${t('detail.err_name','Ad Soyad alanı zorunludur')}</div></div><div class="mfg"><label for="df_phone">${t('detail.field_phone','Telefon')}</label><input id="df_phone" required data-phone placeholder="${t('detail.placeholder_phone','0(5XX) XXX XX XX')}" aria-label="${t('detail.aria_phone','Telefon numarası')}" autocomplete="tel"><div class="field-error">${t('detail.err_phone','Geçerli bir telefon numarası girin')}</div></div><div class="mfg"><label for="df_msg">${t('detail.field_msg','Mesaj')}</label><textarea id="df_msg" placeholder="${t('detail.placeholder_msg_prefix','Mesajınız... (')}${pName}${t('detail.placeholder_msg_suffix',' hakkında bilgi almak istiyorum)')}" aria-label="${t('detail.aria_msg','Mesaj')}"></textarea></div><button class="msub" onclick="submitForm(this,document.getElementById('df_name'),document.getElementById('df_phone'),document.getElementById('df_msg'))">${t('detail.submit','📩 Bilgi Talep Et')}</button></div>`;
+  bd.innerHTML=`<div class="dto-hero" style="${heroStyle}" role="img" aria-label="${pName} ${t('detail.hero_aria_suffix','öne çıkan görsel')}">${heroBody}<div class="st" style="background:${p.sc};color:${p.sc==='#c8913a'?'var(--dk)':'#fff'}">${pStat}</div></div>${videoHtml}<div class="dto-name">${pName}</div><div class="dto-loc">📍 ${pLoc}</div>${pTL?`<div style="font-size:.75rem;color:var(--txm);margin-bottom:14px">🗓️ ${pTL}</div>`:''}${qstatsHtml}${htypesHtml}${mapHtml}${photosHtml}${typesHtml}<div class="sec-t">${t('detail.section_features','Özellikler')}</div><div class="ftgrid">${(pFeats||[]).map(f=>`<div class="fti">${f}</div>`).join('')}</div><div class="ddesc">${pDesc}</div><div class="cmini" id="cmini"><h4>${t('detail.contact_form_title','Bu Proje İçin Bilgi Al')}</h4><div class="mfg"><label for="df_name">${t('detail.field_name','Ad Soyad')}</label><input id="df_name" required placeholder="${t('detail.placeholder_name','Adınız Soyadınız')}" aria-label="${t('detail.field_name','Ad Soyad')}" autocomplete="name"><div class="field-error">${t('detail.err_name','Ad Soyad alanı zorunludur')}</div></div><div class="mfg"><label for="df_phone">${t('detail.field_phone','Telefon')}</label><input id="df_phone" required data-phone placeholder="${t('detail.placeholder_phone','0(5XX) XXX XX XX')}" aria-label="${t('detail.aria_phone','Telefon numarası')}" autocomplete="tel"><div class="field-error">${t('detail.err_phone','Geçerli bir telefon numarası girin')}</div></div><div class="mfg"><label for="df_msg">${t('detail.field_msg','Mesaj')}</label><textarea id="df_msg" placeholder="${t('detail.placeholder_msg_prefix','Mesajınız... (')}${pName}${t('detail.placeholder_msg_suffix',' hakkında bilgi almak istiyorum)')}" aria-label="${t('detail.aria_msg','Mesaj')}"></textarea></div><button class="msub" onclick="submitForm(this,document.getElementById('df_name'),document.getElementById('df_phone'),document.getElementById('df_msg'))">${t('detail.submit','📩 Bilgi Talep Et')}</button></div>`;
   bd.scrollTop=0;
   requestAnimationFrame(()=>{
     bd.querySelectorAll('.dto-hero,.dto-name,.dto-loc,.qstats,.dto-htypes,.dto-map,.dto-photos,.atgrid,.ftgrid,.ddesc,.cmini').forEach((el,i)=>{el.style.animation=`dFade .4s ease-out ${i*.05}s backwards`});

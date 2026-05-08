@@ -82,6 +82,7 @@
     "err_name": "Full name is required",
     "err_phone": "Please enter a valid phone number",
     "video_pending": "Drone video coming soon",
+    "no_info": "No info",
     "video_title_suffix": "drone video",
     "hero_aria_suffix": "featured image",
     "photo_aria_prefix": "photo",
