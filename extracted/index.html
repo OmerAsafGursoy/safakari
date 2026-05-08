@@ -12,6 +12,17 @@
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://safakari.com/">
 
+  <!-- ── hreflang 5 dil (TR/EN/RU/AR/DE + x-default) — domain karari sonra fix edilecek ── -->
+  <link rel="alternate" hreflang="tr" href="https://safakari.com/?lang=tr">
+  <link rel="alternate" hreflang="en" href="https://safakari.com/?lang=en">
+  <link rel="alternate" hreflang="ru" href="https://safakari.com/?lang=ru">
+  <link rel="alternate" hreflang="ar" href="https://safakari.com/?lang=ar">
+  <link rel="alternate" hreflang="de" href="https://safakari.com/?lang=de">
+  <link rel="alternate" hreflang="x-default" href="https://safakari.com/">
+
+  <!-- ── theme-color (mobile address bar marka rengi) ── -->
+  <meta name="theme-color" content="#1e3a5f">
+
   <!-- ── Open Graph ── -->
   <meta property="og:type" content="website">
   <meta property="og:locale" content="tr_TR">
@@ -108,22 +119,40 @@
   </script>
 
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H"
+        crossorigin="anonymous">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH"
+          crossorigin="anonymous"></script>
 
   <!-- ── i18n: 5 dil (TR/EN/RU/AR/DE) — boot scripti async DOMContentLoaded'a kadar bekler ── -->
   <link rel="prefetch" href="locales/tr.json">
   <script src="assets/i18n.js" defer></script>
 
-  <!-- ── Editor.js core + plugins (page-builder v1) — versiyonlar PIN'LI ── -->
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.30.7/dist/editorjs.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.8.8/dist/header.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@2.11.7/dist/paragraph.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@2.10.2/dist/image.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@1.4.2/dist/delimiter.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@1.10.0/dist/list.umd.js"></script>
+  <!-- ── Editor.js core + plugins (page-builder v1) — versiyonlar PIN'LI + SRI integrity ── -->
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.30.7/dist/editorjs.umd.min.js"
+          integrity="sha384-epCcifFeVlG/jgroe1K9cNHZXF5EegGkEQ/F8sTPYe5KRwYaGSQ/XRtjykWUHYaR"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.8.8/dist/header.umd.min.js"
+          integrity="sha384-J2N453rePuqsP7i3A56e5A45QOjK2njuCnGPYZ1U7k02J2JxP8h8/p+NxU0ekegS"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@2.11.7/dist/paragraph.umd.min.js"
+          integrity="sha384-eDjehA3KwzZVHeTrIgWQaK1EOTeZ8cS6Rj6Vgh8sXGsgs6YfP5CN3niIsQoLdqhB"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@2.10.2/dist/image.umd.min.js"
+          integrity="sha384-rj0gW+mokHJAAPRCc/JVJm7E8u6iKeMxoBXPX4WKB5DKf+lazOahwBPsqbiFPTLE"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@1.4.2/dist/delimiter.umd.min.js"
+          integrity="sha384-Uv4Z4GsgfrA5pg3scHQtmhD8yCstnJ2cDPCDFmwlfPdW689hXTo451CHKh/ZI3/h"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@1.10.0/dist/list.umd.js"
+          integrity="sha384-pt2axkhrlqv09EbFmJffXfINJyTZxEnHXulBal/0IZoIT/DIjN9Q8pxYzvJmol8z"
+          crossorigin="anonymous"></script>
   <!-- DOMPurify (zorunlu — her save ve render'da sanitize) -->
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"
+          integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu"
+          crossorigin="anonymous"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -721,6 +750,21 @@ html[lang="ar"] .filters-row{ flex-direction: row; }
 /* ── Pages listesi ek: backup butonlari ── */
 .pages-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .pages-toolbar .abtn{padding:7px 14px;font-size:.74rem}
+
+/* ── prefers-reduced-motion (WCAG 2.3.3, vestibular kullanicilar) ──
+   Tum animasyon/transition'lari neredeyse anlik yapar. Drawer slide,
+   lightbox fade/zoom, lang dropdown chevron, dto.open, keyframes —
+   hepsi bu blok ile override edilir. */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+  .particles{display:none}
+}
 </style>
 </head>
 <body>
@@ -4736,6 +4780,28 @@ function initTopbarDrawer(){
     if (window.innerWidth > 700 && !drawer.hidden) closeDrawer();
   });
 
+  // ── Tab focus trap (a11y MED-3 fix) ── drawer acikken Tab focus icinde dolasmali
+  drawer.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab' || drawer.hidden) return;
+    const focusables = drawer.querySelectorAll(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    const visible = Array.from(focusables).filter(el => {
+      // display:none veya offsetParent null olanlari atla (drawer-foot tb display:none olabilir)
+      return el.offsetParent !== null || el === document.activeElement;
+    });
+    if (visible.length === 0) return;
+    const first = visible[0];
+    const last = visible[visible.length - 1];
+    if (e.shiftKey && document.activeElement === first){
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last){
+      e.preventDefault();
+      first.focus();
+    }
+  });
+
   // buildNav her cagrildiginda drawer'i da senkronize et
   window.__syncDrawerNav = syncDrawerNav;
 }
@@ -4807,8 +4873,8 @@ function showPage(id){
     const aMis   = tf(a.mission) || t('about.mission','');
     const aVis   = tf(a.vision)  || t('about.vision','');
     // Tagline + cert body: admin'den girilmiyor (sabit i18n key)
-    el.innerHTML=`<div class="gpage">
-      <h1>${aTitle}</h1>
+    el.innerHTML=`<section class="gpage" aria-labelledby="about-pg-title">
+      <h1 id="about-pg-title">${aTitle}</h1>
       <div class="divider"></div>
       ${aSub?`<p class="sub">${aSub}</p>`:''}
       ${t('about_pg.tagline','')?`<p style="font-size:.9rem;color:var(--tx);margin-bottom:22px;font-weight:500">${t('about_pg.tagline','')}</p>`:''}
@@ -4854,7 +4920,7 @@ function showPage(id){
           return `<div class="gval"><div class="icon">${v.icon}</div><h4>${title}</h4><p>${desc}</p></div>`;
         }).filter(Boolean).join('')}</div>`;
       })()}
-    </div>${buildFooter()}`;
+    </section>${buildFooter()}`;
     showPg('pg-'+id);return;
   }
 
@@ -4878,7 +4944,7 @@ function showPage(id){
       insta ? `<div class="citem"><span class="ci">📸</span><div>${t('contact_pg.label_instagram','Instagram:')} ${insta}</div></div>` : '',
       fb ? `<div class="citem"><span class="ci">📘</span><div>${t('contact_pg.label_facebook','Facebook:')} ${fb}</div></div>` : ''
     ].filter(Boolean).join('');
-    el.innerHTML=`<div class="gpage"><h1>${t('contact_pg.title','Bize Ulaşın')}</h1><div class="divider"></div><div class="cgrid"><div class="cinfo"><h3>${t('contact_pg.info_title','İletişim Bilgileri')}</h3>${infoBlocks}</div><div class="cform"><h3>${t('contact_pg.form_title','Mesaj Gönderin')}</h3><div class="cfg"><label for="cf_name">${t('contact_pg.field_name','Ad Soyad')}</label><input id="cf_name" required placeholder="${t('contact_pg.placeholder_name','Adınız Soyadınız')}" autocomplete="name"><div class="field-error" id="cf_name_err">${t('contact_pg.err_name','Bu alan zorunludur')}</div></div><div class="cfg"><label for="cf_phone">${t('contact_pg.field_phone','Telefon')}</label><input id="cf_phone" required data-phone placeholder="${t('contact_pg.placeholder_phone','0(5XX) XXX XX XX')}" autocomplete="tel"><div class="field-error" id="cf_phone_err">${t('contact_pg.err_phone','Geçerli bir telefon numarası girin')}</div></div><div class="cfg"><label for="cf_email">${t('contact_pg.field_email','E-Posta')}</label><input id="cf_email" type="email" placeholder="${t('contact_pg.placeholder_email','ornek@mail.com')}" autocomplete="email"><div class="field-error" id="cf_email_err">${t('contact_pg.err_email','Geçerli bir e-posta adresi girin')}</div></div><div class="cfg"><label for="cf_msg">${t('contact_pg.field_msg','Mesaj')}</label><textarea id="cf_msg" placeholder="${t('contact_pg.placeholder_msg','Mesajınız...')}"></textarea></div><button class="abtn sv" style="width:100%" onclick="submitForm(this,document.getElementById('cf_name'),document.getElementById('cf_phone'),document.getElementById('cf_msg'),document.getElementById('cf_email'))">${t('contact_pg.submit','📩 Gönder')}</button></div></div></div>${buildFooter()}`;
+    el.innerHTML=`<section class="gpage" aria-labelledby="contact-pg-title"><h1 id="contact-pg-title">${t('contact_pg.title','Bize Ulaşın')}</h1><div class="divider"></div><div class="cgrid"><div class="cinfo"><h3>${t('contact_pg.info_title','İletişim Bilgileri')}</h3>${infoBlocks}</div><div class="cform"><h3>${t('contact_pg.form_title','Mesaj Gönderin')}</h3><div class="cfg"><label for="cf_name">${t('contact_pg.field_name','Ad Soyad')}</label><input id="cf_name" required placeholder="${t('contact_pg.placeholder_name','Adınız Soyadınız')}" autocomplete="name"><div class="field-error" id="cf_name_err">${t('contact_pg.err_name','Bu alan zorunludur')}</div></div><div class="cfg"><label for="cf_phone">${t('contact_pg.field_phone','Telefon')}</label><input id="cf_phone" required data-phone placeholder="${t('contact_pg.placeholder_phone','0(5XX) XXX XX XX')}" autocomplete="tel"><div class="field-error" id="cf_phone_err">${t('contact_pg.err_phone','Geçerli bir telefon numarası girin')}</div></div><div class="cfg"><label for="cf_email">${t('contact_pg.field_email','E-Posta')}</label><input id="cf_email" type="email" placeholder="${t('contact_pg.placeholder_email','ornek@mail.com')}" autocomplete="email"><div class="field-error" id="cf_email_err">${t('contact_pg.err_email','Geçerli bir e-posta adresi girin')}</div></div><div class="cfg"><label for="cf_msg">${t('contact_pg.field_msg','Mesaj')}</label><textarea id="cf_msg" placeholder="${t('contact_pg.placeholder_msg','Mesajınız...')}"></textarea></div><button class="abtn sv" style="width:100%" onclick="submitForm(this,document.getElementById('cf_name'),document.getElementById('cf_phone'),document.getElementById('cf_msg'),document.getElementById('cf_email'))">${t('contact_pg.submit','📩 Gönder')}</button></div></div></section>${buildFooter()}`;
     showPg('pg-'+id);return;
   }
 
@@ -4886,8 +4952,8 @@ function showPage(id){
   if(id==='loan'){
     const el = ensurePg(id, true);
     el.innerHTML = `
-      <div class="gpage">
-        <h1>${t('loan.title','💰 Konut Kredisi Hesaplama')}</h1>
+      <section class="gpage" aria-labelledby="loan-pg-title">
+        <h1 id="loan-pg-title">${t('loan.title','💰 Konut Kredisi Hesaplama')}</h1>
         <div class="divider"></div>
         <p class="sub">${t('loan.subtitle','Düşündüğünüz konut için aylık taksit, toplam ödeme ve faiz tutarını anında hesaplayın. Bilgiler bilgilendirme amaçlıdır.')}</p>
         <div class="loan-section">
@@ -4922,7 +4988,7 @@ function showPage(id){
             <div class="loan-results" id="ln_output"></div>
           </div>
         </div>
-      </div>${buildFooter()}`;
+      </section>${buildFooter()}`;
     showPg('pg-'+id);
     // Wire up calculator after DOM insertion
     setTimeout(attachLoanCalc, 50);
@@ -5000,8 +5066,10 @@ function renderCards(list){
     return;
   }
   list.forEach((p,i)=>{
-    const c=document.createElement('div');
+    // Semantic: proje karti <article> — screen reader "next article" jump shortcut'una uyar
+    const c=document.createElement('article');
     c.className='card';c.id='c'+p.id;c.style.animationDelay=i*.06+'s';
+    c.setAttribute('aria-label', tp(p,'name') || 'Proje');
     // Mac iter-2 fix B: kart container LTR zorla (AR'de bidi flex'i tersliyor)
     c.setAttribute('dir','ltr');
     c.onclick=()=>openD(p.id);
@@ -6369,12 +6437,14 @@ function renderPageBlocks(pg){
   migratePageToBlocks(pg);
   // i18n: pg.title icin builtin sayfalarda ceviri kullan
   const title = pageTitle(pg);
-  let html = `<div class="gpage"><h1>${escapeHtml(pg.icon||'📄')} ${escapeHtml(title||'')}</h1><div class="divider"></div>`;
+  // Custom sayfa wrapper'i <section> — landmark + aria-labelledby ile h1'e bagli
+  const safeId = 'custom-pg-title-' + (pg.id || Math.random().toString(36).slice(2,8));
+  let html = `<section class="gpage" aria-labelledby="${safeId}"><h1 id="${safeId}">${escapeHtml(pg.icon||'📄')} ${escapeHtml(title||'')}</h1><div class="divider"></div>`;
   // Aktif dilin editorData'sini al, yoksa TR'ye dus
   const data = (pg.type === 'custom') ? getPageDataForLang(pg, curLang()) : pg.editorData;
   const blocks = (data && Array.isArray(data.blocks)) ? data.blocks : [];
   blocks.forEach(b => { html += renderBlock(b); });
-  html += `</div>`;
+  html += `</section>`;
   return html;
 }
 function renderBlock(b){
