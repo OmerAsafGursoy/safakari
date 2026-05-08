@@ -176,121 +176,163 @@
     el.setAttribute('content', content);
   }
 
-  // ── Switcher UI ──
-  // Strateji: Mevcutsa topbar.topbar-r icine prepend et (en saga oturur, butonlardan once
-  // gorunsun ki kullanici dili once secsin). Topbar yoksa body'ye fixed sag-ust olarak ekle.
+  // ── Switcher UI (Mac iter-6 / 2026-05-08) ──
+  // Tek aktif buton ("TR ▾") tikla -> dropdown menu acilsin -> 5 dil oradan secilsin.
+  // ARIA: button[aria-haspopup="listbox"][aria-expanded] + ul[role="listbox"] + li[role="option"]
+  // Klavye: Enter/Space/ArrowDown ac, Escape kapat, ArrowUp/Down/Home/End gez, Enter sec.
+  // Stil: index.html icindeki .lang-switcher / .lang-switcher-btn / .lang-switcher-menu kurallari.
+  const LANG_LABELS = { tr:'TR', en:'EN', ru:'RU', ar:'AR', de:'DE' };
+  const LANG_NAMES = {
+    tr: 'Türkçe', en: 'English', ru: 'Русский', ar: 'العربية', de: 'Deutsch'
+  };
+
   function buildSwitcher(){
-    let host = document.getElementById('langSwitcher');
-    if (host) host.remove(); // Yeniden olustur (lang degisikliginde update icin daha basit)
-    host = document.createElement('div');
-    host.id = 'langSwitcher';
-    host.setAttribute('role', 'group');
-    host.setAttribute('aria-label', 'Language');
-    const labels = { tr:'TR', en:'EN', ru:'RU', ar:'AR', de:'DE' };
-    host.innerHTML = SUPPORTED.map(code => {
-      const active = code === currentLang ? ' active' : '';
-      return `<button type="button" class="lang-btn${active}" data-lang="${code}" aria-pressed="${code === currentLang}" aria-label="${labels[code]}">${labels[code]}</button>`;
-    }).join('');
-    host.querySelectorAll('.lang-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const code = btn.getAttribute('data-lang');
-        if (code && code !== currentLang) setLang(code);
-      });
-    });
-    // Topbar'a yerlestir (sag butonlardan once)
+    // Eski host(lar)i temizle (eski .lang-btn pill'leri dahil)
+    document.querySelectorAll('#langSwitcher, .lang-switcher').forEach(el => el.remove());
+
+    // 1. Topbar saginda primary instance
     const topbarR = document.querySelector('.topbar-r');
     if (topbarR){
-      host.classList.add('inline');
-      topbarR.insertBefore(host, topbarR.firstChild);
-    } else {
-      host.classList.add('floating');
-      document.body.appendChild(host);
+      const sw = createSwitcherEl('primary');
+      // tbWa ve tbPhone'dan once (en sola, dil ilk goze carpsin)
+      topbarR.insertBefore(sw, topbarR.firstChild);
+    }
+
+    // 2. Drawer footer (mobile) — drawer'in nav blogundan sonra, foot'tan once.
+    const drawer = document.getElementById('topbarDrawer');
+    if (drawer){
+      const drawerFoot = drawer.querySelector('.topbar-drawer-foot');
+      const sw2 = createSwitcherEl('drawer');
+      if (drawerFoot){
+        drawer.insertBefore(sw2, drawerFoot);
+      } else {
+        drawer.appendChild(sw2);
+      }
+    }
+
+    // 3. Hicbiri yoksa fallback floating (sayfa olabilir ki sade demo)
+    if (!topbarR && !drawer){
+      const sw = createSwitcherEl('floating');
+      sw.classList.add('floating');
+      document.body.appendChild(sw);
     }
   }
 
+  function createSwitcherEl(variant){
+    const host = document.createElement('div');
+    host.className = 'lang-switcher';
+    host.setAttribute('data-variant', variant);
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'lang-switcher-btn';
+    btn.setAttribute('aria-haspopup', 'listbox');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-label', t('lang.switcher_label', 'Dil'));
+    btn.innerHTML = `<span class="lang-active-code">${LANG_LABELS[currentLang]}</span><svg class="lang-chev" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
+
+    const menu = document.createElement('ul');
+    menu.className = 'lang-switcher-menu';
+    menu.setAttribute('role', 'listbox');
+    menu.setAttribute('aria-label', t('lang.switcher_label', 'Dil'));
+    menu.hidden = true;
+    menu.innerHTML = SUPPORTED.map((code, i) => {
+      const sel = code === currentLang;
+      return `<li role="presentation"><button type="button" role="option" class="lang-switcher-opt" data-lang="${code}" aria-selected="${sel}" tabindex="-1"><span class="lang-opt-name">${LANG_LABELS[code]} <span style="opacity:.6;font-weight:600">· ${LANG_NAMES[code]}</span></span><span class="lang-check" aria-hidden="true">✓</span></button></li>`;
+    }).join('');
+
+    host.appendChild(btn);
+    host.appendChild(menu);
+
+    // ── Event wiring ──
+    function openMenu(){
+      menu.hidden = false;
+      btn.setAttribute('aria-expanded', 'true');
+      // Aktif option'a focus
+      const active = menu.querySelector('.lang-switcher-opt[aria-selected="true"]') || menu.querySelector('.lang-switcher-opt');
+      if (active){ active.tabIndex = 0; setTimeout(() => active.focus(), 0); }
+      document.addEventListener('click', onDocClick, true);
+      document.addEventListener('keydown', onDocKey, true);
+    }
+    function closeMenu(returnFocus){
+      menu.hidden = true;
+      btn.setAttribute('aria-expanded', 'false');
+      menu.querySelectorAll('.lang-switcher-opt').forEach(o => o.tabIndex = -1);
+      document.removeEventListener('click', onDocClick, true);
+      document.removeEventListener('keydown', onDocKey, true);
+      if (returnFocus) btn.focus();
+    }
+    function toggleMenu(){
+      if (menu.hidden) openMenu(); else closeMenu(false);
+    }
+    function onDocClick(e){
+      if (!host.contains(e.target)) closeMenu(false);
+    }
+    function onDocKey(e){
+      if (e.key === 'Escape'){ e.preventDefault(); closeMenu(true); return; }
+      if (e.key === 'Tab'){ closeMenu(false); return; }
+      const opts = Array.from(menu.querySelectorAll('.lang-switcher-opt'));
+      const cur = opts.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown'){ e.preventDefault(); const n = opts[(cur + 1 + opts.length) % opts.length]; if (n){ opts.forEach(o=>o.tabIndex=-1); n.tabIndex=0; n.focus(); } }
+      else if (e.key === 'ArrowUp'){ e.preventDefault(); const n = opts[(cur - 1 + opts.length) % opts.length]; if (n){ opts.forEach(o=>o.tabIndex=-1); n.tabIndex=0; n.focus(); } }
+      else if (e.key === 'Home'){ e.preventDefault(); const n = opts[0]; if (n){ opts.forEach(o=>o.tabIndex=-1); n.tabIndex=0; n.focus(); } }
+      else if (e.key === 'End'){ e.preventDefault(); const n = opts[opts.length-1]; if (n){ opts.forEach(o=>o.tabIndex=-1); n.tabIndex=0; n.focus(); } }
+    }
+
+    btn.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        if (menu.hidden) openMenu();
+      }
+    });
+
+    menu.querySelectorAll('.lang-switcher-opt').forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const code = opt.getAttribute('data-lang');
+        closeMenu(true);
+        if (code && code !== currentLang) setLang(code);
+      });
+      opt.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          opt.click();
+        }
+      });
+    });
+
+    return host;
+  }
+
   function updateSwitcherActive(){
-    const host = document.getElementById('langSwitcher');
-    if (!host) return;
-    host.querySelectorAll('.lang-btn').forEach(btn => {
-      const code = btn.getAttribute('data-lang');
-      const on = code === currentLang;
-      btn.classList.toggle('active', on);
-      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    document.querySelectorAll('.lang-switcher').forEach(host => {
+      const codeEl = host.querySelector('.lang-active-code');
+      if (codeEl) codeEl.textContent = LANG_LABELS[currentLang] || currentLang.toUpperCase();
+      const btn = host.querySelector('.lang-switcher-btn');
+      if (btn) btn.setAttribute('aria-label', t('lang.switcher_label', 'Dil'));
+      const menu = host.querySelector('.lang-switcher-menu');
+      if (menu) menu.setAttribute('aria-label', t('lang.switcher_label', 'Dil'));
+      host.querySelectorAll('.lang-switcher-opt').forEach(opt => {
+        const c = opt.getAttribute('data-lang');
+        opt.setAttribute('aria-selected', c === currentLang ? 'true' : 'false');
+      });
     });
   }
 
-  // ── Switcher CSS (inline injection) ──
+  // ── Switcher CSS (Sadece global font + AR override — diger stiller index.html'de) ──
   function injectStyles(){
     if (document.getElementById('i18n-styles')) return;
     const css = `
-      #langSwitcher {
-        display: inline-flex;
-        gap: 2px;
-        padding: 3px;
-        background: rgba(247, 245, 242, .85);
-        border: 1px solid rgba(232,228,223,.7);
-        border-radius: 999px;
-        align-items: center;
-        flex-shrink: 0;
-      }
-      #langSwitcher.floating {
-        position: fixed;
-        top: 12px;
-        right: 12px;
-        z-index: 9001;
-        background: rgba(255,255,255,.92);
-        backdrop-filter: blur(10px);
-        box-shadow: 0 4px 14px rgba(0,0,0,.08);
-        padding: 4px;
-      }
-      #langSwitcher.inline {
-        margin-right: 4px;
-      }
-      #langSwitcher .lang-btn {
-        appearance: none;
-        border: none;
-        background: transparent;
-        font-family: inherit;
-        font-size: .66rem;
-        font-weight: 700;
-        letter-spacing: .3px;
-        color: #8e8e9e;
-        padding: 5px 8px;
-        border-radius: 999px;
-        cursor: pointer;
-        transition: all .25s ease;
-        line-height: 1;
-        min-width: 28px;
-      }
-      #langSwitcher .lang-btn:hover {
-        color: #1e3a5f;
-        background: #eaf1f8;
-      }
-      #langSwitcher .lang-btn.active {
-        background: linear-gradient(135deg, #1e3a5f, #2a5078);
-        color: #fff;
-        box-shadow: 0 2px 6px rgba(30,58,95,.25);
-      }
-      /* Mobile */
-      @media(max-width: 700px) {
-        #langSwitcher.floating {
-          top: 6px;
-          right: 6px;
-          padding: 3px;
-        }
-        #langSwitcher .lang-btn {
-          padding: 4px 6px;
-          font-size: .6rem;
-          min-width: 24px;
-        }
-      }
       /* AR: Arabic-friendly font stack (layout LTR korunur — Omer kararı 2026-05-07) */
       html[lang="ar"] body {
         font-family: 'Tajawal', 'Cairo', 'Segoe UI', system-ui, sans-serif;
       }
-      /* Switcher ile ust nav'i ezmemek icin topbar saginda mini boslukla itelenmis sekilde nav'i biraz alt cek */
-      @media(min-width: 701px) {
-        #langSwitcher { top: 10px; }
+      /* AR: dropdown menu kendi LTR kalsin (kart kontaineri ile tutarli) */
+      html[lang="ar"] .lang-switcher-menu { direction: ltr; text-align: left; }
+      /* Floating fallback (topbar yoksa) */
+      .lang-switcher.floating {
+        position: fixed; top: 12px; right: 12px; z-index: 9001;
       }
     `;
     const s = document.createElement('style');
