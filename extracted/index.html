@@ -197,7 +197,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 /* card-tags: wrap yerine nowrap + overflow:hidden -> applyTagOverflow tek-satir hesabi tutarli olsun, uzun chip listesi karti tasdirmasin */
 .card-tags{display:flex;gap:4px;margin:6px 0;flex-wrap:nowrap;overflow:hidden;max-width:100%}
 .card-tag{background:rgba(240,238,235,.8);padding:2px 8px;border-radius:5px;font-size:.63rem;font-weight:600;color:var(--txm);white-space:nowrap;flex-shrink:0}
-.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px}
+.card-foot{display:flex;align-items:center;justify-content:flex-end;margin-top:auto;padding-top:8px}
 .card-price{font-size:.88rem;font-weight:800;color:var(--pri);flex-shrink:0;min-width:0;overflow-wrap:anywhere}
 .card-price small{font-size:.63rem;font-weight:500;color:var(--txm)}
 .card-foot .dbtn{flex-shrink:0}
@@ -4857,16 +4857,27 @@ function renderCards(list){
     // i18n alanlari
     const pName  = tp(p,'name');
     const pLoc   = tp(p,'location');
-    const pTags  = tp(p,'tags') || p.tags;
+    const pTagsRaw = tp(p,'tags') || p.tags;
     const pFeats = tp(p,'feats') || p.feats;
-    const pStat  = tStatus(p.status);
-    const pPrice = tPrice(p.price);
+    // Mac iter-3 (2026-05-08): Omer geri bildirimi — kartlarda status/sale state metinleri yazmasin,
+    // sadece houseType/feature chip'ler kalsin. tags icindeki sabit status string'lerini filtrele.
+    // (Filter buttons (Tumu/Yapimda/Tamamlananlar) sayfa ustunde, detay panelde status kalsin.)
+    const STATUS_TAG_BLACKLIST = new Set([
+      'Satışı Devam Eden','Yapım Aşamasında','Tamamlandı','Belgelendirme Aşamasında','Belgede','Tamamlanmış',
+      'On Sale','Under Construction','Completed','For Sale','In Construction','In Progress',
+      'В продаже','В стадии строительства','Завершено','Завершён','Документация',
+      'متاح للبيع','تحت الإنشاء','مكتمل','قيد الإنشاء',
+      'Im Verkauf','Im Bau','Fertiggestellt','Zu verkaufen','In Bearbeitung'
+    ]);
+    const pTags = (pTagsRaw||[]).filter(tg => tg && !STATUS_TAG_BLACKLIST.has(String(tg).trim()));
     const ariaImg = `${pName} ${t('card.aria_image_suffix','görseli')}`;
     const ariaDet = `${pName} ${t('card.aria_detail_prefix','detaylarını görüntüle')}`;
     const featsHtml = (pFeats && pFeats.length)
       ? `<div class="card-feats">${pFeats.map(f=>`<span class="card-feat">${f}</span>`).join('')}</div>`
       : '';
-    c.innerHTML=`<div class="card-img" style="${imgStyle}" role="img" aria-label="${ariaImg}">${emojiBody}<div class="card-badge" style="background:${p.sc};color:${p.sc==='#c8913a'?'var(--dk)':'#fff'}">${pStat}</div>${pendingBadge}</div><div class="card-body"><div class="card-top"><div class="card-title">${pName}</div><div class="card-loc">📍 ${pLoc}</div><div class="card-tags">${(pTags||[]).map(tg=>`<span class="card-tag">${tg}</span>`).join('')}</div>${featsHtml}</div><div class="card-foot"><div class="card-price">${pPrice}</div><button class="dbtn" aria-label="${ariaDet}">${t('card.detail','Detay →')}</button></div></div>`;
+    // Mac iter-3: status overlay (foto badge) + price/status text (kart govdesi) kart UI'sinden cikti.
+    // Detay butonu kalsin; foot'ta sadece buton, sag hizali.
+    c.innerHTML=`<div class="card-img" style="${imgStyle}" role="img" aria-label="${ariaImg}">${emojiBody}${pendingBadge}</div><div class="card-body"><div class="card-top"><div class="card-title">${pName}</div><div class="card-loc">📍 ${pLoc}</div><div class="card-tags">${pTags.map(tg=>`<span class="card-tag">${tg}</span>`).join('')}</div>${featsHtml}</div><div class="card-foot"><button class="dbtn" aria-label="${ariaDet}">${t('card.detail','Detay →')}</button></div></div>`;
     el.appendChild(c);
   });
   document.getElementById('rcount').textContent=list.length+' '+t('filters.count_suffix','proje listeleniyor');
