@@ -4544,8 +4544,22 @@ const SafakariMigrate = {
   // Mac v2-polish 2026-05-08: page.editorData tek-dilli -> multilang (Schema v3)
   // Eski format: pg.editorData = { time, blocks, version }
   // Yeni format: pg.editorData = { tr: { time, blocks, version }, en: {...}, ru: {...}, ar: {...}, de: {...} }
-  // Yeni format ayni zamanda title icin: pg.title -> pg.titleMl multilang olabilir,
-  // ama geriye uyum icin pg.title TR sabit kalir (ana dil; UI'de TR sekmesinde duzenlenir).
+  // Schema v4 (2026-05-08): pg.title tek-string -> {tr,en,ru,ar,de} multilang
+  // Builtin sayfalar (about/contact) i18n dictionary'den ceviriliyor, title yine de migrate edilir
+  // (geriye uyum + tutarlilik). Custom sayfalarda ad aktif dile gore gosterilir.
+  upgradePageTitle(pg){
+    if (!pg || typeof pg !== 'object') return pg;
+    // Zaten multilang obje mi?
+    if (pg.title && typeof pg.title === 'object' && !Array.isArray(pg.title)){
+      // Eksik dilleri bos string ile tamamla
+      pg.title = toMl(pg.title);
+      return pg;
+    }
+    // Tek-string legacy: TR'ye indir, digerleri bos
+    const legacy = (typeof pg.title === 'string') ? pg.title : (pg.title != null ? String(pg.title) : '');
+    pg.title = { tr: legacy, en: '', ru: '', ar: '', de: '' };
+    return pg;
+  },
   upgradePageEditorData(pg){
     if (!pg || typeof pg !== 'object') return pg;
     if (pg.type === 'builtin') return pg; // builtin page'lerin icerigi i18n dictionary'den
@@ -4594,7 +4608,11 @@ const SafakariMigrate = {
     if (Array.isArray(D.pages)){
       D.pages.forEach(pg => this.upgradePageEditorData(pg));
     }
-    D.schema = 3;
+    // v3 -> v4: pages.title multilang (tek-string -> {tr,en,ru,ar,de})
+    if (Array.isArray(D.pages)){
+      D.pages.forEach(pg => this.upgradePageTitle(pg));
+    }
+    D.schema = 4;
     return D;
   }
 };
@@ -4608,12 +4626,17 @@ let admEditLang = 'tr'; // hangi dilde duzenleniyor
 // Kisa erisim: t('key','default'); guvenli — I18N henuz boot etmediyse default doner
 function t(key, def){ return (window.I18N && window.I18N.t) ? window.I18N.t(key, def) : (def != null ? def : key); }
 // Builtin sayfa basligi cevirisi (about, contact, kvkk vs.)
+// Schema v4 (2026-05-08): p.title artik multilang obje ({tr,en,ru,ar,de}). getMl ile aktif dile dus.
+// Builtin sayfalar: i18n dictionary onceligi (about/contact/kvkk dictionary'den), fallback p.title getMl.
 function pageTitle(p){
-  // Builtin pages
-  if (p.id === 'about')   return t('pages.about_title',   p.title);
-  if (p.id === 'contact') return t('pages.contact_title', p.title);
-  if (p.id === 'kvkk')    return t('pages.kvkk_title',    p.title);
-  return p.title;
+  if (!p) return '';
+  const fallback = (p.title && typeof p.title === 'object') ? getMl(p.title) : (p.title || '');
+  // Builtin pages — i18n dictionary'den oncelikli (her dilde manuel cevirisi var)
+  if (p.id === 'about')   return t('pages.about_title',   fallback);
+  if (p.id === 'contact') return t('pages.contact_title', fallback);
+  if (p.id === 'kvkk')    return t('pages.kvkk_title',    fallback);
+  // Custom pages — aktif dilde getMl, yoksa TR, yoksa ilk dolu
+  return fallback;
 }
 // Project field cevirisi — D.projects multilang storage'dan cek (schema v2)
 // Legacy fallback: dictionary'de projects.p<id>.<field> varsa onu kullan
@@ -4833,10 +4856,17 @@ function buildNav(){
   ]);
   D.pages.filter(p=>{
     if(!p.visible) return false;
-    if(p.type === 'custom' && DEFAULT_GALLERY_NAV_BLOCK.has((p.title||'').trim())) return false;
+    if(p.type === 'custom'){
+      // Schema v4: p.title obje olabilir. TR'de default-gallery title varsa cikar.
+      // Tum dillerde de eslese yine cikar (orneğin localStorage'tan gelen eski default).
+      const titleForCheck = (p.title && typeof p.title === 'object')
+        ? (p.title.tr || p.title.en || p.title.ru || p.title.ar || p.title.de || '')
+        : (p.title || '');
+      if (DEFAULT_GALLERY_NAV_BLOCK.has(String(titleForCheck).trim())) return false;
+    }
     return true;
   }).forEach(p=>{
-    nav.innerHTML+=`<button class="nav-btn" data-pg="${p.id}" onclick="showPage('${p.id}')">${pageTitle(p)}</button>`;
+    nav.innerHTML+=`<button class="nav-btn" data-pg="${p.id}" onclick="showPage('${p.id}')">${escapeHtml(pageTitle(p))}</button>`;
   });
   // Kredi hesaplama - sabit, kaldirilamaz (farklilasma)
   nav.innerHTML+=`<button class="nav-btn" data-pg="loan" onclick="showPage('loan')">💰 ${t('nav.loan','Kredi Hesapla')}</button>`;
@@ -5015,6 +5045,11 @@ function showPage(id){
     const el=ensurePg(id,true);
     el.innerHTML=renderPageBlocks(pg)+buildFooter();
     showPg('pg-'+id);
+    // Schema v4: Browser tab <title> aktif dilde sayfa basligi (Safakari sufix korunur)
+    try {
+      const t = pageTitle(pg);
+      if (t) document.title = t + ' | Safakari';
+    } catch(_){}
   }
 }
 
@@ -6311,8 +6346,12 @@ function loadPages(){
         // Custom gallery sayfasi default title'da kalmis (kullanici hic degistirmemis) ise cikar.
         // Icerik kontrolune bakmiyoruz: blocks template'ten geldigi icin "kullanici eklemis" gibi
         // gozukuyordu (iter-4 bug'i). Title-only check yeterli ve daha temiz.
-        if(p.type === 'custom' && DEFAULT_GALLERY_TITLES.has((p.title||'').trim())){
-          return false;
+        // Schema v4 (2026-05-08): p.title obje olabilir; TR (ana dil) default ise cikar.
+        if(p.type === 'custom'){
+          const titleForCheck = (p.title && typeof p.title === 'object')
+            ? (p.title.tr || p.title.en || p.title.ru || p.title.ar || p.title.de || '')
+            : (p.title || '');
+          if (DEFAULT_GALLERY_TITLES.has(String(titleForCheck).trim())) return false;
         }
         return true;
       });
@@ -6322,10 +6361,16 @@ function loadPages(){
       D.pages = saved;
       // Mac v2-polish 2026-05-08 (Schema v3): Eski tek-dilli editorData -> multilang
       // localStorage'tan gelen sayfalarda editorData.blocks (legacy) varsa multilang'a indir
+      // Schema v4 (2026-05-08): pg.title tek-string -> multilang
       D.pages.forEach(pg => {
-        if (pg && pg.type === 'custom') {
-          if (typeof SafakariMigrate !== 'undefined' && SafakariMigrate.upgradePageEditorData){
-            SafakariMigrate.upgradePageEditorData(pg);
+        if (pg) {
+          if (typeof SafakariMigrate !== 'undefined') {
+            // Title migration tum sayfalar icin (builtin + custom)
+            if (SafakariMigrate.upgradePageTitle) SafakariMigrate.upgradePageTitle(pg);
+            // editorData migration sadece custom icin
+            if (pg.type === 'custom' && SafakariMigrate.upgradePageEditorData){
+              SafakariMigrate.upgradePageEditorData(pg);
+            }
           }
         }
       });
@@ -6632,9 +6677,13 @@ function admPages(bd){
           ? `<button class="aci-b ed" onclick="togglePgVis('${escapeHtml(p.id)}')" aria-label="${p.visible?'Gizle':'Göster'}">${p.visible?'Gizle':'Göster'}</button>`
           : `<button class="aci-b ed" onclick="openPageEditor('${escapeHtml(p.id)}')" aria-label="Sayfayi duzenle">Düzenle</button>
              <button class="aci-b dl" onclick="deletePage('${escapeHtml(p.id)}')" aria-label="Sayfayi sil">Sil</button>`;
+        // Schema v4: p.title multilang obje. Admin listede TR oncelikli, yoksa ilk dolu, yoksa id.
+        const titleDisplay = (p.title && typeof p.title === 'object')
+          ? (p.title.tr || p.title.en || p.title.ru || p.title.ar || p.title.de || p.id)
+          : (p.title || p.id);
         return `<div class="aci">
           <div class="aci-i">
-            <div class="aci-n">${escapeHtml(isBuiltin?'🔒':(p.icon||'📄'))} ${escapeHtml(p.title||p.id)}</div>
+            <div class="aci-n">${escapeHtml(isBuiltin?'🔒':(p.icon||'📄'))} ${escapeHtml(titleDisplay)}</div>
             <div class="aci-m">${statusTxt}</div>
           </div>
           <div class="aci-a">${actions}</div>
@@ -6694,11 +6743,12 @@ function uniquePageId(base){
 function createPageFromTemplate(tplKey){
   const t = PAGE_TEMPLATES[tplKey];
   if(!t){ toast('Sablon bulunamadi'); return; }
-  const title = t.defaultTitle;
-  const id = uniquePageId(slugifyTitle(title));
+  const titleStr = t.defaultTitle;
+  const id = uniquePageId(slugifyTitle(titleStr));
+  // Schema v4: title multilang obje. Default sablon basligi TR'ye yazilir, digerleri bos.
   const pg = {
     id,
-    title,
+    title: { tr: titleStr, en: '', ru: '', ar: '', de: '' },
     type:'custom',
     visible:false, // taslak
     icon:t.icon,
@@ -6779,10 +6829,20 @@ function drawPageEditorUI(pg){
     }
   });
 
+  // Schema v4: title multilang. Input mevcut dilde gosterilir.
+  // pg.title eski tek-string ise (legacy/cache) toMl ile sar (defansif).
+  if (pg.title == null || typeof pg.title === 'string'){
+    pg.title = (typeof SafakariMigrate !== 'undefined' && SafakariMigrate.upgradePageTitle)
+      ? (SafakariMigrate.upgradePageTitle(pg), pg.title)
+      : { tr: (pg.title || ''), en: '', ru: '', ar: '', de: '' };
+  }
+  const titleForLang = (pg.title && typeof pg.title === 'object') ? (pg.title[currentEditorLang] || '') : '';
+  // Lang-aware aria-label + placeholder
+  const ariaSuffix = currentEditorLang === 'tr' ? '(zorunlu)' : '(opsiyonel — boş ise TR gösterilir)';
   bd.innerHTML = `
     <div class="pe-topbar">
       <button class="abtn sc" onclick="closePageEditor()" aria-label="Sayfa listesine don">← Geri</button>
-      <input class="pe-title-in" id="pe_title" value="${escapeHtml(pg.title)}" placeholder="Sayfa basligi" aria-label="Sayfa basligi (tüm dillerde aynı)">
+      <input class="pe-title-in" id="pe_title" value="${escapeHtml(titleForLang)}" placeholder="Sayfa basligi (${currentEditorLang.toUpperCase()})" aria-label="Sayfa basligi - ${currentEditorLang.toUpperCase()} ${ariaSuffix}">
       <span class="pe-badge" id="pe_badge" data-status="${pubStatus}" aria-live="polite">${pubTxt}</span>
       <span class="pe-save-ind" id="pe_save_ind" aria-live="polite">Hazır</span>
     </div>
@@ -6799,11 +6859,18 @@ function drawPageEditorUI(pg){
     </div>
   `;
 
-  // Wire title input to auto-save (title TR sabit, lang'tan bagimsiz)
+  // Wire title input to auto-save (Schema v4: title multilang, aktif dile yazilir)
   document.getElementById('pe_title').addEventListener('input', ()=>{
     const v = document.getElementById('pe_title').value;
     const cur = D.pages.find(p=>p.id===currentEditorPageId);
-    if(cur){ cur.title = v; debouncedAutoSave(); }
+    if(cur){
+      // Defansif: cur.title obje degilse, sar
+      if (!cur.title || typeof cur.title !== 'object'){
+        cur.title = { tr: (typeof cur.title === 'string' ? cur.title : ''), en: '', ru: '', ar: '', de: '' };
+      }
+      cur.title[currentEditorLang] = v;
+      debouncedAutoSave();
+    }
   });
 
   // Lang tab swap: once mevcut dilin editor degerini kaydet, sonra yeni dilde init
@@ -6824,19 +6891,27 @@ function drawPageEditorUI(pg){
       await saveCurrentLangEditor();
       const cur = D.pages.find(p => p.id === currentEditorPageId);
       if (!cur || admEditLang === 'tr') return 0;
-      const trBlocks = cur.editorData && cur.editorData.tr && Array.isArray(cur.editorData.tr.blocks) ? cur.editorData.tr.blocks : [];
-      if (!trBlocks.length || (trBlocks.length===1 && (!trBlocks[0].data || !trBlocks[0].data.text || !trBlocks[0].data.text.trim()))){
-        return 0;
+      let copied = 0;
+      // Schema v4: Title TR -> hedef dile kopyala (TR doluysa)
+      if (cur.title && typeof cur.title === 'object' && cur.title.tr && cur.title.tr.trim()){
+        cur.title[admEditLang] = cur.title.tr;
+        copied++;
       }
-      // Deep clone TR'yi hedef dile
-      cur.editorData[admEditLang] = {
-        time: Date.now(),
-        blocks: JSON.parse(JSON.stringify(trBlocks)),
-        version: cur.editorData.tr.version || '2.30.7'
-      };
+      // Editor blocks TR -> hedef dile kopyala (TR doluysa)
+      const trBlocks = cur.editorData && cur.editorData.tr && Array.isArray(cur.editorData.tr.blocks) ? cur.editorData.tr.blocks : [];
+      const blocksFilled = trBlocks.length && !(trBlocks.length===1 && (!trBlocks[0].data || !trBlocks[0].data.text || !trBlocks[0].data.text.trim()));
+      if (blocksFilled){
+        cur.editorData[admEditLang] = {
+          time: Date.now(),
+          blocks: JSON.parse(JSON.stringify(trBlocks)),
+          version: cur.editorData.tr.version || '2.30.7'
+        };
+        copied++;
+      }
+      if (copied === 0) return 0;
       persistPages();
       drawPageEditorUI(cur);
-      return 1; // 1 kopyalama olayi
+      return copied; // her kopyalanan alan 1 sayi
     }
   });
 
@@ -6868,8 +6943,21 @@ async function saveCurrentLangEditor(){
       blocks: (clean && clean.blocks) || [{type:'paragraph', data:{text:''}}],
       version: (clean && clean.version) || '2.30.7'
     };
+    // Schema v4: title multilang, aktif dile yaz. TR ana dil zorunlu — TR bos kaydedilmesin
+    // (mevcut TR degerini koru). Diger dillerde bos string serbest (TR fallback'e duser).
     const titleEl = document.getElementById('pe_title');
-    if (titleEl) pg.title = titleEl.value.trim() || pg.title;
+    if (titleEl){
+      if (!pg.title || typeof pg.title !== 'object'){
+        pg.title = { tr: (typeof pg.title === 'string' ? pg.title : ''), en: '', ru: '', ar: '', de: '' };
+      }
+      const v = titleEl.value.trim();
+      if (currentEditorLang === 'tr'){
+        // TR zorunlu: bos ise mevcut TR'yi koru
+        if (v) pg.title.tr = v;
+      } else {
+        pg.title[currentEditorLang] = v; // diger diller bos serbest
+      }
+    }
     persistPages();
   } catch(err){
     console.warn('saveCurrentLangEditor fail', err);
@@ -7206,8 +7294,19 @@ async function autoSavePage(){
       blocks: (clean && clean.blocks) || [{type:'paragraph', data:{text:''}}],
       version: (clean && clean.version) || '2.30.7'
     };
+    // Schema v4: title multilang, aktif dile yaz. TR ana dil zorunlu kuralı korunur.
     const titleEl = document.getElementById('pe_title');
-    if(titleEl) pg.title = titleEl.value.trim() || pg.title;
+    if(titleEl){
+      if (!pg.title || typeof pg.title !== 'object'){
+        pg.title = { tr: (typeof pg.title === 'string' ? pg.title : ''), en: '', ru: '', ar: '', de: '' };
+      }
+      const v = titleEl.value.trim();
+      if (currentEditorLang === 'tr'){
+        if (v) pg.title.tr = v; // TR bos kalirsa mevcut TR korunur
+      } else {
+        pg.title[currentEditorLang] = v;
+      }
+    }
     persistPages();
     // Re-render public page if currently visible
     const existing = document.getElementById('pg-'+pg.id);
@@ -7280,10 +7379,21 @@ function importPagesJSON(ev){
       const parsed = JSON.parse(reader.result);
       const incoming = Array.isArray(parsed) ? parsed : (parsed && Array.isArray(parsed.pages) ? parsed.pages : null);
       if(!incoming){ toast('Gecersiz JSON formati'); return; }
-      // Validation: every item needs id + title
-      const valid = incoming.every(p => p && typeof p.id==='string' && typeof p.title==='string');
+      // Validation: every item needs id + title (Schema v4: title string veya {tr,en,ru,ar,de})
+      const valid = incoming.every(p => {
+        if (!p || typeof p.id !== 'string') return false;
+        if (typeof p.title === 'string') return true;
+        if (p.title && typeof p.title === 'object' && !Array.isArray(p.title)) return true;
+        return false;
+      });
       if(!valid){ toast('JSON sema uyumsuz (id + title zorunlu)'); return; }
       if(!confirm(`${incoming.length} sayfa yuklenecek. Mevcut tum sayfalar silinecek. Devam?`)) return;
+      // Schema v4: import sonrasi title'lari multilang'a normalize et
+      incoming.forEach(p => {
+        if (typeof SafakariMigrate !== 'undefined' && SafakariMigrate.upgradePageTitle){
+          SafakariMigrate.upgradePageTitle(p);
+        }
+      });
       D.pages = incoming;
       persistPages();
       buildNav();
