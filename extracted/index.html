@@ -440,6 +440,9 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .loan-field input:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 3px rgba(30,58,95,.08)}
 .loan-field .loan-hint{font-size:.68rem;color:var(--txm);margin-top:3px}
 .loan-field input.invalid{border-color:#c0392b;background:#fef2f2}
+.loan-field input.ln-rate-locked{background:#f4f6fa;color:var(--txm);cursor:not-allowed;border-color:rgba(30,58,95,.18)}
+.loan-field select{width:100%;padding:12px 14px;border:2px solid rgba(232,228,223,.6);border-radius:var(--rads);font-size:.9rem;font-weight:600;font-family:inherit;background:#fff;color:var(--dk);cursor:pointer;transition:all var(--tr);appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='%231e3a5f'><path d='M6 8L0 0h12z'/></svg>");background-repeat:no-repeat;background-position:right 14px center;background-size:10px;padding-right:36px}
+.loan-field select:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 3px rgba(30,58,95,.08)}
 .loan-results{background:#fff;border-radius:var(--rad);padding:24px;border:1px solid rgba(232,228,223,.5);box-shadow:0 4px 18px rgba(30,58,95,.06)}
 .loan-results h3{font-size:.82rem;font-weight:800;color:var(--dk);margin-bottom:16px;text-transform:uppercase;letter-spacing:1px}
 .loan-row{display:flex;justify-content:space-between;align-items:baseline;padding:12px 0;border-bottom:1px dashed var(--brd)}
@@ -838,6 +841,7 @@ html[lang="ar"] .filters-row{ flex-direction: row; }
       <div class="adm-ni" onclick="admTab('contact',this)" data-i18n="admin.tab_contact">📞 İletişim</div>
       <div class="adm-ni" onclick="admTab('site',this)" data-i18n="admin.tab_settings">⚙️ Ayarlar</div>
       <div class="adm-ni" onclick="admTab('pages',this)" data-i18n="admin.tab_pages">📄 Sayfalar</div>
+      <div class="adm-ni" onclick="admTab('banks',this)" data-i18n="admin.tab_banks">🏦 Banka Faizleri</div>
     </div>
     <div class="adm-main">
       <div class="adm-head"><h2 id="admTitle" data-i18n="admin.title_projects">Proje Yönetimi</h2><div class="adm-cls" onclick="toggleAdmin()">✕</div></div>
@@ -861,6 +865,42 @@ html[lang="ar"] .filters-row{ flex-direction: row; }
 const SUPPORTED_LANGS = ['tr','en','ru','ar','de'];
 function emptyMl(){ return { tr:'', en:'', ru:'', ar:'', de:'' }; }
 function emptyMlArr(){ return { tr:[], en:[], ru:[], ar:[], de:[] }; }
+
+// ═══ BANK RATES (Konut Kredisi - Aylık % ) ═══
+// Kaynak: enuygunfinans.com + hangikredi.com snapshot'i — admin panelinden guncellenir.
+// Aylık faiz oranı (yıllık degil). Her banka için son guncelleme tarihi tutulur.
+const BANK_RATES_KEY = 'safakari_bank_rates_v1';
+const BANK_RATES_DEFAULT = {
+  updated: '2026-05-09',
+  banks: [
+    { id: 'ziraat',   name: 'Ziraat Bankası',       rate: 3.19, type: 'kamu' },
+    { id: 'halkbank', name: 'Halkbank',             rate: 2.70, type: 'kamu' },
+    { id: 'vakif',    name: 'VakıfBank',            rate: 2.99, type: 'kamu' },
+    { id: 'isbank',   name: 'Türkiye İş Bankası',   rate: 2.79, type: 'ozel' },
+    { id: 'garanti',  name: 'Garanti BBVA',         rate: 2.99, type: 'ozel' },
+    { id: 'akbank',   name: 'Akbank',               rate: 2.69, type: 'ozel' },
+    { id: 'yapikredi',name: 'Yapı Kredi',           rate: 2.79, type: 'ozel' },
+    { id: 'qnb',      name: 'QNB Finansbank',       rate: 3.73, type: 'ozel' },
+    { id: 'albaraka', name: 'Albaraka Türk',        rate: 2.75, type: 'katilim' },
+    { id: 'kuveyt',   name: 'Kuveyt Türk',          rate: 2.80, type: 'katilim' }
+  ]
+};
+function loadBankRates(){
+  try {
+    const raw = localStorage.getItem(BANK_RATES_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(parsed && Array.isArray(parsed.banks) && parsed.banks.length){
+        return parsed;
+      }
+    }
+  } catch(_){}
+  return JSON.parse(JSON.stringify(BANK_RATES_DEFAULT));
+}
+function saveBankRates(obj){
+  try { localStorage.setItem(BANK_RATES_KEY, JSON.stringify(obj)); } catch(_){}
+}
+let BANK_RATES = loadBankRates();
 
 const D = {
   schema: 2,
@@ -5019,14 +5059,22 @@ function showPage(id){
                 <div class="loan-hint">${t('loan.field_term_hint','Krediyi geri ödemek istediğiniz ay sayısı (örn. 120 ay = 10 yıl)')}</div>
               </div>
               <div class="loan-field">
+                <label for="ln_bank">${t('loan.field_bank','Banka')}</label>
+                <select id="ln_bank" aria-describedby="ln_bank_updated">
+                  ${BANK_RATES.banks.map(b => `<option value="${escapeHtml(b.id)}">${escapeHtml(b.name)} — %${(+b.rate).toFixed(2)} ${t('loan.bank_monthly_short','aylık')}</option>`).join('')}
+                  <option value="__custom">${t('loan.bank_custom','Diğer / Manuel giriş')}</option>
+                </select>
+                <div class="loan-hint" id="ln_bank_updated">${t('loan.bank_updated_prefix','Güncel:')} ${escapeHtml(BANK_RATES.updated || '')}</div>
+              </div>
+              <div class="loan-field">
                 <label for="ln_rate">${t('loan.field_rate','Faiz Oranı (%)')}</label>
                 <div class="ln-rate-toggle" role="radiogroup" aria-label="${t('loan.rate_unit_aria','Faiz oranı birimi')}">
                   <label><input type="radio" name="ln_rate_unit" value="monthly" checked>${t('loan.rate_monthly','Aylık')}</label>
                   <label><input type="radio" name="ln_rate_unit" value="yearly">${t('loan.rate_yearly','Yıllık')}</label>
                 </div>
-                <input type="number" id="ln_rate" min="0" max="100" step="0.01" value="3.29" inputmode="decimal">
+                <input type="number" id="ln_rate" min="0" max="100" step="0.01" value="${(+(BANK_RATES.banks[0]?.rate ?? 3.29)).toFixed(2)}" inputmode="decimal">
                 <div class="ln-rate-conv" id="ln_rate_conv"></div>
-                <div class="loan-hint" id="ln_rate_hint">${t('loan.rate_hint_monthly',"Türkiye'de aylık konut kredisi faizi genelde %3-4 aralığındadır")}</div>
+                <div class="loan-hint" id="ln_rate_hint">${t('loan.rate_hint_bank',"Banka seçin — oran otomatik dolar. 'Diğer' seçerseniz manuel girebilirsiniz.")}</div>
               </div>
             </div>
             <div class="loan-results" id="ln_output"></div>
@@ -5499,14 +5547,15 @@ function toggleAdminMode(){if(!admUnlocked)return;toggleAdmin()}
 function toggleAdmin(){const ov=document.getElementById('admOv');ov.classList.toggle('open');const isOpen=ov.classList.contains('open');document.body.classList.toggle('modal-open',isOpen||document.getElementById('legalOv')?.classList.contains('open'));if(isOpen)admTab('projects',document.querySelector('.adm-ni'))}
 
 // ═══ ADMIN TABS ═══
-function admTab(tab,el){document.querySelectorAll('.adm-ni').forEach(n=>n.classList.remove('on'));if(el)el.classList.add('on');const titles={projects:t('admin.title_projects','Proje Yönetimi'),about:t('admin.title_about','Hakkımızda'),contact:t('admin.title_contact','İletişim Bilgileri'),site:t('admin.title_settings','Site Ayarları'),pages:t('admin.title_pages','Sayfa Yönetimi')};document.getElementById('admTitle').textContent=titles[tab]||'';const bd=document.getElementById('admBd');
+function admTab(tab,el){document.querySelectorAll('.adm-ni').forEach(n=>n.classList.remove('on'));if(el)el.classList.add('on');const titles={projects:t('admin.title_projects','Proje Yönetimi'),about:t('admin.title_about','Hakkımızda'),contact:t('admin.title_contact','İletişim Bilgileri'),site:t('admin.title_settings','Site Ayarları'),pages:t('admin.title_pages','Sayfa Yönetimi'),banks:t('admin.title_banks','Banka Faiz Oranları')};document.getElementById('admTitle').textContent=titles[tab]||'';const bd=document.getElementById('admBd');
 // Tab change -> cleanup any stale mini-map/admin form state
 if(typeof epMiniMap!=='undefined' && epMiniMap){ try{ epMiniMap.remove(); }catch(_){} epMiniMap=null; epMiniMarker=null; }
 if(tab==='projects')admProjects(bd);
 else if(tab==='about')admAbout(bd);
 else if(tab==='contact')admContact(bd);
 else if(tab==='site')admSite(bd);
-else if(tab==='pages')admPages(bd)}
+else if(tab==='pages')admPages(bd);
+else if(tab==='banks')admBanks(bd)}
 
 // ═══ ADMIN LANG-TAB HELPER ═══
 // Admin formlarinin ust kismi icin dil tab pillar UI'si.
@@ -6183,6 +6232,124 @@ function saveSite(){
   persistCompany();
   refreshAll();
   toast(`Ayarlar güncellendi (${admEditLang.toUpperCase()})`);
+}
+
+// ═══ ADMIN: BANK RATES ═══
+function admBanks(bd){
+  const banks = BANK_RATES.banks || [];
+  const updated = BANK_RATES.updated || '';
+  const today = new Date().toISOString().slice(0,10);
+  const rows = banks.map((b,i) => `
+    <div class="bnk-row" data-idx="${i}" style="display:grid;grid-template-columns:1.5fr 0.7fr 0.9fr auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid rgba(232,228,223,.6);border-radius:8px;margin-bottom:8px;background:#fff">
+      <input type="text" class="bnk-name" value="${escapeHtml(b.name||'')}" placeholder="Banka adı" style="padding:8px 10px;border:1px solid rgba(232,228,223,.7);border-radius:6px;font-size:.85rem;font-weight:600">
+      <input type="number" class="bnk-rate" value="${(+b.rate||0).toFixed(2)}" min="0" max="100" step="0.01" inputmode="decimal" style="padding:8px 10px;border:1px solid rgba(232,228,223,.7);border-radius:6px;font-size:.85rem;font-weight:600;text-align:right">
+      <select class="bnk-type" style="padding:8px 10px;border:1px solid rgba(232,228,223,.7);border-radius:6px;font-size:.78rem;font-weight:600;background:#fff">
+        <option value="kamu" ${b.type==='kamu'?'selected':''}>Kamu</option>
+        <option value="ozel" ${b.type==='ozel'?'selected':''}>Özel</option>
+        <option value="katilim" ${b.type==='katilim'?'selected':''}>Katılım</option>
+      </select>
+      <button type="button" class="abtn" data-act="bnk-del" data-idx="${i}" style="padding:6px 12px;font-size:.72rem;background:#fef2f2;color:#c0392b;border:1px solid #e8c5c0">Sil</button>
+    </div>`).join('');
+  bd.innerHTML = `
+    <div style="margin-bottom:14px;font-size:.78rem;color:var(--txm);line-height:1.55">
+      Konut kredisi faiz oranlarını buradan güncelleyin. Oranlar <strong>aylık %</strong> olarak girilir
+      ve değişiklik kaydedildiğinde site genelinde anında geçerli olur.
+      Kaynak öneri: <a href="https://www.enuygunfinans.com/kredi/konut/" target="_blank" rel="noopener" style="color:var(--pri);font-weight:700">enuygunfinans.com</a>
+      veya <a href="https://www.hangikredi.com/kredi/konut-kredisi" target="_blank" rel="noopener" style="color:var(--pri);font-weight:700">hangikredi.com</a>.
+    </div>
+    <div class="af" style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-bottom:14px">
+      <div>
+        <label>Son güncelleme tarihi</label>
+        <input type="date" id="bnk_updated" value="${escapeHtml(updated)}" style="padding:9px 12px;width:100%">
+      </div>
+      <button type="button" class="abtn" id="bnk_today_btn" style="padding:9px 14px;font-size:.78rem;font-weight:700;border-radius:8px;background:#fff;border:1px solid rgba(30,58,95,.3);color:#1e3a5f;cursor:pointer">Bugünü kullan</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1.5fr 0.7fr 0.9fr auto;gap:10px;padding:0 12px 6px;font-size:.7rem;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.4px">
+      <span>Banka adı</span><span style="text-align:right">Aylık %</span><span>Tip</span><span></span>
+    </div>
+    <div id="bnk_rows">${rows}</div>
+    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button class="abtn" id="bnk_add_btn" style="padding:9px 16px;font-size:.78rem;border-radius:8px;background:#fff;border:1px solid rgba(30,58,95,.3);color:#1e3a5f;cursor:pointer">+ Banka ekle</button>
+      <button class="abtn" id="bnk_reset_btn" style="padding:9px 16px;font-size:.78rem;border-radius:8px;background:#fff;border:1px solid rgba(232,228,223,.7);color:var(--txm);cursor:pointer">Varsayılana dön</button>
+      <button class="abtn sv" id="bnk_save_btn" style="margin-left:auto">Kaydet</button>
+    </div>
+  `;
+  // Wire
+  document.getElementById('bnk_today_btn')?.addEventListener('click', ()=>{
+    const inp = document.getElementById('bnk_updated');
+    if(inp) inp.value = today;
+  });
+  document.getElementById('bnk_add_btn')?.addEventListener('click', ()=>{
+    saveAdmBanksFromInputs(false); // capture before redraw
+    BANK_RATES.banks.push({ id: 'banka_'+Date.now().toString(36), name: '', rate: 2.99, type: 'ozel' });
+    admBanks(bd);
+  });
+  document.getElementById('bnk_reset_btn')?.addEventListener('click', ()=>{
+    if(!confirm('Tüm banka oranları varsayılana sıfırlanacak. Devam edilsin mi?')) return;
+    BANK_RATES = JSON.parse(JSON.stringify(BANK_RATES_DEFAULT));
+    saveBankRates(BANK_RATES);
+    admBanks(bd);
+    refreshLoanBankSelect();
+    toast(t('admin.banks_reset_ok','Banka oranları varsayılana döndü'));
+  });
+  document.getElementById('bnk_save_btn')?.addEventListener('click', ()=>{
+    if(!saveAdmBanksFromInputs(true)) return;
+    saveBankRates(BANK_RATES);
+    refreshLoanBankSelect();
+    toast(t('admin.banks_save_ok','Banka oranları güncellendi'));
+  });
+  bd.querySelectorAll('[data-act="bnk-del"]').forEach(btn => {
+    btn.addEventListener('click', ()=>{
+      const idx = parseInt(btn.getAttribute('data-idx'),10);
+      if(BANK_RATES.banks.length <= 1){
+        toast(t('admin.banks_min_one','En az bir banka olmalı'));
+        return;
+      }
+      saveAdmBanksFromInputs(false);
+      BANK_RATES.banks.splice(idx,1);
+      admBanks(bd);
+    });
+  });
+}
+function saveAdmBanksFromInputs(validate){
+  const rows = document.querySelectorAll('#bnk_rows .bnk-row');
+  const newBanks = [];
+  for(const row of rows){
+    const idx = parseInt(row.getAttribute('data-idx'),10);
+    const orig = BANK_RATES.banks[idx] || {};
+    const name = (row.querySelector('.bnk-name')?.value || '').trim();
+    const rate = parseFloat(row.querySelector('.bnk-rate')?.value || '0');
+    const type = row.querySelector('.bnk-type')?.value || 'ozel';
+    if(validate){
+      if(!name){ toast('Banka adı boş olamaz'); row.querySelector('.bnk-name')?.focus(); return false; }
+      if(!Number.isFinite(rate) || rate < 0 || rate > 100){ toast('Geçersiz faiz oranı: '+name); row.querySelector('.bnk-rate')?.focus(); return false; }
+    }
+    newBanks.push({
+      id: orig.id || ('banka_'+Date.now().toString(36)+'_'+idx),
+      name,
+      rate: Number.isFinite(rate) ? rate : 0,
+      type
+    });
+  }
+  BANK_RATES.banks = newBanks;
+  const updatedInp = document.getElementById('bnk_updated');
+  if(updatedInp){ BANK_RATES.updated = updatedInp.value || BANK_RATES.updated; }
+  return true;
+}
+// Loan sayfasi acik ise dropdown'i yeniden cizdir; degilse no-op.
+function refreshLoanBankSelect(){
+  const sel = document.getElementById('ln_bank');
+  if(!sel) return;
+  const prev = sel.value;
+  const opts = (BANK_RATES.banks || []).map(b => `<option value="${escapeHtml(b.id)}">${escapeHtml(b.name)} — %${(+b.rate).toFixed(2)} ${t('loan.bank_monthly_short','aylık')}</option>`).join('');
+  sel.innerHTML = opts + `<option value="__custom">${t('loan.bank_custom','Diğer / Manuel giriş')}</option>`;
+  // Onceki secimi koru (varsa)
+  const stillExists = (BANK_RATES.banks || []).some(b => b.id === prev);
+  sel.value = stillExists ? prev : (BANK_RATES.banks[0]?.id || '__custom');
+  const upd = document.getElementById('ln_bank_updated');
+  if(upd){ upd.textContent = `${t('loan.bank_updated_prefix','Güncel:')} ${BANK_RATES.updated || ''}`; }
+  applyBankSelection();
+  if(typeof calcLoan === 'function') calcLoan();
 }
 
 // ═══════════════════════════════════════════════════
@@ -7701,11 +7868,43 @@ function calcLoan(){
     <p class="loan-disclaimer">${t('loan.disclaimer','Bu hesaplama bilgilendirme amaçlıdır. Güncel faiz oranları ve resmi teklif için banka ile iletişime geçmeniz önerilir.')}</p>
   `;
 }
+function applyBankSelection(){
+  const sel = document.getElementById('ln_bank');
+  const rateEl = document.getElementById('ln_rate');
+  if(!sel || !rateEl) return;
+  const val = sel.value;
+  if(val === '__custom'){
+    rateEl.readOnly = false;
+    rateEl.removeAttribute('aria-readonly');
+    rateEl.classList.remove('ln-rate-locked');
+    return;
+  }
+  const bank = (BANK_RATES.banks || []).find(b => b.id === val);
+  if(!bank) return;
+  // Banka oranlari aylik tutuluyor; toggle'i Aylik'a kilit
+  const monthlyRadio = document.querySelector('input[name="ln_rate_unit"][value="monthly"]');
+  if(monthlyRadio && !monthlyRadio.checked){ monthlyRadio.checked = true; }
+  rateEl.value = (+bank.rate).toFixed(2);
+  rateEl.readOnly = true;
+  rateEl.setAttribute('aria-readonly','true');
+  rateEl.classList.add('ln-rate-locked');
+}
 function attachLoanCalc(){
   ['ln_price','ln_down','ln_term','ln_rate'].forEach(id=>{
     const el = document.getElementById(id);
     if(el && !el._loanWired){ el._loanWired = true; el.addEventListener('input', calcLoan); }
   });
+  // Bank selector
+  const bankSel = document.getElementById('ln_bank');
+  if(bankSel && !bankSel._loanWired){
+    bankSel._loanWired = true;
+    bankSel.addEventListener('change', ()=>{
+      applyBankSelection();
+      calcLoan();
+    });
+    // Initial apply (defaults to first bank)
+    applyBankSelection();
+  }
   // Rate unit radio toggle
   document.querySelectorAll('input[name="ln_rate_unit"]').forEach(el=>{
     if(!el._loanWired){
@@ -7716,6 +7915,12 @@ function attachLoanCalc(){
           hint.textContent = el.value === 'monthly'
             ? t('loan.rate_hint_monthly',"Türkiye'de aylık konut kredisi faizi genelde %3-4 aralığındadır")
             : t('loan.rate_hint_yearly',"Bankanızın yıllık faiz oranı");
+        }
+        // Manuel mod aktif degilse banka kilidini bozma — kullanici banka secmisse "yıllık"a geçince custom moda düş
+        const sel = document.getElementById('ln_bank');
+        if(sel && sel.value !== '__custom' && el.value === 'yearly'){
+          sel.value = '__custom';
+          applyBankSelection();
         }
         calcLoan();
       });
