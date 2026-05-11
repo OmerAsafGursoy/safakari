@@ -1,0 +1,23 @@
+name = "safakari-rates"
+main = "src/worker.js"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# KV namespace for storing scraped bank rates
+# Create with: wrangler kv:namespace create RATES
+# Then replace id below with the returned namespace id.
+[[kv_namespaces]]
+binding = "RATES"
+id = "PLACEHOLDER_KV_ID"
+
+# Weekly refresh: Monday 09:00 TRT (UTC+3) = Monday 06:00 UTC
+[triggers]
+crons = ["0 6 * * 1"]
+
+# Secrets (set via `wrangler secret put NAME`):
+#   EVDS_API_KEY   - TCMB EVDS API anahtari (https://evds2.tcmb.gov.tr)
+#   ADMIN_SECRET   - Admin panel "force refresh" endpoint icin paylasilan sir
+#   ALLOWED_ORIGINS - virgulle ayrilmis CORS origin listesi (ornek: "https://safakari.com,https://safakari.com.tr")
+
+[observability]
+enabled = true

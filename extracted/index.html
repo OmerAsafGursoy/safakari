@@ -867,9 +867,16 @@ function emptyMl(){ return { tr:'', en:'', ru:'', ar:'', de:'' }; }
 function emptyMlArr(){ return { tr:[], en:[], ru:[], ar:[], de:[] }; }
 
 // ═══ BANK RATES (Konut Kredisi - Aylık % ) ═══
-// Kaynak: enuygunfinans.com + hangikredi.com snapshot'i — admin panelinden guncellenir.
-// Aylık faiz oranı (yıllık degil). Her banka için son guncelleme tarihi tutulur.
+// Kaynak: enuygunfinans.com + hangikredi.com snapshot'i — admin panelinden guncellenir
+// veya Worker (Faz 2) ile haftalik otomatik tazelenir. Aylık faiz oranı (yıllık degil).
 const BANK_RATES_KEY = 'safakari_bank_rates_v1';
+// Otomatik faiz tazeleme servisi (Worker URL). Deploy sonrasi doldurulur.
+//   Ornek: 'https://safakari-rates.<account>.workers.dev'  veya  '' (Routes ile ayni domain)
+//   Bos string -> otomatik tazeleme kapali, sadece manuel + hardcoded fallback calisir.
+const BANK_RATES_API_URL = '';
+const BANK_RATES_MODE_KEY = 'safakari_bank_rates_mode_v1'; // 'auto' | 'manual'
+const BANK_RATES_META_KEY = 'safakari_bank_rates_meta_v1'; // {fetched_at, updated, age_days, status, source[]}
+const BANK_RATES_SECRET_KEY = 'safakari_admin_secret_v1'; // Worker manuel-tazele icin admin sir
 const BANK_RATES_DEFAULT = {
   updated: '2026-05-09',
   banks: [
@@ -900,7 +907,94 @@ function loadBankRates(){
 function saveBankRates(obj){
   try { localStorage.setItem(BANK_RATES_KEY, JSON.stringify(obj)); } catch(_){}
 }
+function getBankRatesMode(){
+  try { return localStorage.getItem(BANK_RATES_MODE_KEY) || 'auto'; } catch(_){ return 'auto'; }
+}
+function setBankRatesMode(mode){
+  try { localStorage.setItem(BANK_RATES_MODE_KEY, mode); } catch(_){}
+}
+function getBankRatesMeta(){
+  try { return JSON.parse(localStorage.getItem(BANK_RATES_META_KEY) || 'null'); } catch(_){ return null; }
+}
+function setBankRatesMeta(meta){
+  try { localStorage.setItem(BANK_RATES_META_KEY, JSON.stringify(meta)); } catch(_){}
+}
+async function fetchBankRatesFromApi(opts){
+  opts = opts || {};
+  const url = BANK_RATES_API_URL;
+  if(!url) return { ok:false, reason:'no_api_url' };
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(()=>ctrl.abort(), 8000);
+    const resp = await fetch(url.replace(/\/$/,'') + '/api/bank-rates', { signal: ctrl.signal });
+    clearTimeout(timer);
+    if(!resp.ok) return { ok:false, reason:'http_'+resp.status };
+    const data = await resp.json();
+    if(!data || !Array.isArray(data.banks) || data.banks.length===0) return { ok:false, reason:'empty' };
+    setBankRatesMeta({
+      fetched_at: new Date().toISOString(),
+      updated: data.updated || null,
+      age_days: data.age_days != null ? data.age_days : null,
+      status: data.status || null,
+      source: Array.isArray(data.source) ? data.source : []
+    });
+    if(getBankRatesMode() === 'manual' && !opts.force){
+      return { ok:true, applied:false, reason:'manual_mode' };
+    }
+    BANK_RATES = {
+      updated: (data.updated || '').slice(0,10),
+      banks: data.banks
+        .filter(b => b && b.id && b.name && b.rate != null)
+        .map(b => ({ id:String(b.id), name:String(b.name), rate:+b.rate, type:String(b.type||'ozel') }))
+    };
+    saveBankRates(BANK_RATES);
+    setBankRatesMode('auto');
+    return { ok:true, applied:true, banks_count: BANK_RATES.banks.length };
+  } catch(e){
+    return { ok:false, reason:'fetch_error:'+(e && e.message || 'unknown') };
+  }
+}
+async function triggerWorkerRefresh(){
+  const url = BANK_RATES_API_URL;
+  if(!url) return { ok:false, reason:'no_api_url' };
+  let secret = '';
+  try { secret = localStorage.getItem(BANK_RATES_SECRET_KEY) || ''; } catch(_){}
+  if(!secret){
+    secret = prompt('Worker admin secret giriniz (deploy sırasında oluşturulan):') || '';
+    if(!secret) return { ok:false, reason:'no_secret' };
+    try { localStorage.setItem(BANK_RATES_SECRET_KEY, secret); } catch(_){}
+  }
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(()=>ctrl.abort(), 30000);
+    const resp = await fetch(url.replace(/\/$/,'') + '/api/bank-rates/refresh', {
+      method:'POST',
+      headers:{ 'X-Admin-Secret': secret },
+      signal: ctrl.signal
+    });
+    clearTimeout(timer);
+    if(resp.status === 401){
+      try { localStorage.removeItem(BANK_RATES_SECRET_KEY); } catch(_){}
+      return { ok:false, reason:'unauthorized' };
+    }
+    if(!resp.ok) return { ok:false, reason:'http_'+resp.status };
+    const result = await resp.json().catch(()=>({}));
+    return { ok:true, ...(result||{}) };
+  } catch(e){
+    return { ok:false, reason:'fetch_error:'+(e && e.message || 'unknown') };
+  }
+}
 let BANK_RATES = loadBankRates();
+// Otomatik tazeleme - sayfa yuklenince arkaplanda dene (engellemez, fail sessiz)
+if(BANK_RATES_API_URL){
+  setTimeout(()=>{
+    fetchBankRatesFromApi().then(r => {
+      if(r && r.ok && r.applied && typeof refreshLoanBankSelect === 'function'){
+        try { refreshLoanBankSelect(); } catch(_){}
+      }
+    });
+  }, 1500);
+}
 
 const D = {
   schema: 2,
@@ -6251,6 +6345,7 @@ function admBanks(bd){
       <button type="button" class="abtn" data-act="bnk-del" data-idx="${i}" style="padding:6px 12px;font-size:.72rem;background:#fef2f2;color:#c0392b;border:1px solid #e8c5c0">Sil</button>
     </div>`).join('');
   bd.innerHTML = `
+    <div id="bnk_auto_status" style="margin-bottom:14px;padding:10px 12px;border-radius:8px;font-size:.78rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;line-height:1.5"></div>
     <div style="margin-bottom:14px;font-size:.78rem;color:var(--txm);line-height:1.55">
       Konut kredisi faiz oranlarını buradan güncelleyin. Oranlar <strong>aylık %</strong> olarak girilir
       ve değişiklik kaydedildiğinde site genelinde anında geçerli olur.
@@ -6288,6 +6383,7 @@ function admBanks(bd){
     if(!confirm('Tüm banka oranları varsayılana sıfırlanacak. Devam edilsin mi?')) return;
     BANK_RATES = JSON.parse(JSON.stringify(BANK_RATES_DEFAULT));
     saveBankRates(BANK_RATES);
+    setBankRatesMode('manual');
     admBanks(bd);
     refreshLoanBankSelect();
     toast(t('admin.banks_reset_ok','Banka oranları varsayılana döndü'));
@@ -6295,7 +6391,9 @@ function admBanks(bd){
   document.getElementById('bnk_save_btn')?.addEventListener('click', ()=>{
     if(!saveAdmBanksFromInputs(true)) return;
     saveBankRates(BANK_RATES);
+    setBankRatesMode('manual');
     refreshLoanBankSelect();
+    renderBankRatesAutoStatus(bd);
     toast(t('admin.banks_save_ok','Banka oranları güncellendi'));
   });
   bd.querySelectorAll('[data-act="bnk-del"]').forEach(btn => {
@@ -6309,6 +6407,84 @@ function admBanks(bd){
       BANK_RATES.banks.splice(idx,1);
       admBanks(bd);
     });
+  });
+  renderBankRatesAutoStatus(bd);
+}
+function renderBankRatesAutoStatus(bd){
+  const el = bd.querySelector('#bnk_auto_status');
+  if(!el) return;
+  const mode = getBankRatesMode();
+  const meta = getBankRatesMeta();
+  const apiOn = !!BANK_RATES_API_URL;
+  let bg, color, badge, text;
+  if(!apiOn){
+    bg = '#eef2f7'; color = '#1e3a5f';
+    badge = 'Servis bağlı değil';
+    text = 'Otomatik tazeleme servisi henüz ayarlanmadı (deploy sonrası aktif olur).';
+  } else if(mode === 'manual'){
+    bg = '#fef3e8'; color = '#9c6d2e';
+    badge = 'Manuel mod';
+    text = 'Manuel düzenleme aktif. Otomatik tazeleme oranları ezmiyor.';
+  } else {
+    const age = meta && meta.age_days != null ? meta.age_days : null;
+    if(age == null){
+      bg = '#eef2f7'; color = '#1e3a5f';
+      badge = 'Otomatik';
+      text = 'İlk tazeleme bekleniyor.';
+    } else if(age >= 14 || (meta && meta.status === 'scrape_failed')){
+      bg = '#fef2f2'; color = '#c0392b';
+      badge = 'Eski (' + age + ' gün)';
+      text = 'Otomatik tazeleme uzun süredir başarısız. Manuel kontrol veya destek gerekebilir.';
+    } else {
+      bg = '#ecf6ee'; color = '#2e7d32';
+      badge = 'Otomatik (' + age + ' gün önce)';
+      text = 'Son tazeleme: ' + (meta.updated || '?').slice(0,10) + '. Kaynak: ' + ((meta.source||[]).join(', ') || '?');
+    }
+  }
+  el.style.background = bg;
+  el.style.color = color;
+  el.style.border = '1px solid ' + color + '33';
+  el.innerHTML =
+    '<strong style="font-weight:700;white-space:nowrap">' + escapeHtml(badge) + '</strong>' +
+    '<span style="flex:1;min-width:200px">' + escapeHtml(text) + '</span>' +
+    (apiOn ?
+      '<button type="button" class="abtn" id="bnk_auto_refresh_btn" style="padding:7px 12px;font-size:.72rem;background:#fff;border:1px solid currentColor;color:inherit;border-radius:6px;cursor:pointer;font-weight:700">Şimdi Tazele</button>' +
+      (mode === 'manual' ? '<button type="button" class="abtn" id="bnk_back_to_auto_btn" style="padding:7px 12px;font-size:.72rem;background:#fff;border:1px solid currentColor;color:inherit;border-radius:6px;cursor:pointer;font-weight:700">Otomatik moda dön</button>' : '')
+    : '');
+  document.getElementById('bnk_auto_refresh_btn')?.addEventListener('click', async ()=>{
+    const btn = document.getElementById('bnk_auto_refresh_btn');
+    if(btn){ btn.disabled = true; btn.textContent = 'Tazeleniyor...'; }
+    const r = await triggerWorkerRefresh();
+    if(!r.ok){
+      toast('Tazeleme başarısız: ' + r.reason);
+      if(btn){ btn.disabled = false; btn.textContent = 'Şimdi Tazele'; }
+      return;
+    }
+    const f = await fetchBankRatesFromApi({ force: getBankRatesMode() !== 'manual' });
+    if(f.ok && f.applied){
+      try { refreshLoanBankSelect(); } catch(_){}
+      admBanks(bd);
+      toast('Banka oranları otomatik tazelendi');
+    } else if(f.ok){
+      renderBankRatesAutoStatus(bd);
+      toast('Tazeleme tamamlandı (manuel mod aktif olduğu için oranlar ezilmedi)');
+    } else {
+      toast('Tazeleme bilgisi alınamadı: ' + (f.reason || '?'));
+      if(btn){ btn.disabled = false; btn.textContent = 'Şimdi Tazele'; }
+    }
+  });
+  document.getElementById('bnk_back_to_auto_btn')?.addEventListener('click', async ()=>{
+    if(!confirm('Manuel düzenlemeniz silinip otomatik servisten son oranlar yüklenecek. Devam edilsin mi?')) return;
+    setBankRatesMode('auto');
+    const f = await fetchBankRatesFromApi({ force: true });
+    if(f.ok && f.applied){
+      try { refreshLoanBankSelect(); } catch(_){}
+      admBanks(bd);
+      toast('Otomatik moda dönüldü');
+    } else {
+      admBanks(bd);
+      toast('Otomatik veri alınamadı: ' + (f.reason || '?'));
+    }
   });
 }
 function saveAdmBanksFromInputs(validate){
